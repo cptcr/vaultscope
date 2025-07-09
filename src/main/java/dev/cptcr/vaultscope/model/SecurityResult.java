@@ -13,10 +13,12 @@ public class SecurityResult {
     
     private List<Vulnerability> vulnerabilities;
     private int securityScore;
+    private String scanDuration;
 
     public SecurityResult() {}
 
-    public SecurityResult(String targetUrl, LocalDateTime scanTimestamp, List<Vulnerability> vulnerabilities, int securityScore) {
+    public SecurityResult(String targetUrl, LocalDateTime scanTimestamp, 
+                         List<Vulnerability> vulnerabilities, int securityScore) {
         this.targetUrl = targetUrl;
         this.scanTimestamp = scanTimestamp;
         this.vulnerabilities = vulnerabilities;
@@ -53,5 +55,13 @@ public class SecurityResult {
 
     public void setSecurityScore(int securityScore) {
         this.securityScore = securityScore;
+    }
+
+    public String getScanDuration() {
+        return scanDuration;
+    }
+
+    public void setScanDuration(String scanDuration) {
+        this.scanDuration = scanDuration;
     }
 }

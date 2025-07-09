@@ -27,7 +27,7 @@ public class ReportService {
 
     public String exportJsonReport(SecurityResult result) throws IOException {
         String timestamp = result.getScanTimestamp().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String filename = String.format("vaultscope_report_%s.json", timestamp);
+        String filename = String.format("VaultScope_Report_%s.json", timestamp);
         File reportFile = new File(reportsDirectory, filename);
         
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(reportFile, result);
@@ -37,7 +37,7 @@ public class ReportService {
 
     public String exportHtmlReport(SecurityResult result) throws IOException {
         String timestamp = result.getScanTimestamp().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String filename = String.format("vaultscope_report_%s.html", timestamp);
+        String filename = String.format("VaultScope_Report_%s.html", timestamp);
         File reportFile = new File(reportsDirectory, filename);
         
         String htmlContent = generateHtmlReport(result);
@@ -57,7 +57,7 @@ public class ReportService {
         html.append("<head>\n");
         html.append("    <meta charset=\"UTF-8\">\n");
         html.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
-        html.append("    <title>VaultScope Security Report</title>\n");
+        html.append("    <title>VaultScope Security Assessment Report</title>\n");
         html.append("    <style>\n");
         html.append(getReportCSS());
         html.append("    </style>\n");
@@ -65,62 +65,106 @@ public class ReportService {
         html.append("<body>\n");
         
         html.append("    <div class=\"container\">\n");
-        html.append("        <header>\n");
-        html.append("            <h1>VaultScope Security Assessment Report</h1>\n");
-        html.append("            <div class=\"meta-info\">\n");
-        html.append("                <p><strong>Target:</strong> ").append(result.getTargetUrl()).append("</p>\n");
-        html.append("                <p><strong>Scan Date:</strong> ").append(result.getScanTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("</p>\n");
-        html.append("                <p><strong>Security Score:</strong> <span class=\"score\">").append(result.getSecurityScore()).append("/100</span></p>\n");
+        html.append("        <header class=\"report-header\">\n");
+        html.append("            <div class=\"header-content\">\n");
+        html.append("                <h1>🛡️ VaultScope Security Assessment Report</h1>\n");
+        html.append("                <div class=\"header-meta\">\n");
+        html.append("                    <div class=\"meta-item\">\n");
+        html.append("                        <strong>Target:</strong> ").append(escapeHtml(result.getTargetUrl())).append("\n");
+        html.append("                    </div>\n");
+        html.append("                    <div class=\"meta-item\">\n");
+        html.append("                        <strong>Scan Date:</strong> ").append(result.getScanTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
+        html.append("                    </div>\n");
+        html.append("                    <div class=\"meta-item\">\n");
+        html.append("                        <strong>Duration:</strong> ").append(result.getScanDuration() != null ? result.getScanDuration() : "N/A").append("\n");
+        html.append("                    </div>\n");
+        html.append("                    <div class=\"score-display\">\n");
+        html.append("                        <strong>Security Score:</strong> <span class=\"score-value\">").append(result.getSecurityScore()).append("/100</span>\n");
+        html.append("                        <span class=\"score-grade\">").append(getScoreGrade(result.getSecurityScore())).append("</span>\n");
+        html.append("                    </div>\n");
+        html.append("                </div>\n");
         html.append("            </div>\n");
         html.append("        </header>\n");
         
-        html.append("        <section class=\"summary\">\n");
-        html.append("            <h2>Executive Summary</h2>\n");
-        html.append("            <div class=\"summary-stats\">\n");
-        html.append("                <div class=\"stat-card critical\">\n");
-        html.append("                    <h3>").append(countVulnerabilitiesBySeverity(result, "CRITICAL")).append("</h3>\n");
-        html.append("                    <p>Critical</p>\n");
+        html.append("        <section class=\"executive-summary\">\n");
+        html.append("            <h2>📊 Executive Summary</h2>\n");
+        html.append("            <div class=\"summary-grid\">\n");
+        html.append("                <div class=\"summary-card total\">\n");
+        html.append("                    <div class=\"card-header\">Total Issues</div>\n");
+        html.append("                    <div class=\"card-value\">").append(result.getVulnerabilities().size()).append("</div>\n");
         html.append("                </div>\n");
-        html.append("                <div class=\"stat-card high\">\n");
-        html.append("                    <h3>").append(countVulnerabilitiesBySeverity(result, "HIGH")).append("</h3>\n");
-        html.append("                    <p>High</p>\n");
+                        html.append("                <div class=\"summary-card critical\">\n");
+        html.append("                    <div class=\"card-header\">Critical</div>\n");
+        html.append("                    <div class=\"card-value\">").append(countVulnerabilitiesBySeverity(result, "CRITICAL")).append("</div>\n");
         html.append("                </div>\n");
-        html.append("                <div class=\"stat-card medium\">\n");
-        html.append("                    <h3>").append(countVulnerabilitiesBySeverity(result, "MEDIUM")).append("</h3>\n");
-        html.append("                    <p>Medium</p>\n");
+        html.append("                <div class=\"summary-card high\">\n");
+        html.append("                    <div class=\"card-header\">High</div>\n");
+        html.append("                    <div class=\"card-value\">").append(countVulnerabilitiesBySeverity(result, "HIGH")).append("</div>\n");
         html.append("                </div>\n");
-        html.append("                <div class=\"stat-card low\">\n");
-        html.append("                    <h3>").append(countVulnerabilitiesBySeverity(result, "LOW")).append("</h3>\n");
-        html.append("                    <p>Low</p>\n");
+        html.append("                <div class=\"summary-card medium\">\n");
+        html.append("                    <div class=\"card-header\">Medium</div>\n");
+        html.append("                    <div class=\"card-value\">").append(countVulnerabilitiesBySeverity(result, "MEDIUM")).append("</div>\n");
+        html.append("                </div>\n");
+        html.append("                <div class=\"summary-card low\">\n");
+        html.append("                    <div class=\"card-header\">Low</div>\n");
+        html.append("                    <div class=\"card-value\">").append(countVulnerabilitiesBySeverity(result, "LOW")).append("</div>\n");
         html.append("                </div>\n");
         html.append("            </div>\n");
         html.append("        </section>\n");
         
-        html.append("        <section class=\"vulnerabilities\">\n");
-        html.append("            <h2>Vulnerability Details</h2>\n");
-        
         if (result.getVulnerabilities().isEmpty()) {
-            html.append("            <p class=\"no-vulnerabilities\">No vulnerabilities detected during the scan.</p>\n");
+            html.append("        <section class=\"no-vulnerabilities\">\n");
+            html.append("            <div class=\"success-message\">\n");
+            html.append("                <h2>🎉 Excellent Security Posture!</h2>\n");
+            html.append("                <p>No security vulnerabilities were detected during this comprehensive assessment.</p>\n");
+            html.append("                <p>Your API demonstrates good security practices and appears to be well-protected against common attack vectors.</p>\n");
+            html.append("            </div>\n");
+            html.append("        </section>\n");
         } else {
+            html.append("        <section class=\"vulnerabilities-section\">\n");
+            html.append("            <h2>🔍 Vulnerability Details</h2>\n");
+            
             for (Vulnerability vuln : result.getVulnerabilities()) {
-                html.append("            <div class=\"vulnerability ").append(vuln.getSeverity().toLowerCase()).append("\">\n");
+                html.append("            <div class=\"vulnerability-card ").append(vuln.getSeverity().toLowerCase()).append("\">\n");
                 html.append("                <div class=\"vuln-header\">\n");
-                html.append("                    <h3>").append(escapeHtml(vuln.getType())).append("</h3>\n");
+                html.append("                    <h3 class=\"vuln-title\">").append(escapeHtml(vuln.getType())).append("</h3>\n");
                 html.append("                    <span class=\"severity-badge ").append(vuln.getSeverity().toLowerCase()).append("\">").append(vuln.getSeverity()).append("</span>\n");
                 html.append("                </div>\n");
-                html.append("                <p><strong>Endpoint:</strong> ").append(escapeHtml(vuln.getEndpoint())).append("</p>\n");
-                html.append("                <p><strong>Description:</strong> ").append(escapeHtml(vuln.getDescription())).append("</p>\n");
-                html.append("                <p><strong>Details:</strong> ").append(escapeHtml(vuln.getDetails())).append("</p>\n");
-                html.append("                <p><strong>Recommendation:</strong> ").append(escapeHtml(vuln.getRecommendation())).append("</p>\n");
+                html.append("                <div class=\"vuln-content\">\n");
+                html.append("                    <div class=\"vuln-field\">\n");
+                html.append("                        <strong>Endpoint:</strong> <code>").append(escapeHtml(vuln.getEndpoint())).append("</code>\n");
+                html.append("                    </div>\n");
+                html.append("                    <div class=\"vuln-field\">\n");
+                html.append("                        <strong>Description:</strong> ").append(escapeHtml(vuln.getDescription())).append("\n");
+                html.append("                    </div>\n");
+                html.append("                    <div class=\"vuln-field\">\n");
+                html.append("                        <strong>Technical Details:</strong> ").append(escapeHtml(vuln.getDetails())).append("\n");
+                html.append("                    </div>\n");
+                if (vuln.getPayload() != null && !vuln.getPayload().isEmpty()) {
+                    html.append("                    <div class=\"vuln-field\">\n");
+                    html.append("                        <strong>Payload:</strong> <code>").append(escapeHtml(vuln.getPayload())).append("</code>\n");
+                    html.append("                    </div>\n");
+                }
+                html.append("                    <div class=\"vuln-recommendation\">\n");
+                html.append("                        <strong>💡 Recommendation:</strong> ").append(escapeHtml(vuln.getRecommendation())).append("\n");
+                html.append("                    </div>\n");
+                html.append("                </div>\n");
                 html.append("            </div>\n");
             }
+            
+            html.append("        </section>\n");
         }
         
-        html.append("        </section>\n");
-        
-        html.append("        <footer>\n");
-        html.append("            <p>Generated by VaultScope - Enterprise API Security Assessment Tool</p>\n");
-        html.append("            <p>Author: CPTCR | <a href=\"https://cptcr.dev\">cptcr.dev</a> | <a href=\"https://github.com/cptcr\">GitHub</a></p>\n");
+        html.append("        <footer class=\"report-footer\">\n");
+        html.append("            <div class=\"footer-content\">\n");
+        html.append("                <p><strong>Generated by VaultScope</strong> - Enterprise API Security Assessment Tool</p>\n");
+        html.append("                <div class=\"footer-links\">\n");
+        html.append("                    <span>Author: <strong>CPTCR</strong></span> | \n");
+        html.append("                    <a href=\"https://cptcr.dev\" target=\"_blank\">cptcr.dev</a> | \n");
+        html.append("                    <a href=\"https://github.com/cptcr\" target=\"_blank\">GitHub</a>\n");
+        html.append("                </div>\n");
+        html.append("                <p class=\"disclaimer\">This report contains security assessment results for localhost testing only. Use responsibly and only on systems you own or have explicit permission to test.</p>\n");
+        html.append("            </div>\n");
         html.append("        </footer>\n");
         html.append("    </div>\n");
         html.append("</body>\n");
@@ -138,146 +182,285 @@ public class ReportService {
             }
             
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                 line-height: 1.6;
-                color: #333;
-                background-color: #f5f5f5;
+                color: #2c3e50;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
             }
             
             .container {
                 max-width: 1200px;
                 margin: 0 auto;
-                padding: 20px;
                 background: white;
-                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+                overflow: hidden;
             }
             
-            header {
-                border-bottom: 3px solid #007acc;
-                padding-bottom: 20px;
-                margin-bottom: 30px;
+            .report-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 40px;
+                text-align: center;
             }
             
-            h1 {
-                color: #007acc;
+            .header-content h1 {
                 font-size: 2.5em;
-                margin-bottom: 15px;
-            }
-            
-            h2 {
-                color: #333;
-                font-size: 1.8em;
                 margin-bottom: 20px;
-                border-bottom: 2px solid #eee;
-                padding-bottom: 10px;
+                font-weight: 700;
             }
             
-            .meta-info p {
-                margin-bottom: 8px;
-                font-size: 1.1em;
+            .header-meta {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin-top: 30px;
             }
             
-            .score {
-                font-weight: bold;
-                color: #007acc;
+            .meta-item {
+                background: rgba(255,255,255,0.1);
+                padding: 15px;
+                border-radius: 8px;
+                backdrop-filter: blur(10px);
+            }
+            
+            .score-display {
+                grid-column: 1 / -1;
+                text-align: center;
                 font-size: 1.2em;
             }
             
-            .summary-stats {
+            .score-value {
+                font-size: 2em;
+                font-weight: bold;
+                color: #ffd700;
+            }
+            
+            .score-grade {
+                font-size: 1.5em;
+                font-weight: bold;
+                margin-left: 10px;
+                padding: 5px 15px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 20px;
+            }
+            
+            .executive-summary {
+                padding: 40px;
+                background: #f8f9fa;
+            }
+            
+            .executive-summary h2 {
+                color: #2c3e50;
+                margin-bottom: 30px;
+                font-size: 1.8em;
+                text-align: center;
+            }
+            
+            .summary-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 20px;
-                margin-bottom: 30px;
             }
             
-            .stat-card {
-                padding: 20px;
-                border-radius: 8px;
+            .summary-card {
+                background: white;
+                padding: 25px;
+                border-radius: 10px;
                 text-align: center;
-                color: white;
-                font-weight: bold;
-            }
-            
-            .stat-card.critical { background-color: #dc3545; }
-            .stat-card.high { background-color: #fd7e14; }
-            .stat-card.medium { background-color: #ffc107; color: #333; }
-            .stat-card.low { background-color: #28a745; }
-            
-            .stat-card h3 {
-                font-size: 2.5em;
-                margin-bottom: 5px;
-            }
-            
-            .vulnerability {
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 20px;
-                margin-bottom: 20px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
                 border-left: 5px solid;
             }
             
-            .vulnerability.critical { border-left-color: #dc3545; }
-            .vulnerability.high { border-left-color: #fd7e14; }
-            .vulnerability.medium { border-left-color: #ffc107; }
-            .vulnerability.low { border-left-color: #28a745; }
+            .summary-card.total { border-left-color: #3498db; }
+            .summary-card.critical { border-left-color: #e74c3c; }
+            .summary-card.high { border-left-color: #f39c12; }
+            .summary-card.medium { border-left-color: #f1c40f; }
+            .summary-card.low { border-left-color: #27ae60; }
+            
+            .card-header {
+                font-size: 0.9em;
+                color: #7f8c8d;
+                text-transform: uppercase;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            
+            .card-value {
+                font-size: 2.5em;
+                font-weight: bold;
+                color: #2c3e50;
+            }
+            
+            .vulnerabilities-section {
+                padding: 40px;
+            }
+            
+            .vulnerabilities-section h2 {
+                color: #2c3e50;
+                margin-bottom: 30px;
+                font-size: 1.8em;
+                text-align: center;
+            }
+            
+            .vulnerability-card {
+                background: white;
+                border-radius: 10px;
+                margin-bottom: 25px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                border-left: 5px solid;
+                overflow: hidden;
+            }
+            
+            .vulnerability-card.critical { border-left-color: #e74c3c; }
+            .vulnerability-card.high { border-left-color: #f39c12; }
+            .vulnerability-card.medium { border-left-color: #f1c40f; }
+            .vulnerability-card.low { border-left-color: #27ae60; }
             
             .vuln-header {
+                background: #f8f9fa;
+                padding: 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 15px;
+                border-bottom: 1px solid #dee2e6;
             }
             
-            .vuln-header h3 {
+            .vuln-title {
                 margin: 0;
-                color: #333;
+                color: #2c3e50;
+                font-size: 1.3em;
             }
             
             .severity-badge {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.8em;
+                padding: 8px 16px;
+                border-radius: 25px;
+                font-size: 0.85em;
                 font-weight: bold;
                 text-transform: uppercase;
                 color: white;
             }
             
-            .severity-badge.critical { background-color: #dc3545; }
-            .severity-badge.high { background-color: #fd7e14; }
-            .severity-badge.medium { background-color: #ffc107; color: #333; }
-            .severity-badge.low { background-color: #28a745; }
+            .severity-badge.critical { background: #e74c3c; }
+            .severity-badge.high { background: #f39c12; }
+            .severity-badge.medium { background: #f1c40f; color: #333; }
+            .severity-badge.low { background: #27ae60; }
             
-            .vulnerability p {
-                margin-bottom: 10px;
+            .vuln-content {
+                padding: 25px;
+            }
+            
+            .vuln-field {
+                margin-bottom: 15px;
+            }
+            
+            .vuln-field strong {
+                color: #2c3e50;
+                display: inline-block;
+                min-width: 120px;
+            }
+            
+            .vuln-recommendation {
+                background: #e8f5e8;
+                padding: 15px;
+                border-radius: 6px;
+                border-left: 4px solid #27ae60;
+                margin-top: 20px;
+            }
+            
+            code {
+                background: #f8f9fa;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: 'Courier New', monospace;
+                color: #e74c3c;
             }
             
             .no-vulnerabilities {
+                padding: 60px 40px;
                 text-align: center;
-                color: #28a745;
-                font-size: 1.2em;
-                font-weight: bold;
+            }
+            
+            .success-message {
+                background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+                color: white;
                 padding: 40px;
-                background-color: #d4edda;
-                border-radius: 8px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             }
             
-            footer {
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 2px solid #eee;
+            .success-message h2 {
+                font-size: 2.2em;
+                margin-bottom: 20px;
+            }
+            
+            .success-message p {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+            
+            .report-footer {
+                background: #2c3e50;
+                color: white;
+                padding: 30px 40px;
                 text-align: center;
-                color: #666;
             }
             
-            footer a {
-                color: #007acc;
+            .footer-content p {
+                margin-bottom: 10px;
+            }
+            
+            .footer-links {
+                margin: 15px 0;
+            }
+            
+            .footer-links a {
+                color: #3498db;
                 text-decoration: none;
             }
             
-            footer a:hover {
+            .footer-links a:hover {
                 text-decoration: underline;
             }
+            
+            .disclaimer {
+                font-size: 0.9em;
+                color: #bdc3c7;
+                font-style: italic;
+                margin-top: 20px;
+            }
+            
+            @media (max-width: 768px) {
+                .container {
+                    margin: 10px;
+                    border-radius: 8px;
+                }
+                
+                .report-header, .executive-summary, .vulnerabilities-section {
+                    padding: 20px;
+                }
+                
+                .header-meta {
+                    grid-template-columns: 1fr;
+                }
+                
+                .vuln-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 10px;
+                }
+            }
             """;
+    }
+
+    private String getScoreGrade(int score) {
+        if (score >= 90) return "A";
+        if (score >= 80) return "B";
+        if (score >= 70) return "C";
+        if (score >= 60) return "D";
+        return "F";
     }
 
     private long countVulnerabilitiesBySeverity(SecurityResult result, String severity) {
@@ -294,4 +477,3 @@ public class ReportService {
                   .replace("\"", "&quot;")
                   .replace("'", "&#x27;");
     }
-}

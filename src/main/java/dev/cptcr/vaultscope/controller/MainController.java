@@ -54,6 +54,10 @@ public class MainController implements Initializable {
         setupTable();
         setupEventHandlers();
         updateButtonStates();
+        
+        targetUrlField.setText("localhost:8080");
+        vulnerabilityDetailsArea.setText("Select a vulnerability to view details");
+        trafficLogArea.setText("Traffic log will appear here during scanning");
     }
 
     private void setupTable() {
@@ -67,7 +71,7 @@ public class MainController implements Initializable {
         vulnerabilityTable.getSelectionModel().selectedItemProperty().addListener(
             (observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    vulnerabilityDetailsArea.setText(formatVulnerabilityDetails(newValue));
+                    showVulnerabilityDetails(newValue);
                 }
             });
     }
@@ -87,13 +91,14 @@ public class MainController implements Initializable {
         String targetUrl = targetUrlField.getText().trim();
         
         if (!urlValidator.isValidLocalhostUrl(targetUrl)) {
-            showAlert("Invalid URL", "Please enter a valid localhost URL (e.g., localhost:8080 or 127.0.0.1:3000)");
+            showAlert(Alert.AlertType.ERROR, "Invalid URL", 
+                "Please enter a valid localhost URL\n\nExamples:\n• localhost:8080\n• 127.0.0.1:3000\n• http://localhost/api");
             return;
         }
 
         scanButton.setDisabled(true);
         scanProgress.setVisible(true);
-        statusLabel.setText("Scanning...");
+        statusLabel.setText("Initializing security scan...");
         vulnerabilities.clear();
         trafficLogArea.clear();
         vulnerabilityDetailsArea.clear();
@@ -107,7 +112,12 @@ public class MainController implements Initializable {
                         trafficLogArea.appendText(message + "\n");
                         trafficLogArea.setScrollTop(Double.MAX_VALUE);
                     }),
-                    (progress) -> Platform.runLater(() -> scanProgress.setProgress(progress))
+                    (progress) -> Platform.runLater(() -> {
+                        scanProgress.setProgress(progress);
+                        if (progress < 1.0) {
+                            statusLabel.setText(String.format("Scanning... %.0f%%", progress * 100));
+                        }
+                    })
                 );
             }
 
@@ -116,13 +126,21 @@ public class MainController implements Initializable {
                 Platform.runLater(() -> {
                     currentResult = getValue();
                     vulnerabilities.addAll(currentResult.getVulnerabilities());
-                    securityScoreLabel.setText(String.format("Score: %d/100 (%s)", 
-                        currentResult.getSecurityScore(), 
-                        getGradeFromScore(currentResult.getSecurityScore())));
-                    statusLabel.setText("Scan completed");
+                    
+                    int score = currentResult.getSecurityScore();
+                    String grade = getGradeFromScore(score);
+                    securityScoreLabel.setText(String.format("Score: %d/100 (%s)", score, grade));
+                    
+                    statusLabel.setText(String.format("Scan completed - Found %d vulnerabilities", vulnerabilities.size()));
                     scanProgress.setVisible(false);
                     scanButton.setDisabled(false);
                     updateButtonStates();
+                    
+                    if (vulnerabilities.isEmpty()) {
+                        vulnerabilityDetailsArea.setText("🎉 Excellent!\n\nNo security vulnerabilities detected!\nYour API appears to be well-secured.");
+                    } else {
+                        vulnerabilityDetailsArea.setText("Security scan completed.\nSelect a vulnerability from the table above to view details.");
+                    }
                 });
             }
 
@@ -132,7 +150,8 @@ public class MainController implements Initializable {
                     statusLabel.setText("Scan failed");
                     scanProgress.setVisible(false);
                     scanButton.setDisabled(false);
-                    showAlert("Scan Error", "Failed to complete security scan: " + getException().getMessage());
+                    showAlert(Alert.AlertType.ERROR, "Scan Error", 
+                        "Failed to complete security scan:\n" + getException().getMessage());
                 });
             }
         };
@@ -144,9 +163,11 @@ public class MainController implements Initializable {
         if (currentResult != null) {
             try {
                 String filename = reportService.exportJsonReport(currentResult);
-                showAlert("Export Successful", "Report exported to: " + filename);
+                showAlert(Alert.AlertType.INFORMATION, "Export Successful", 
+                    "JSON report exported successfully!\n\nFile: " + filename);
             } catch (Exception e) {
-                showAlert("Export Error", "Failed to export JSON report: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Export Error", 
+                    "Failed to export JSON report:\n" + e.getMessage());
             }
         }
     }
@@ -155,9 +176,11 @@ public class MainController implements Initializable {
         if (currentResult != null) {
             try {
                 String filename = reportService.exportHtmlReport(currentResult);
-                showAlert("Export Successful", "Report exported to: " + filename);
+                showAlert(Alert.AlertType.INFORMATION, "Export Successful", 
+                    "HTML report exported successfully!\n\nFile: " + filename);
             } catch (Exception e) {
-                showAlert("Export Error", "Failed to export HTML report: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Export Error", 
+                    "Failed to export HTML report:\n" + e.getMessage());
             }
         }
     }
@@ -167,11 +190,11 @@ public class MainController implements Initializable {
         if (isDarkTheme) {
             rootPane.getScene().getStylesheets().clear();
             rootPane.getScene().getStylesheets().add(getClass().getResource("/css/dark-theme.css").toExternalForm());
-            toggleThemeButton.setText("Light Theme");
+            toggleThemeButton.setText("☀️ Light Theme");
         } else {
             rootPane.getScene().getStylesheets().clear();
             rootPane.getScene().getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-            toggleThemeButton.setText("Dark Theme");
+            toggleThemeButton.setText("🌙 Dark Theme");
         }
     }
 
@@ -179,20 +202,26 @@ public class MainController implements Initializable {
         boolean hasValidUrl = urlValidator.isValidLocalhostUrl(targetUrlField.getText().trim());
         scanButton.setDisabled(!hasValidUrl);
         
-        boolean hasResults = currentResult != null;
-        exportJsonButton.setDisabled(!hasResults);
-        exportHtmlButton.setDisabled(!hasResults);
+        boolean hasResults = currentResult != null && !currentResult.getVulnerabilities().isEmpty();
+        exportJsonButton.setDisabled(currentResult == null);
+        exportHtmlButton.setDisabled(currentResult == null);
     }
 
-    private String formatVulnerabilityDetails(Vulnerability vulnerability) {
-        StringBuilder details = new StringBuilder();
-        details.append("Severity: ").append(vulnerability.getSeverity()).append("\n\n");
-        details.append("Type: ").append(vulnerability.getType()).append("\n\n");
-        details.append("Endpoint: ").append(vulnerability.getEndpoint()).append("\n\n");
-        details.append("Description: ").append(vulnerability.getDescription()).append("\n\n");
-        details.append("Details: ").append(vulnerability.getDetails()).append("\n\n");
-        details.append("Recommendation: ").append(vulnerability.getRecommendation());
-        return details.toString();
+    private void showVulnerabilityDetails(Vulnerability vuln) {
+        String details = String.format(
+            "🔍 VULNERABILITY DETAILS\n" +
+            "═══════════════════════════════════════\n\n" +
+            "Severity: %s\n" +
+            "Type: %s\n" +
+            "Endpoint: %s\n\n" +
+            "Description:\n%s\n\n" +
+            "Technical Details:\n%s\n\n" +
+            "💡 Recommendation:\n%s\n",
+            vuln.getSeverity(), vuln.getType(), vuln.getEndpoint(),
+            vuln.getDescription(), vuln.getDetails(), vuln.getRecommendation()
+        );
+        vulnerabilityDetailsArea.setText(details);
+        vulnerabilityDetailsArea.setScrollTop(0);
     }
 
     private String getGradeFromScore(int score) {
@@ -203,8 +232,8 @@ public class MainController implements Initializable {
         return "F";
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

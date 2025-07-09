@@ -4,17 +4,15 @@ import dev.cptcr.vaultscope.model.SecurityResult;
 import dev.cptcr.vaultscope.model.Vulnerability;
 import org.apache.hc.client5.http.classic.methods.*;
 import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.util.Timeout;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,27 +23,34 @@ public class SecurityScanner {
 
     private static final String[] SQL_INJECTION_PAYLOADS = {
         "' OR '1'='1", "' OR 1=1--", "'; DROP TABLE users--", 
-        "' UNION SELECT NULL--", "1' AND SLEEP(5)--", "' OR '1'='1' /*"
+        "' UNION SELECT NULL--", "1' AND SLEEP(5)--", "' OR '1'='1' /*",
+        "admin'--", "admin' #", "admin'/*", "' or 1=1#",
+        "' or 1=1--", ") or '1'='1--", ") or ('1'='1--"
     };
 
     private static final String[] NOSQL_INJECTION_PAYLOADS = {
         "[$ne]", "{\"$gt\":\"\"}", "true, $where: '1 == 1'",
-        "', $where: '1 == 1", "1; return Math.PI"
+        "', $where: '1 == 1", "1; return Math.PI", "{\"$where\":\"1==1\"}",
+        "admin' || 'a'=='a", "1'||'1'=='1", "{$regex: \".*\"}"
     };
 
     private static final String[] PATH_TRAVERSAL_PAYLOADS = {
         "../../../etc/passwd", "..\\..\\..\\windows\\system32\\drivers\\etc\\hosts",
-        "%2e%2e%2f%2e%2e%2f%2e%2e%2f", "....//....//....//etc/passwd"
+        "%2e%2e%2f%2e%2e%2f%2e%2e%2f", "....//....//....//etc/passwd",
+        "..%252f..%252f..%252fetc%252fpasswd", "..%c0%af..%c0%af..%c0%afetc%c0%afpasswd"
     };
 
     private static final String[] XSS_PAYLOADS = {
         "<script>alert('XSS')</script>", "javascript:alert('XSS')",
-        "<img src=x onerror=alert('XSS')>", "'\"><script>alert('XSS')</script>"
+        "<img src=x onerror=alert('XSS')>", "'\"><script>alert('XSS')</script>",
+        "<svg onload=alert('XSS')>", "<<SCRIPT>alert('XSS')//<</SCRIPT>",
+        "<iframe src=javascript:alert('XSS')></iframe>"
     };
 
     private static final String[] XXE_PAYLOADS = {
         "<?xml version=\"1.0\"?><!DOCTYPE test [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><test>&xxe;</test>",
-        "<?xml version=\"1.0\"?><!DOCTYPE test [<!ENTITY xxe SYSTEM \"http://localhost/test\">]><test>&xxe;</test>"
+        "<?xml version=\"1.0\"?><!DOCTYPE test [<!ENTITY xxe SYSTEM \"http://localhost/test\">]><test>&xxe;</test>",
+        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE foo [<!ELEMENT foo ANY><!ENTITY xxe SYSTEM \"file:///etc/shadow\">]><foo>&xxe;</foo>"
     };
 
     private UrlValidator urlValidator;
@@ -57,8 +62,12 @@ public class SecurityScanner {
     public SecurityResult performSecurityScan(String targetUrl, Consumer<String> logCallback, Consumer<Double> progressCallback) {
         String normalizedUrl = urlValidator.normalizeUrl(targetUrl);
         List<Vulnerability> vulnerabilities = new ArrayList<>();
+        long startTime = System.currentTimeMillis();
         
-        logCallback.accept("Starting security scan for: " + normalizedUrl);
+        logCallback.accept("🚀 Starting comprehensive security assessment");
+        logCallback.accept("🎯 Target: " + normalizedUrl);
+        logCallback.accept("⏰ Started: " + LocalDateTime.now());
+        logCallback.accept("" + "=".repeat(60));
         progressCallback.accept(0.0);
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
@@ -94,15 +103,20 @@ public class SecurityScanner {
             progressCallback.accept(1.0);
 
         } catch (Exception e) {
-            logCallback.accept("Scan error: " + e.getMessage());
-            vulnerabilities.add(createVulnerability("ERROR", "Scan Error", targetUrl, 
-                "Failed to complete security scan", e.getMessage(), "Review connectivity and target availability"));
+            logCallback.accept("❌ Scan error: " + e.getMessage());
         }
 
-        logCallback.accept("Scan completed. Found " + vulnerabilities.size() + " potential vulnerabilities.");
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        
+        logCallback.accept("" + "=".repeat(60));
+        logCallback.accept(String.format("✅ Scan completed in %.2f seconds", duration / 1000.0));
+        logCallback.accept(String.format("🔍 Found %d potential security vulnerabilities", vulnerabilities.size()));
         
         int securityScore = calculateSecurityScore(vulnerabilities);
-        return new SecurityResult(targetUrl, LocalDateTime.now(), vulnerabilities, securityScore);
+        SecurityResult result = new SecurityResult(targetUrl, LocalDateTime.now(), vulnerabilities, securityScore);
+        result.setScanDuration(String.format("%.2f seconds", duration / 1000.0));
+        return result;
     }
 
     private CloseableHttpClient createHttpClient() {
@@ -113,172 +127,216 @@ public class SecurityScanner {
         
         return HttpClients.custom()
             .setDefaultRequestConfig(config)
+            .setUserAgent("VaultScope-Security-Scanner/1.0")
             .build();
     }
 
-    private void testBasicConnectivity(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+    private void testBasicConnectivity(CloseableHttpClient client, String url, 
+                                     List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
         try {
+            logCallback.accept("🔍 Testing basic connectivity and information disclosure...");
             HttpGet request = new HttpGet(url);
-            logCallback.accept("Testing basic connectivity to " + url);
             
             try (CloseableHttpResponse response = client.execute(request)) {
                 int statusCode = response.getCode();
                 String responseBody = EntityUtils.toString(response.getEntity());
                 
-                logCallback.accept("GET " + url + " -> " + statusCode);
+                logCallback.accept("📡 GET " + url + " → " + statusCode);
                 
-                if (responseBody.toLowerCase().contains("error") || responseBody.toLowerCase().contains("exception")) {
+                if (responseBody.toLowerCase().contains("error") || 
+                    responseBody.toLowerCase().contains("exception") ||
+                    responseBody.toLowerCase().contains("stack trace")) {
+                    
                     vulnerabilities.add(createVulnerability("MEDIUM", "Information Disclosure", url,
                         "Error information exposed in response", 
                         "Response contains error details that may reveal system information",
-                        "Configure error handling to avoid exposing sensitive information"));
+                        "Configure error handling to avoid exposing sensitive details to users"));
                 }
                 
                 String serverHeader = response.getFirstHeader("Server") != null ? 
                     response.getFirstHeader("Server").getValue() : "";
-                if (!serverHeader.isEmpty()) {
+                if (!serverHeader.isEmpty() && !serverHeader.contains("*")) {
                     vulnerabilities.add(createVulnerability("LOW", "Information Disclosure", url,
                         "Server information disclosed", 
                         "Server header reveals: " + serverHeader,
-                        "Remove or obfuscate server header information"));
+                        "Remove or obfuscate server header information in HTTP responses"));
+                }
+                
+                String xPoweredBy = response.getFirstHeader("X-Powered-By") != null ?
+                    response.getFirstHeader("X-Powered-By").getValue() : "";
+                if (!xPoweredBy.isEmpty()) {
+                    vulnerabilities.add(createVulnerability("LOW", "Information Disclosure", url,
+                        "Technology stack disclosed", 
+                        "X-Powered-By header reveals: " + xPoweredBy,
+                        "Remove X-Powered-By header to prevent technology fingerprinting"));
                 }
             }
         } catch (Exception e) {
-            logCallback.accept("Basic connectivity test failed: " + e.getMessage());
+            logCallback.accept("⚠️ Basic connectivity test failed: " + e.getMessage());
         }
     }
 
-    private void testSqlInjection(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing SQL injection vulnerabilities...");
+    private void testSqlInjection(CloseableHttpClient client, String url, 
+                                List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing SQL injection vulnerabilities...");
         
         for (String payload : SQL_INJECTION_PAYLOADS) {
             try {
-                String testUrl = url + "?id=" + payload + "&username=" + payload;
+                String encodedPayload = URLEncoder.encode(payload, StandardCharsets.UTF_8);
+                String testUrl = url + "?id=" + encodedPayload + "&user=" + encodedPayload + "&search=" + encodedPayload;
                 HttpGet request = new HttpGet(testUrl);
                 
+                long startTime = System.currentTimeMillis();
                 try (CloseableHttpResponse response = client.execute(request)) {
+                    long responseTime = System.currentTimeMillis() - startTime;
                     String responseBody = EntityUtils.toString(response.getEntity());
-                    long responseTime = System.currentTimeMillis();
                     
-                    logCallback.accept("SQL Test: " + payload + " -> " + response.getCode());
+                    logCallback.accept("🧪 SQL: " + payload.substring(0, Math.min(20, payload.length())) + "... → " + response.getCode() + " (" + responseTime + "ms)");
                     
-                    if (responseBody.toLowerCase().contains("sql") || 
-                        responseBody.toLowerCase().contains("mysql") ||
-                        responseBody.toLowerCase().contains("oracle") ||
-                        responseBody.toLowerCase().contains("postgresql") ||
-                        response.getCode() == 500) {
+                    String lowerResponse = responseBody.toLowerCase();
+                    if (lowerResponse.contains("sql syntax") || 
+                        lowerResponse.contains("mysql") ||
+                        lowerResponse.contains("postgresql") || 
+                        lowerResponse.contains("oracle") ||
+                        lowerResponse.contains("sqlite") ||
+                        lowerResponse.contains("mssql") ||
+                        response.getCode() == 500 || 
+                        responseTime > 4000) {
                         
-                        vulnerabilities.add(createVulnerability("CRITICAL", "SQL Injection", testUrl,
+                        Vulnerability vuln = createVulnerability("CRITICAL", "SQL Injection", testUrl,
                             "Potential SQL injection vulnerability detected",
-                            "Payload: " + payload + " caused suspicious response",
-                            "Use parameterized queries and input validation"));
+                            "Payload: " + payload + " | Response time: " + responseTime + "ms | Status: " + response.getCode(),
+                            "Use parameterized queries, prepared statements, and input validation. Never concatenate user input directly into SQL queries.");
+                        vuln.setPayload(payload);
+                        vuln.setResponseCode(String.valueOf(response.getCode()));
+                        vuln.setResponseTime(responseTime);
+                        vulnerabilities.add(vuln);
+                        
+                        logCallback.accept("🚨 CRITICAL: SQL injection vulnerability detected!");
+                        break;
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("SQL injection test error: " + e.getMessage());
+                logCallback.accept("⚠️ SQL injection test error: " + e.getMessage());
             }
         }
     }
 
-    private void testNoSqlInjection(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing NoSQL injection vulnerabilities...");
+    private void testNoSqlInjection(CloseableHttpClient client, String url, 
+                                  List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing NoSQL injection vulnerabilities...");
         
         for (String payload : NOSQL_INJECTION_PAYLOADS) {
             try {
                 HttpPost request = new HttpPost(url);
                 request.setHeader("Content-Type", "application/json");
-                request.setEntity(new StringEntity("{\"query\":\"" + payload + "\"}"));
+                request.setEntity(new StringEntity("{\"query\":\"" + payload + "\",\"filter\":\"" + payload + "\"}"));
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
                     String responseBody = EntityUtils.toString(response.getEntity());
                     
-                    logCallback.accept("NoSQL Test: " + payload + " -> " + response.getCode());
+                    logCallback.accept("🧪 NoSQL: " + payload.substring(0, Math.min(15, payload.length())) + "... → " + response.getCode());
                     
-                    if (responseBody.toLowerCase().contains("mongo") ||
-                        responseBody.toLowerCase().contains("bson") ||
+                    String lowerResponse = responseBody.toLowerCase();
+                    if (lowerResponse.contains("mongo") ||
+                        lowerResponse.contains("bson") ||
+                        lowerResponse.contains("nosql") ||
                         response.getCode() == 500) {
                         
                         vulnerabilities.add(createVulnerability("HIGH", "NoSQL Injection", url,
                             "Potential NoSQL injection vulnerability detected",
                             "Payload: " + payload + " caused suspicious response",
-                            "Validate and sanitize all input data"));
+                            "Validate and sanitize all input data. Use parameterized queries for NoSQL databases."));
+                        logCallback.accept("🚨 HIGH: NoSQL injection vulnerability detected!");
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("NoSQL injection test error: " + e.getMessage());
+                logCallback.accept("⚠️ NoSQL injection test error: " + e.getMessage());
             }
         }
     }
 
-    private void testPathTraversal(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing path traversal vulnerabilities...");
+    private void testPathTraversal(CloseableHttpClient client, String url, 
+                                 List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing path traversal vulnerabilities...");
         
         for (String payload : PATH_TRAVERSAL_PAYLOADS) {
             try {
-                String testUrl = url + "/file?path=" + payload;
+                String testUrl = url + "/file?path=" + URLEncoder.encode(payload, StandardCharsets.UTF_8) + 
+                               "&filename=" + URLEncoder.encode(payload, StandardCharsets.UTF_8);
                 HttpGet request = new HttpGet(testUrl);
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
                     String responseBody = EntityUtils.toString(response.getEntity());
                     
-                    logCallback.accept("Path Traversal Test: " + payload + " -> " + response.getCode());
+                    logCallback.accept("🧪 Path: " + payload.substring(0, Math.min(20, payload.length())) + "... → " + response.getCode());
                     
-                    if (responseBody.contains("root:") || 
-                        responseBody.contains("localhost") ||
-                        responseBody.contains("admin") ||
-                        (response.getCode() == 200 && responseBody.length() > 1000)) {
+                    if ((responseBody.contains("root:") || 
+                         responseBody.contains("localhost") ||
+                         responseBody.contains("admin:") ||
+                         responseBody.contains("[drivers]") ||
+                         responseBody.contains("daemon:")) &&
+                        response.getCode() == 200) {
                         
                         vulnerabilities.add(createVulnerability("HIGH", "Path Traversal", testUrl,
-                            "Potential path traversal vulnerability detected",
-                            "Payload: " + payload + " may have accessed system files",
-                            "Implement proper file access controls and input validation"));
+                            "Directory traversal vulnerability detected",
+                            "Application allows access to files outside intended directory using: " + payload,
+                            "Implement proper file access controls, input validation, and use whitelist approach for file access."));
+                        logCallback.accept("🚨 HIGH: Path traversal vulnerability detected!");
+                        break;
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("Path traversal test error: " + e.getMessage());
+                logCallback.accept("⚠️ Path traversal test error: " + e.getMessage());
             }
         }
     }
 
-    private void testXssVulnerabilities(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing XSS vulnerabilities...");
+    private void testXssVulnerabilities(CloseableHttpClient client, String url, 
+                                      List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing Cross-Site Scripting (XSS) vulnerabilities...");
         
         for (String payload : XSS_PAYLOADS) {
             try {
-                String testUrl = url + "?search=" + payload;
+                String encodedPayload = URLEncoder.encode(payload, StandardCharsets.UTF_8);
+                String testUrl = url + "?search=" + encodedPayload + "&q=" + encodedPayload;
                 HttpGet request = new HttpGet(testUrl);
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
                     String responseBody = EntityUtils.toString(response.getEntity());
                     
-                    logCallback.accept("XSS Test: " + payload + " -> " + response.getCode());
+                    logCallback.accept("🧪 XSS: " + payload.substring(0, Math.min(15, payload.length())) + "... → " + response.getCode());
                     
                     if (responseBody.contains(payload) || 
                         responseBody.contains("<script>") ||
-                        responseBody.contains("javascript:")) {
+                        responseBody.contains("javascript:") ||
+                        responseBody.contains("onerror=")) {
                         
-                        vulnerabilities.add(createVulnerability("HIGH", "Cross-Site Scripting", testUrl,
-                            "Potential XSS vulnerability detected",
-                            "Payload: " + payload + " was reflected in response",
-                            "Implement output encoding and Content Security Policy"));
+                        vulnerabilities.add(createVulnerability("HIGH", "Cross-Site Scripting (XSS)", testUrl,
+                            "Reflected XSS vulnerability detected",
+                            "User input is reflected in the response without proper encoding. Payload: " + payload,
+                            "Implement output encoding, Content Security Policy (CSP), and validate/sanitize all user inputs."));
+                        logCallback.accept("🚨 HIGH: XSS vulnerability detected!");
+                        break;
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("XSS test error: " + e.getMessage());
+                logCallback.accept("⚠️ XSS test error: " + e.getMessage());
             }
         }
     }
 
-    private void testXxeVulnerabilities(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing XXE vulnerabilities...");
+    private void testXxeVulnerabilities(CloseableHttpClient client, String url, 
+                                      List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing XML External Entity (XXE) vulnerabilities...");
         
         for (String payload : XXE_PAYLOADS) {
             try {
@@ -289,30 +347,34 @@ public class SecurityScanner {
                 try (CloseableHttpResponse response = client.execute(request)) {
                     String responseBody = EntityUtils.toString(response.getEntity());
                     
-                    logCallback.accept("XXE Test -> " + response.getCode());
+                    logCallback.accept("🧪 XXE test → " + response.getCode());
                     
                     if (responseBody.contains("root:") || 
                         responseBody.contains("passwd") ||
-                        responseBody.contains("xml") && response.getCode() == 500) {
+                        responseBody.contains("daemon:") ||
+                        (responseBody.toLowerCase().contains("xml") && response.getCode() == 500)) {
                         
-                        vulnerabilities.add(createVulnerability("CRITICAL", "XML External Entity", url,
-                            "Potential XXE vulnerability detected",
-                            "XML parser may be processing external entities",
-                            "Disable external entity processing in XML parsers"));
+                        vulnerabilities.add(createVulnerability("CRITICAL", "XML External Entity (XXE)", url,
+                            "XXE vulnerability detected",
+                            "XML parser processes external entities, potentially exposing sensitive files",
+                            "Disable external entity processing in XML parsers and use safe XML parsing libraries."));
+                        logCallback.accept("🚨 CRITICAL: XXE vulnerability detected!");
+                        break;
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("XXE test error: " + e.getMessage());
+                logCallback.accept("⚠️ XXE test error: " + e.getMessage());
             }
         }
     }
 
-    private void testHttpMethodOverride(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing HTTP method override...");
+    private void testHttpMethodOverride(CloseableHttpClient client, String url, 
+                                      List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing HTTP method security...");
         
-        String[] methods = {"DELETE", "PUT", "PATCH", "TRACE", "OPTIONS"};
+        String[] methods = {"DELETE", "PUT", "PATCH", "TRACE", "OPTIONS", "HEAD"};
         
         for (String method : methods) {
             try {
@@ -323,112 +385,132 @@ public class SecurityScanner {
                     case "PATCH" -> request = new HttpPatch(url);
                     case "TRACE" -> request = new HttpTrace(url);
                     case "OPTIONS" -> request = new HttpOptions(url);
+                    case "HEAD" -> request = new HttpHead(url);
                     default -> continue;
                 }
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
-                    logCallback.accept(method + " " + url + " -> " + response.getCode());
+                    logCallback.accept("🧪 " + method + " " + url + " → " + response.getCode());
                     
-                    if (response.getCode() == 200 || response.getCode() == 204) {
+                    if ((response.getCode() == 200 || response.getCode() == 204) && 
+                        !method.equals("OPTIONS") && !method.equals("HEAD")) {
+                        
                         vulnerabilities.add(createVulnerability("MEDIUM", "HTTP Method Override", url,
-                            "Dangerous HTTP method allowed",
-                            method + " method returned successful response",
-                            "Restrict allowed HTTP methods to only those required"));
+                            "Dangerous HTTP method allowed: " + method,
+                            method + " method returned successful response (" + response.getCode() + ")",
+                            "Restrict HTTP methods to only those required (typically GET, POST). Disable dangerous methods."));
+                        logCallback.accept("⚠️ MEDIUM: " + method + " method allowed");
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("HTTP method test error: " + e.getMessage());
+                logCallback.accept("⚠️ HTTP method test error: " + e.getMessage());
             }
         }
     }
 
-    private void testHeaderInjection(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing header injection vulnerabilities...");
+    private void testHeaderInjection(CloseableHttpClient client, String url, 
+                                   List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing header injection vulnerabilities...");
         
         try {
-            HttpGet request = new HttpGet(url);
+            HttpGet request = new HttpGet(url + "?redirect=http://evil.com");
             request.setHeader("X-Forwarded-For", "127.0.0.1\r\nX-Injected: injected");
             request.setHeader("User-Agent", "VaultScope\r\nX-Injected: injected");
             
             try (CloseableHttpResponse response = client.execute(request)) {
                 String responseHeaders = response.toString();
+                String location = response.getFirstHeader("Location") != null ? 
+                    response.getFirstHeader("Location").getValue() : "";
                 
-                logCallback.accept("Header Injection Test -> " + response.getCode());
+                logCallback.accept("🧪 Header Injection test → " + response.getCode());
                 
-                if (responseHeaders.contains("X-Injected")) {
+                if (responseHeaders.contains("X-Injected") || location.contains("evil.com")) {
                     vulnerabilities.add(createVulnerability("MEDIUM", "Header Injection", url,
                         "Header injection vulnerability detected",
-                        "Application reflects injected headers",
-                        "Validate and sanitize all header values"));
+                        "Application reflects injected headers or allows open redirects",
+                        "Validate and sanitize all header values and implement proper redirect validation."));
+                    logCallback.accept("⚠️ MEDIUM: Header injection detected!");
                 }
             }
         } catch (Exception e) {
-            logCallback.accept("Header injection test error: " + e.getMessage());
+            logCallback.accept("⚠️ Header injection test error: " + e.getMessage());
         }
     }
 
-    private void testAuthenticationBypass(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing authentication bypass...");
+    private void testAuthenticationBypass(CloseableHttpClient client, String url, 
+                                        List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing authentication bypass vulnerabilities...");
         
-        String[] authBypassHeaders = {
-            "X-Forwarded-User:admin",
-            "X-Remote-User:administrator", 
-            "X-Forwarded-For:127.0.0.1",
-            "Authorization:Bearer fake-token"
+        String[][] authBypassHeaders = {
+            {"X-Forwarded-User", "admin"},
+            {"X-Remote-User", "administrator"},
+            {"X-Forwarded-For", "127.0.0.1"},
+            {"Authorization", "Bearer fake-token"},
+            {"X-Original-URL", "/admin"},
+            {"X-Rewrite-URL", "/admin"}
         };
         
-        for (String header : authBypassHeaders) {
+        for (String[] header : authBypassHeaders) {
             try {
-                String[] parts = header.split(":", 2);
                 HttpGet request = new HttpGet(url + "/admin");
-                request.setHeader(parts[0], parts[1]);
+                request.setHeader(header[0], header[1]);
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
-                    logCallback.accept("Auth Bypass Test: " + header + " -> " + response.getCode());
+                    logCallback.accept("🧪 Auth bypass: " + header[0] + " → " + response.getCode());
                     
                     if (response.getCode() == 200) {
                         vulnerabilities.add(createVulnerability("CRITICAL", "Authentication Bypass", url,
                             "Authentication bypass detected",
-                            "Header " + header + " granted access to protected resource",
-                            "Implement proper authentication and authorization checks"));
+                            "Header " + header[0] + ": " + header[1] + " granted access to protected resource",
+                            "Implement proper authentication and authorization checks. Do not trust client-side headers."));
+                        logCallback.accept("🚨 CRITICAL: Authentication bypass detected!");
                     }
                 }
                 
                 Thread.sleep(100);
             } catch (Exception e) {
-                logCallback.accept("Auth bypass test error: " + e.getMessage());
+                logCallback.accept("⚠️ Auth bypass test error: " + e.getMessage());
             }
         }
     }
 
-    private void testRateLimiting(CloseableHttpClient client, String url, List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
-        logCallback.accept("Testing rate limiting...");
+    private void testRateLimiting(CloseableHttpClient client, String url, 
+                                List<Vulnerability> vulnerabilities, Consumer<String> logCallback) {
+        logCallback.accept("🔍 Testing rate limiting protection...");
         
         try {
             int successfulRequests = 0;
-            for (int i = 0; i < 20; i++) {
+            int totalRequests = 25;
+            
+            for (int i = 0; i < totalRequests; i++) {
                 HttpGet request = new HttpGet(url);
                 
                 try (CloseableHttpResponse response = client.execute(request)) {
                     if (response.getCode() == 200) {
                         successfulRequests++;
+                    } else if (response.getCode() == 429) {
+                        logCallback.accept("✅ Rate limiting detected at request " + (i + 1));
+                        return;
                     }
+                } catch (Exception e) {
+                    break;
                 }
                 Thread.sleep(50);
             }
             
-            logCallback.accept("Rate Limiting Test: " + successfulRequests + "/20 requests succeeded");
+            logCallback.accept("🧪 Rate limiting: " + successfulRequests + "/" + totalRequests + " requests succeeded");
             
-            if (successfulRequests >= 18) {
+            if (successfulRequests >= totalRequests - 2) {
                 vulnerabilities.add(createVulnerability("MEDIUM", "Missing Rate Limiting", url,
                     "No rate limiting detected",
-                    "Multiple rapid requests succeeded without throttling",
-                    "Implement rate limiting to prevent abuse"));
+                    "Multiple rapid requests succeeded without throttling (" + successfulRequests + "/" + totalRequests + ")",
+                    "Implement rate limiting to prevent abuse, brute force attacks, and DoS attempts."));
+                logCallback.accept("⚠️ MEDIUM: No rate limiting protection detected");
             }
         } catch (Exception e) {
-            logCallback.accept("Rate limiting test error: " + e.getMessage());
+            logCallback.accept("⚠️ Rate limiting test error: " + e.getMessage());
         }
     }
 
