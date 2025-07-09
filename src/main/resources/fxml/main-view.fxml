@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.cptcr.vaultscope.controller.MainController">
+   <left>
+      <VBox prefWidth="250.0" styleClass="sidebar">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Label styleClass="sidebar-title" text="VaultScope" />
+            <Label styleClass="sidebar-subtitle" text="API Security Assessment" />
+            <Separator />
+            
+            <Label styleClass="section-header" text="Target Configuration">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Label>
+            <TextField fx:id="targetUrlField" promptText="localhost:8080" styleClass="url-field">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </TextField>
+            <Button fx:id="scanButton" styleClass="primary-button" text="Start Security Scan">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            
+            <Label styleClass="section-header" text="Security Score">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="securityScoreLabel" styleClass="score-label" text="Score: --">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            
+            <Label styleClass="section-header" text="Export Reports">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </Label>
+            <Button fx:id="exportJsonButton" styleClass="secondary-button" text="Export JSON">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="exportHtmlButton" styleClass="secondary-button" text="Export HTML">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Button>
+            
+            <Region VBox.vgrow="ALWAYS" />
+            
+            <Button fx:id="toggleThemeButton" styleClass="theme-button" text="Dark Theme" />
+         </children>
+      </VBox>
+   </left>
+   
+   <center>
+      <VBox styleClass="main-content">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <ProgressBar fx:id="scanProgress" prefWidth="200.0" visible="false" />
+                  <Label fx:id="statusLabel" styleClass="status-label" text="Ready to scan" />
+               </children>
+            </HBox>
+            
+            <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <tabs>
+                  <Tab text="Vulnerabilities">
+                     <content>
+                        <SplitPane dividerPositions="0.6" orientation="VERTICAL">
+                           <items>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="content-header" text="Security Vulnerabilities" />
+                                    <TableView fx:id="vulnerabilityTable" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                       <columns>
+                                          <TableColumn fx:id="severityColumn" prefWidth="80.0" text="Severity" />
+                                          <TableColumn fx:id="typeColumn" prefWidth="150.0" text="Type" />
+                                          <TableColumn fx:id="endpointColumn" prefWidth="200.0" text="Endpoint" />
+                                          <TableColumn fx:id="descriptionColumn" prefWidth="300.0" text="Description" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="content-header" text="Vulnerability Details" />
+                                    <TextArea fx:id="vulnerabilityDetailsArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </TextArea>
+                                 </children>
+                              </VBox>
+                           </items>
+                        </SplitPane>
+                     </content>
+                  </Tab>
+                  <Tab text="Traffic Log">
+                     <content>
+                        <VBox>
+                           <children>
+                              <Label styleClass="content-header" text="HTTP Traffic Monitor" />
+                              <TextArea fx:id="trafficLogArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
