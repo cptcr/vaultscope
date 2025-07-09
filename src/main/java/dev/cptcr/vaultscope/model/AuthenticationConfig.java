@@ -194,4 +194,26 @@ public class AuthenticationConfig {
             default -> null;
         };
     }
+    
+    public void setType(String type) {
+        if (type != null) {
+            try {
+                this.authType = AuthType.valueOf(type.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                this.authType = AuthType.NONE;
+            }
+        }
+    }
+    
+    public void setJwtToken(String jwtToken) {
+        this.token = jwtToken;
+    }
+    
+    public void setHeaderName(String headerName) {
+        this.apiKeyHeader = headerName;
+    }
+    
+    public void setHeaderValue(String headerValue) {
+        this.apiKey = headerValue;
+    }
 }

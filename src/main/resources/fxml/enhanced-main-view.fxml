@@ -73,25 +73,25 @@
                </VBox.margin>
             </Separator>
             
-            <VBox styleClass="enterprise-card" spacing="15.0">
+            <VBox styleClass="enterprise-card" spacing="16.0">
                <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
                <children>
                   <Label styleClass="section-header" text="🎯 Target Configuration" />
-                  <TextField fx:id="targetUrlField" promptText="localhost:8080/api" styleClass="url-field" />
+                  <TextField fx:id="targetUrlField" promptText="Enter target URL (e.g., https://api.example.com)" styleClass="url-field" />
                   <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                         <Label styleClass="status-indicator" />
-                        <Label fx:id="urlStatusLabel" styleClass="validation-message" text="Enter target URL" />
+                        <Label fx:id="urlStatusLabel" styleClass="validation-message" text="Waiting for target URL validation" />
                      </children>
                   </HBox>
                </children>
             </VBox>
             
-            <VBox styleClass="enterprise-card" spacing="15.0">
+            <VBox styleClass="enterprise-card" spacing="16.0">
                <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
                <children>
                   <Label styleClass="section-header" text="🔐 Authentication" />
@@ -99,13 +99,13 @@
                   <VBox fx:id="authConfigContainer" spacing="10.0" />
                </children>
                <VBox.margin>
-                  <Insets top="15.0" />
+                  <Insets top="16.0" />
                </VBox.margin>
             </VBox>
             
-            <VBox styleClass="enterprise-card" spacing="15.0">
+            <VBox styleClass="enterprise-card" spacing="16.0">
                <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
                <children>
                   <Label styleClass="section-header" text="⚡ Scan Options" />
@@ -115,7 +115,7 @@
                   <CheckBox text="Verbose Logging" selected="false" />
                </children>
                <VBox.margin>
-                  <Insets top="15.0" />
+                  <Insets top="16.0" />
                </VBox.margin>
             </VBox>
             
@@ -131,7 +131,7 @@
                </padding>
                <children>
                   <Label styleClass="section-header" text="📊 Security Score" />
-                  <Label fx:id="securityScoreLabel" styleClass="score-label" text="Score: --/100" />
+                  <Label fx:id="securityScoreLabel" styleClass="score-label" text="Security Score: Not Available" />
                   <ProgressBar fx:id="securityScoreProgress" prefWidth="200.0" progress="0.0" />
                </children>
                <VBox.margin>
@@ -203,7 +203,7 @@
                                        <children>
                                           <Label styleClass="content-header" text="Security Vulnerabilities" />
                                           <Region HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="vulnerabilityCountLabel" styleClass="count-label" text="0 vulnerabilities" />
+                                          <Label fx:id="vulnerabilityCountLabel" styleClass="count-label" text="No vulnerabilities detected" />
                                        </children>
                                        <VBox.margin>
                                           <Insets bottom="15.0" />

@@ -1,14 +1,10 @@
 package dev.cptcr.vaultscope.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class SecurityResult {
     private String targetUrl;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime scanTimestamp;
     
     private List<Vulnerability> vulnerabilities;
@@ -17,6 +13,14 @@ public class SecurityResult {
 
     public SecurityResult() {}
 
+    public SecurityResult(String targetUrl, List<Vulnerability> vulnerabilities, long scanDurationMs) {
+        this.targetUrl = targetUrl;
+        this.scanTimestamp = LocalDateTime.now();
+        this.vulnerabilities = vulnerabilities;
+        this.securityScore = calculateScore(vulnerabilities);
+        this.scanDuration = formatDuration(scanDurationMs);
+    }
+    
     public SecurityResult(String targetUrl, LocalDateTime scanTimestamp, 
                          List<Vulnerability> vulnerabilities, int securityScore) {
         this.targetUrl = targetUrl;
@@ -63,5 +67,35 @@ public class SecurityResult {
 
     public void setScanDuration(String scanDuration) {
         this.scanDuration = scanDuration;
+    }
+    
+    private int calculateScore(List<Vulnerability> vulnerabilities) {
+        if (vulnerabilities == null || vulnerabilities.isEmpty()) {
+            return 100;
+        }
+        
+        int deductions = 0;
+        for (Vulnerability vuln : vulnerabilities) {
+            switch (vuln.getSeverity().toLowerCase()) {
+                case "critical" -> deductions += 30;
+                case "high" -> deductions += 20;
+                case "medium" -> deductions += 10;
+                case "low" -> deductions += 5;
+            }
+        }
+        
+        return Math.max(0, 100 - deductions);
+    }
+    
+    private String formatDuration(long durationMs) {
+        if (durationMs < 1000) {
+            return durationMs + "ms";
+        } else if (durationMs < 60000) {
+            return String.format("%.1fs", durationMs / 1000.0);
+        } else {
+            long minutes = durationMs / 60000;
+            long seconds = (durationMs % 60000) / 1000;
+            return String.format("%dm %ds", minutes, seconds);
+        }
     }
 }

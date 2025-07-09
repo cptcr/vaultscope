@@ -12,8 +12,8 @@ import javafx.util.Duration;
  */
 public class AnimatedProgressBar extends ProgressBar {
     
-    private final Timeline animation;
-    private final DropShadow glowEffect;
+    private Timeline animation;
+    private DropShadow glowEffect;
     private double targetProgress = 0.0;
     private double animationSpeed = 0.02;
     

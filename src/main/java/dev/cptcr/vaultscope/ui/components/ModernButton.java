@@ -13,9 +13,9 @@ import javafx.util.Duration;
  */
 public class ModernButton extends Button {
     
-    private final DropShadow dropShadow;
-    private final ScaleTransition scaleTransition;
-    private final FadeTransition fadeTransition;
+    private DropShadow dropShadow;
+    private ScaleTransition scaleTransition;
+    private FadeTransition fadeTransition;
     
     public ModernButton() {
         super();
@@ -53,13 +53,13 @@ public class ModernButton extends Button {
     private void setupHoverEffects() {
         setOnMouseEntered(e -> {
             // Scale up slightly on hover
-            scaleTransition.setToX(1.05);
-            scaleTransition.setToY(1.05);
+            scaleTransition.setToX(1.02);
+            scaleTransition.setToY(1.02);
             scaleTransition.play();
             
             // Enhance drop shadow
-            dropShadow.setRadius(12);
-            dropShadow.setOffsetY(4);
+            dropShadow.setRadius(10);
+            dropShadow.setOffsetY(3);
         });
         
         setOnMouseExited(e -> {
@@ -88,13 +88,13 @@ public class ModernButton extends Button {
         
         setOnMouseReleased(e -> {
             // Scale back up on release
-            scaleTransition.setToX(1.05);
-            scaleTransition.setToY(1.05);
+            scaleTransition.setToX(1.02);
+            scaleTransition.setToY(1.02);
             scaleTransition.play();
             
             // Restore drop shadow
-            dropShadow.setRadius(12);
-            dropShadow.setOffsetY(4);
+            dropShadow.setRadius(10);
+            dropShadow.setOffsetY(3);
         });
     }
     

@@ -30,6 +30,7 @@ public class ThemeManager {
     private static final String THEME_PREFERENCE_KEY = "selected_theme";
     private static final Preferences preferences = Preferences.userNodeForPackage(ThemeManager.class);
     private static Theme currentTheme;
+    private static ThemeManager instance;
     
     static {
         String themeName = preferences.get(THEME_PREFERENCE_KEY, Theme.DARK_PURPLE.name());
@@ -38,6 +39,11 @@ public class ThemeManager {
         } catch (IllegalArgumentException e) {
             currentTheme = Theme.DARK_PURPLE;
         }
+        instance = new ThemeManager();
+    }
+    
+    public static ThemeManager getInstance() {
+        return instance;
     }
     
     public static Theme getCurrentTheme() {

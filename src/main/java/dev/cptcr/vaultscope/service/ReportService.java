@@ -1,7 +1,5 @@
 package dev.cptcr.vaultscope.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.cptcr.vaultscope.model.SecurityResult;
 import dev.cptcr.vaultscope.model.Vulnerability;
 
@@ -12,13 +10,9 @@ import java.time.format.DateTimeFormatter;
 
 public class ReportService {
 
-    private ObjectMapper objectMapper;
     private File reportsDirectory;
 
     public ReportService() {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
-        
         this.reportsDirectory = new File("reports");
         if (!reportsDirectory.exists()) {
             reportsDirectory.mkdirs();
@@ -30,7 +24,11 @@ public class ReportService {
         String filename = String.format("VaultScope_Report_%s.json", timestamp);
         File reportFile = new File(reportsDirectory, filename);
         
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(reportFile, result);
+        String jsonContent = generateJsonReport(result);
+        
+        try (FileWriter writer = new FileWriter(reportFile)) {
+            writer.write(jsonContent);
+        }
         
         return reportFile.getAbsolutePath();
     }
@@ -469,6 +467,48 @@ public class ReportService {
             .count();
     }
 
+    private String generateJsonReport(SecurityResult result) {
+        StringBuilder json = new StringBuilder();
+        json.append("{\n");
+        json.append("  \"targetUrl\": \"").append(escapeJson(result.getTargetUrl())).append("\",\n");
+        json.append("  \"scanTimestamp\": \"").append(result.getScanTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\",\n");
+        json.append("  \"scanDuration\": \"").append(result.getScanDuration() != null ? result.getScanDuration() : "N/A").append("\",\n");
+        json.append("  \"securityScore\": ").append(result.getSecurityScore()).append(",\n");
+        json.append("  \"vulnerabilities\": [\n");
+        
+        for (int i = 0; i < result.getVulnerabilities().size(); i++) {
+            Vulnerability vuln = result.getVulnerabilities().get(i);
+            json.append("    {\n");
+            json.append("      \"type\": \"").append(escapeJson(vuln.getType())).append("\",\n");
+            json.append("      \"severity\": \"").append(escapeJson(vuln.getSeverity())).append("\",\n");
+            json.append("      \"endpoint\": \"").append(escapeJson(vuln.getEndpoint())).append("\",\n");
+            json.append("      \"description\": \"").append(escapeJson(vuln.getDescription())).append("\",\n");
+            json.append("      \"details\": \"").append(escapeJson(vuln.getDetails())).append("\",\n");
+            json.append("      \"recommendation\": \"").append(escapeJson(vuln.getRecommendation())).append("\"");
+            if (vuln.getPayload() != null && !vuln.getPayload().isEmpty()) {
+                json.append(",\n      \"payload\": \"").append(escapeJson(vuln.getPayload())).append("\"");
+            }
+            json.append("\n    }");
+            if (i < result.getVulnerabilities().size() - 1) {
+                json.append(",");
+            }
+            json.append("\n");
+        }
+        
+        json.append("  ]\n");
+        json.append("}");
+        return json.toString();
+    }
+    
+    private String escapeJson(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
+    }
+
     private String escapeHtml(String text) {
         if (text == null) return "";
         return text.replace("&", "&amp;")
@@ -477,3 +517,4 @@ public class ReportService {
                   .replace("\"", "&quot;")
                   .replace("'", "&#x27;");
     }
+}

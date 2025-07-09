@@ -90,7 +90,7 @@ public class EventBus {
         Class<?> clazz = subscriber.getClass();
         
         for (Method method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(EventHandler.class)) {
+            if (method.isAnnotationPresent(EventHandlerAnnotation.class)) {
                 Class<?>[] paramTypes = method.getParameterTypes();
                 
                 if (paramTypes.length == 1) {
@@ -167,7 +167,7 @@ public class EventBus {
      */
     @java.lang.annotation.Target(java.lang.annotation.ElementType.METHOD)
     @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-    public @interface EventHandler {
+    public @interface EventHandlerAnnotation {
     }
     
     // Common event types

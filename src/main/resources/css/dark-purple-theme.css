@@ -9,8 +9,8 @@
     -fx-default-button: #7c4dff;
     -fx-focus-color: #7c4dff;
     -fx-faint-focus-color: rgba(124, 77, 255, 0.3);
-    -fx-text-fill: #e8e8e8;
-    -fx-text-base-color: #e8e8e8;
+    -fx-text-fill: #f0f0f0;
+    -fx-text-base-color: #f0f0f0;
 }
 
 /* Splash Screen */
@@ -66,21 +66,23 @@
 
 .sidebar-title {
     -fx-text-fill: #7c4dff;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: -0.5px;
     -fx-effect: dropshadow(gaussian, rgba(124, 77, 255, 0.3), 3, 0, 0, 0);
 }
 
 .sidebar-subtitle {
-    -fx-text-fill: #b8b8d1;
+    -fx-text-fill: #c8c8d8;
     -fx-font-size: 12px;
     -fx-font-style: italic;
 }
 
 .section-header {
     -fx-text-fill: #9c64ff;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: 0.25px;
 }
 
 .url-field {
@@ -89,8 +91,8 @@
     -fx-border-width: 1px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
-    -fx-text-fill: #e8e8e8;
-    -fx-prompt-text-fill: #888899;
+    -fx-text-fill: #f0f0f0;
+    -fx-prompt-text-fill: #a0a0b0;
     -fx-padding: 8px 12px;
 }
 
@@ -106,8 +108,8 @@
     -fx-border-width: 1px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
-    -fx-text-fill: #e8e8e8;
-    -fx-prompt-text-fill: #888899;
+    -fx-text-fill: #f0f0f0;
+    -fx-prompt-text-fill: #a0a0b0;
 }
 
 .auth-combo:focused {
@@ -207,7 +209,8 @@
 .content-header {
     -fx-text-fill: #9c64ff;
     -fx-font-size: 16px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: 0.15px;
 }
 
 /* Table View */
@@ -428,10 +431,15 @@
 .enterprise-card {
     -fx-background-color: #16162a;
     -fx-border-color: #444455;
-    -fx-effect: dropshadow(gaussian, rgba(124, 77, 255, 0.2), 8, 0, 0, 2);
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(124, 77, 255, 0.15), 6, 0, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
 }
 
 .enterprise-card:hover {
     -fx-border-color: #7c4dff;
-    -fx-effect: dropshadow(gaussian, rgba(124, 77, 255, 0.4), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(124, 77, 255, 0.25), 8, 0, 0, 3);
+    -fx-transform: translateY(-1px);
 }

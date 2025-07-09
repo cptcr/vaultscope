@@ -288,7 +288,7 @@ public class MainController implements Initializable {
             return;
         }
 
-        scanButton.setDisabled(true);
+        scanButton.setDisable(true);
         scanProgress.setVisible(true);
         statusLabel.setText("Initializing security scan...");
         vulnerabilities.clear();
@@ -325,7 +325,7 @@ public class MainController implements Initializable {
                     
                     statusLabel.setText(String.format("Scan completed - Found %d vulnerabilities", vulnerabilities.size()));
                     scanProgress.setVisible(false);
-                    scanButton.setDisabled(false);
+                    scanButton.setDisable(false);
                     updateButtonStates();
                     
                     if (vulnerabilities.isEmpty()) {
@@ -341,7 +341,7 @@ public class MainController implements Initializable {
                 Platform.runLater(() -> {
                     statusLabel.setText("Scan failed");
                     scanProgress.setVisible(false);
-                    scanButton.setDisabled(false);
+                    scanButton.setDisable(false);
                     showAlert(Alert.AlertType.ERROR, "Scan Error", 
                         "Failed to complete security scan:\n" + getException().getMessage());
                 });
@@ -392,11 +392,11 @@ public class MainController implements Initializable {
 
     private void updateButtonStates() {
         boolean hasValidUrl = urlValidator.isValidLocalhostUrl(targetUrlField.getText().trim());
-        scanButton.setDisabled(!hasValidUrl);
+        scanButton.setDisable(!hasValidUrl);
         
         boolean hasResults = currentResult != null && !currentResult.getVulnerabilities().isEmpty();
-        exportJsonButton.setDisabled(currentResult == null);
-        exportHtmlButton.setDisabled(currentResult == null);
+        exportJsonButton.setDisable(currentResult == null);
+        exportHtmlButton.setDisable(currentResult == null);
     }
 
     private void showVulnerabilityDetails(Vulnerability vuln) {

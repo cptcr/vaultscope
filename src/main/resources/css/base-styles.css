@@ -32,10 +32,17 @@
 }
 
 /* Input field animations */
+.text-field,
+.text-area,
+.combo-box {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
 .text-field:focused,
 .text-area:focused,
 .combo-box:focused {
-    -fx-transition: border-color 0.3s ease-in-out;
+    -fx-transition: all 0.2s ease-in-out;
+    -fx-transform: translateY(-1px);
 }
 
 /* Table styles */
@@ -55,8 +62,16 @@
     -fx-padding: 5px;
 }
 
+.table-row-cell {
+    -fx-transition: all 0.15s ease-in-out;
+}
+
 .table-row-cell:selected {
-    -fx-transition: background-color 0.2s ease-in-out;
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+.table-row-cell:hover {
+    -fx-transform: translateY(-0.5px);
 }
 
 /* Tab styles */

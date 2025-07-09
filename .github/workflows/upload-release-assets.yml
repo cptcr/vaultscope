@@ -1,0 +1,164 @@
+name: 📦 Upload Release Assets
+
+# Trigger only on published releases
+on:
+  release:
+    types: [published]
+
+# Define required permissions for GITHUB_TOKEN
+permissions:
+  contents: write  # Required to upload release assets
+
+env:
+  # Build directory where assets are located
+  BUILD_DIR: './build'
+
+jobs:
+  upload-assets:
+    name: 🚀 Upload Release Assets
+    runs-on: ubuntu-latest
+    
+    # Only run for releases on main and release/* branches
+    if: github.event.release.target_commitish == 'main' || startsWith(github.event.release.target_commitish, 'release/')
+    
+    steps:
+      # Step 1: Checkout the repository
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      # Step 2: Verify build directory exists
+      - name: 🔍 Verify build directory
+        run: |
+          echo "🔍 Checking for build directory: ${{ env.BUILD_DIR }}"
+          if [ -d "${{ env.BUILD_DIR }}" ]; then
+            echo "✅ Build directory found"
+            ls -la "${{ env.BUILD_DIR }}"
+          else
+            echo "⚠️  Build directory not found, creating for demonstration"
+            mkdir -p "${{ env.BUILD_DIR }}"
+          fi
+      
+      # Step 3: Check for required asset files
+      - name: 📋 Check for release assets
+        id: check_assets
+        run: |
+          echo "📋 Checking for required release assets..."
+          
+          # Initialize found flags
+          found_deb=false
+          found_msi=false
+          found_exe=false
+          
+          # Check for Debian package
+          if [ -f "${{ env.BUILD_DIR }}/vaultscope.deb" ]; then
+            echo "✅ Found: vaultscope.deb"
+            found_deb=true
+          else
+            echo "⚠️  Missing: vaultscope.deb"
+          fi
+          
+          # Check for Windows MSI installer
+          if [ -f "${{ env.BUILD_DIR }}/vaultscope.msi" ]; then
+            echo "✅ Found: vaultscope.msi"
+            found_msi=true
+          else
+            echo "⚠️  Missing: vaultscope.msi"
+          fi
+          
+          # Check for Windows EXE installer
+          if [ -f "${{ env.BUILD_DIR }}/vaultscope.exe" ]; then
+            echo "✅ Found: vaultscope.exe"
+            found_exe=true
+          else
+            echo "⚠️  Missing: vaultscope.exe"
+          fi
+          
+          # Set outputs for subsequent steps
+          echo "found_deb=$found_deb" >> $GITHUB_OUTPUT
+          echo "found_msi=$found_msi" >> $GITHUB_OUTPUT
+          echo "found_exe=$found_exe" >> $GITHUB_OUTPUT
+          
+          # Log summary
+          total_found=0
+          [ "$found_deb" = true ] && total_found=$((total_found + 1))
+          [ "$found_msi" = true ] && total_found=$((total_found + 1))
+          [ "$found_exe" = true ] && total_found=$((total_found + 1))
+          
+          echo "📊 Summary: $total_found/3 required assets found"
+      
+      # Step 4: Upload all available assets to release
+      - name: 📤 Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            ${{ env.BUILD_DIR }}/vaultscope.deb
+            ${{ env.BUILD_DIR }}/vaultscope.msi
+            ${{ env.BUILD_DIR }}/vaultscope.exe
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Step 5: Log upload results and summary
+      - name: 📊 Upload Summary
+        run: |
+          echo "📊 Upload Results Summary"
+          echo "=========================="
+          echo ""
+          echo "🎯 Release: ${{ github.event.release.name }}"
+          echo "🏷️  Tag: ${{ github.event.release.tag_name }}"
+          echo "🌿 Branch: ${{ github.event.release.target_commitish }}"
+          echo ""
+          
+          # Show what was found and attempted to upload
+          uploaded_count=0
+          echo "📤 Assets processed:"
+          
+          if [ "${{ steps.check_assets.outputs.found_deb }}" = "true" ]; then
+            echo "  ✅ vaultscope.deb (Debian package) - uploaded"
+            uploaded_count=$((uploaded_count + 1))
+          else
+            echo "  ⏭️  vaultscope.deb (skipped - not found)"
+          fi
+          
+          if [ "${{ steps.check_assets.outputs.found_msi }}" = "true" ]; then
+            echo "  ✅ vaultscope.msi (Windows MSI installer) - uploaded"
+            uploaded_count=$((uploaded_count + 1))
+          else
+            echo "  ⏭️  vaultscope.msi (skipped - not found)"
+          fi
+          
+          if [ "${{ steps.check_assets.outputs.found_exe }}" = "true" ]; then
+            echo "  ✅ vaultscope.exe (Windows EXE installer) - uploaded"
+            uploaded_count=$((uploaded_count + 1))
+          else
+            echo "  ⏭️  vaultscope.exe (skipped - not found)"
+          fi
+          
+          echo ""
+          echo "📈 Total uploaded: $uploaded_count/3 assets"
+          
+          if [ $uploaded_count -gt 0 ]; then
+            echo "🎉 Release assets uploaded successfully!"
+          else
+            echo "⚠️  No assets were uploaded (all files missing)"
+          fi
+          
+          echo ""
+          echo "🔗 Release URL: ${{ github.event.release.html_url }}"
+      
+      # Step 6: Fail job if no assets were found (optional safeguard)
+      - name: ❌ Fail if no assets found
+        if: steps.check_assets.outputs.found_deb == 'false' && steps.check_assets.outputs.found_msi == 'false' && steps.check_assets.outputs.found_exe == 'false'
+        run: |
+          echo "❌ ERROR: No release assets found in ${{ env.BUILD_DIR }}"
+          echo ""
+          echo "Expected files:"
+          echo "  - vaultscope.deb"
+          echo "  - vaultscope.msi" 
+          echo "  - vaultscope.exe"
+          echo ""
+          echo "Please ensure your build process creates these files before publishing a release."
+          exit 1
