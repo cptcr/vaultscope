@@ -1,5 +1,6 @@
 package dev.cptcr.vaultscope.service;
 
+import dev.cptcr.vaultscope.model.AuthenticationConfig;
 import dev.cptcr.vaultscope.model.SecurityResult;
 import dev.cptcr.vaultscope.model.Vulnerability;
 import org.apache.hc.client5.http.classic.methods.*;
@@ -59,7 +60,7 @@ public class SecurityScanner {
         this.urlValidator = new UrlValidator();
     }
 
-    public SecurityResult performSecurityScan(String targetUrl, Consumer<String> logCallback, Consumer<Double> progressCallback) {
+    public SecurityResult performSecurityScan(String targetUrl, AuthenticationConfig authConfig, Consumer<String> logCallback, Consumer<Double> progressCallback) {
         String normalizedUrl = urlValidator.normalizeUrl(targetUrl);
         List<Vulnerability> vulnerabilities = new ArrayList<>();
         long startTime = System.currentTimeMillis();
@@ -100,6 +101,10 @@ public class SecurityScanner {
             progressCallback.accept(0.9);
 
             testRateLimiting(httpClient, normalizedUrl, vulnerabilities, logCallback);
+            progressCallback.accept(0.95);
+            
+            AuthenticationTester authTester = new AuthenticationTester(authConfig);
+            authTester.testAuthenticationVulnerabilities(httpClient, normalizedUrl, vulnerabilities, logCallback);
             progressCallback.accept(1.0);
 
         } catch (Exception e) {

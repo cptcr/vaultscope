@@ -1,5 +1,6 @@
 package dev.cptcr.vaultscope.controller;
 
+import dev.cptcr.vaultscope.model.AuthenticationConfig;
 import dev.cptcr.vaultscope.model.SecurityResult;
 import dev.cptcr.vaultscope.model.Vulnerability;
 import dev.cptcr.vaultscope.service.ReportService;
@@ -11,8 +12,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -36,6 +39,8 @@ public class MainController implements Initializable {
     @FXML private TextArea trafficLogArea;
     @FXML private TextArea vulnerabilityDetailsArea;
     @FXML private VBox rootPane;
+    @FXML private ComboBox<String> authTypeComboBox;
+    @FXML private VBox authConfigContainer;
 
     private SecurityScanner securityScanner;
     private ReportService reportService;
@@ -43,6 +48,11 @@ public class MainController implements Initializable {
     private SecurityResult currentResult;
     private ObservableList<Vulnerability> vulnerabilities;
     private boolean isDarkTheme = false;
+    private AuthenticationConfig authConfig;
+    private TextField usernameField, passwordField, tokenField, apiKeyField, apiKeyHeaderField;
+    private TextField clientIdField, clientSecretField, authUrlField, tokenUrlField, scopeField;
+    private CheckBox testWeakSecretsBox, testAlgorithmConfusionBox, testTokenExpirationBox;
+    private CheckBox testSessionFixationBox, testPrivilegeEscalationBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -51,7 +61,10 @@ public class MainController implements Initializable {
         urlValidator = new UrlValidator();
         vulnerabilities = FXCollections.observableArrayList();
         
+        authConfig = new AuthenticationConfig();
+        
         setupTable();
+        setupAuthenticationUI();
         setupEventHandlers();
         updateButtonStates();
         
@@ -85,6 +98,185 @@ public class MainController implements Initializable {
         targetUrlField.textProperty().addListener((observable, oldValue, newValue) -> {
             updateButtonStates();
         });
+        
+        authTypeComboBox.setOnAction(e -> {
+            String selectedType = authTypeComboBox.getValue();
+            if (selectedType != null) {
+                updateAuthConfig(selectedType);
+                updateAuthUI(selectedType);
+            }
+        });
+    }
+    
+    private void setupAuthenticationUI() {
+        authTypeComboBox.setItems(FXCollections.observableArrayList(
+            "None", "Basic Auth", "Bearer Token", "JWT", "API Key", "OAuth 2.0", "Custom"
+        ));
+        authTypeComboBox.setValue("None");
+        
+        authConfigContainer.getChildren().clear();
+    }
+    
+    private void updateAuthConfig(String authType) {
+        switch (authType) {
+            case "None" -> authConfig.setAuthType(AuthenticationConfig.AuthType.NONE);
+            case "Basic Auth" -> authConfig.setAuthType(AuthenticationConfig.AuthType.BASIC);
+            case "Bearer Token" -> authConfig.setAuthType(AuthenticationConfig.AuthType.BEARER);
+            case "JWT" -> authConfig.setAuthType(AuthenticationConfig.AuthType.JWT);
+            case "API Key" -> authConfig.setAuthType(AuthenticationConfig.AuthType.API_KEY);
+            case "OAuth 2.0" -> authConfig.setAuthType(AuthenticationConfig.AuthType.OAUTH2);
+            case "Custom" -> authConfig.setAuthType(AuthenticationConfig.AuthType.CUSTOM);
+        }
+    }
+    
+    private void updateAuthUI(String authType) {
+        authConfigContainer.getChildren().clear();
+        
+        switch (authType) {
+            case "None" -> {
+                Label infoLabel = new Label("No authentication will be used during testing.");
+                infoLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 11px;");
+                authConfigContainer.getChildren().add(infoLabel);
+            }
+            
+            case "Basic Auth" -> {
+                usernameField = new TextField();
+                usernameField.setPromptText("Username");
+                passwordField = new TextField();
+                passwordField.setPromptText("Password");
+                
+                usernameField.textProperty().addListener((obs, old, val) -> authConfig.setUsername(val));
+                passwordField.textProperty().addListener((obs, old, val) -> authConfig.setPassword(val));
+                
+                authConfigContainer.getChildren().addAll(
+                    new Label("Username:"), usernameField,
+                    new Label("Password:"), passwordField
+                );
+            }
+            
+            case "Bearer Token" -> {
+                tokenField = new TextField();
+                tokenField.setPromptText("Bearer Token");
+                tokenField.textProperty().addListener((obs, old, val) -> authConfig.setToken(val));
+                
+                authConfigContainer.getChildren().addAll(
+                    new Label("Token:"), tokenField
+                );
+            }
+            
+            case "JWT" -> {
+                tokenField = new TextField();
+                tokenField.setPromptText("JWT Token");
+                tokenField.textProperty().addListener((obs, old, val) -> authConfig.setToken(val));
+                
+                TextField jwtSecretField = new TextField();
+                jwtSecretField.setPromptText("JWT Secret (for testing)");
+                jwtSecretField.textProperty().addListener((obs, old, val) -> authConfig.setJwtSecret(val));
+                
+                testWeakSecretsBox = new CheckBox("Test Weak Secrets");
+                testWeakSecretsBox.setSelected(true);
+                testWeakSecretsBox.selectedProperty().addListener((obs, old, val) -> authConfig.setTestWeakSecrets(val));
+                
+                testAlgorithmConfusionBox = new CheckBox("Test Algorithm Confusion");
+                testAlgorithmConfusionBox.setSelected(true);
+                testAlgorithmConfusionBox.selectedProperty().addListener((obs, old, val) -> authConfig.setTestAlgorithmConfusion(val));
+                
+                testTokenExpirationBox = new CheckBox("Test Token Expiration");
+                testTokenExpirationBox.setSelected(true);
+                testTokenExpirationBox.selectedProperty().addListener((obs, old, val) -> authConfig.setTestTokenExpiration(val));
+                
+                authConfigContainer.getChildren().addAll(
+                    new Label("JWT Token:"), tokenField,
+                    new Label("JWT Secret (optional):"), jwtSecretField,
+                    new Label("JWT Tests:"), testWeakSecretsBox, testAlgorithmConfusionBox, testTokenExpirationBox
+                );
+            }
+            
+            case "API Key" -> {
+                apiKeyField = new TextField();
+                apiKeyField.setPromptText("API Key");
+                apiKeyField.textProperty().addListener((obs, old, val) -> authConfig.setApiKey(val));
+                
+                apiKeyHeaderField = new TextField();
+                apiKeyHeaderField.setPromptText("X-API-Key");
+                apiKeyHeaderField.setText("X-API-Key");
+                apiKeyHeaderField.textProperty().addListener((obs, old, val) -> authConfig.setApiKeyHeader(val));
+                
+                authConfigContainer.getChildren().addAll(
+                    new Label("API Key:"), apiKeyField,
+                    new Label("Header Name:"), apiKeyHeaderField
+                );
+            }
+            
+            case "OAuth 2.0" -> {
+                clientIdField = new TextField();
+                clientIdField.setPromptText("Client ID");
+                clientIdField.textProperty().addListener((obs, old, val) -> authConfig.setClientId(val));
+                
+                clientSecretField = new TextField();
+                clientSecretField.setPromptText("Client Secret");
+                clientSecretField.textProperty().addListener((obs, old, val) -> authConfig.setClientSecret(val));
+                
+                authUrlField = new TextField();
+                authUrlField.setPromptText("Authorization URL");
+                authUrlField.textProperty().addListener((obs, old, val) -> authConfig.setAuthorizationUrl(val));
+                
+                tokenUrlField = new TextField();
+                tokenUrlField.setPromptText("Token URL");
+                tokenUrlField.textProperty().addListener((obs, old, val) -> authConfig.setTokenUrl(val));
+                
+                scopeField = new TextField();
+                scopeField.setPromptText("Scope (optional)");
+                scopeField.textProperty().addListener((obs, old, val) -> authConfig.setScope(val));
+                
+                authConfigContainer.getChildren().addAll(
+                    new Label("Client ID:"), clientIdField,
+                    new Label("Client Secret:"), clientSecretField,
+                    new Label("Authorization URL:"), authUrlField,
+                    new Label("Token URL:"), tokenUrlField,
+                    new Label("Scope:"), scopeField
+                );
+            }
+            
+            case "Custom" -> {
+                Label customLabel = new Label("Custom Headers:");
+                TextField customHeaderField = new TextField();
+                customHeaderField.setPromptText("Header-Name: Header-Value");
+                
+                Button addHeaderButton = new Button("Add Header");
+                addHeaderButton.setOnAction(e -> {
+                    String headerText = customHeaderField.getText().trim();
+                    if (headerText.contains(":")) {
+                        String[] parts = headerText.split(":", 2);
+                        authConfig.getCustomHeaders().put(parts[0].trim(), parts[1].trim());
+                        customHeaderField.clear();
+                    }
+                });
+                
+                HBox headerBox = new HBox(10, customHeaderField, addHeaderButton);
+                
+                authConfigContainer.getChildren().addAll(
+                    customLabel, headerBox
+                );
+            }
+        }
+        
+        if (!authType.equals("None")) {
+            Label advancedLabel = new Label("Advanced Tests:");
+            advancedLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+            
+            testSessionFixationBox = new CheckBox("Test Session Fixation");
+            testSessionFixationBox.setSelected(true);
+            testSessionFixationBox.selectedProperty().addListener((obs, old, val) -> authConfig.setTestSessionFixation(val));
+            
+            testPrivilegeEscalationBox = new CheckBox("Test Privilege Escalation");
+            testPrivilegeEscalationBox.setSelected(true);
+            testPrivilegeEscalationBox.selectedProperty().addListener((obs, old, val) -> authConfig.setTestPrivilegeEscalation(val));
+            
+            authConfigContainer.getChildren().addAll(
+                advancedLabel, testSessionFixationBox, testPrivilegeEscalationBox
+            );
+        }
     }
 
     private void startScan() {
@@ -107,7 +299,7 @@ public class MainController implements Initializable {
         Task<SecurityResult> scanTask = new Task<SecurityResult>() {
             @Override
             protected SecurityResult call() throws Exception {
-                return securityScanner.performSecurityScan(targetUrl, 
+                return securityScanner.performSecurityScan(targetUrl, authConfig,
                     (message) -> Platform.runLater(() -> {
                         trafficLogArea.appendText(message + "\n");
                         trafficLogArea.setScrollTop(Double.MAX_VALUE);

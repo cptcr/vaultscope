@@ -21,3 +21,6 @@ Thumbs.db
 dependency-reduced-pom.xml
 .attach_pid*
 replay_pid*
+.claude/
+SETUP.md
+setup.txt

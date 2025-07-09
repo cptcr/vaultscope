@@ -29,6 +29,24 @@
                   <Insets top="8.0" />
                </VBox.margin>
             </TextField>
+            
+            <Label styleClass="section-header" text="Authentication">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Label>
+            <ComboBox fx:id="authTypeComboBox" promptText="Select Auth Type" styleClass="auth-combo">
+               <VBox.margin>
+                  <Insets top="8.0" />
+               </VBox.margin>
+            </ComboBox>
+            
+            <VBox fx:id="authConfigContainer" spacing="8.0">
+               <VBox.margin>
+                  <Insets top="8.0" />
+               </VBox.margin>
+            </VBox>
+            
             <Button fx:id="scanButton" styleClass="primary-button" text="🔍 Start Security Scan">
                <VBox.margin>
                   <Insets top="12.0" />
