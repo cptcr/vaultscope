@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- 
+        VaultScope SpotBugs Exclusions
+        
+        This file contains exclusions for SpotBugs analysis.
+        Each exclusion should be documented with a reason.
+    -->
+    
+    <!-- Exclude GUI-related false positives -->
+    <Match>
+        <Class name="~.*Controller.*"/>
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    </Match>
+    
+    <!-- Exclude JavaFX FXML field injection warnings -->
+    <Match>
+        <Class name="~.*Controller.*"/>
+        <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+    </Match>
+    
+    <!-- Exclude database connection warnings for SQLite -->
+    <Match>
+        <Class name="dev.cptcr.vaultscope.util.DatabaseManager"/>
+        <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
+    
+    <!-- Exclude serialization warnings for models -->
+    <Match>
+        <Class name="~.*\.model\..*"/>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+    
+    <!-- Exclude null pointer warnings for optional fields -->
+    <Match>
+        <Class name="~.*\.model\..*"/>
+        <Bug pattern="NP_NULL_PARAM_DEREF"/>
+    </Match>
+    
+    <!-- Exclude path traversal warnings for controlled file operations -->
+    <Match>
+        <Class name="dev.cptcr.vaultscope.service.ReportService"/>
+        <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </Match>
+    
+    <!-- Exclude performance warnings for small datasets -->
+    <Match>
+        <Class name="~.*\.util\..*"/>
+        <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+    </Match>
+    
+    <!-- Exclude resource leak warnings for properly managed resources -->
+    <Match>
+        <Class name="dev.cptcr.vaultscope.util.DatabaseManager"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
+    </Match>
+    
+    <!-- Exclude test-related warnings -->
+    <Match>
+        <Class name="~.*Test.*"/>
+        <Bug pattern=".*"/>
+    </Match>
+    
+    <!-- Exclude generated code warnings -->
+    <Match>
+        <Class name="~.*\.generated\..*"/>
+        <Bug pattern=".*"/>
+    </Match>
+</FindBugsFilter>

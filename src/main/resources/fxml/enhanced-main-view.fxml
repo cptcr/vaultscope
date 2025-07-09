@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.cptcr.vaultscope.controller.EnhancedMainController">
+   <top>
+      <MenuBar>
+         <menus>
+            <Menu text="File">
+               <items>
+                  <MenuItem text="New Scan" />
+                  <MenuItem text="Load Report" />
+                  <SeparatorMenuItem />
+                  <MenuItem text="Export JSON" />
+                  <MenuItem text="Export HTML" />
+                  <MenuItem text="Export PDF" />
+                  <SeparatorMenuItem />
+                  <MenuItem text="Exit" />
+               </items>
+            </Menu>
+            <Menu text="Scan">
+               <items>
+                  <MenuItem text="Quick Scan" />
+                  <MenuItem text="Deep Scan" />
+                  <MenuItem text="Custom Scan" />
+                  <SeparatorMenuItem />
+                  <MenuItem text="Scan History" />
+               </items>
+            </Menu>
+            <Menu text="Tools">
+               <items>
+                  <MenuItem text="Settings" />
+                  <MenuItem text="Preferences" />
+                  <SeparatorMenuItem />
+                  <MenuItem text="Clear Cache" />
+                  <MenuItem text="Reset Database" />
+               </items>
+            </Menu>
+            <Menu text="Help">
+               <items>
+                  <MenuItem text="Documentation" />
+                  <MenuItem text="Security Guidelines" />
+                  <MenuItem text="Report Bug" />
+                  <SeparatorMenuItem />
+                  <MenuItem text="About VaultScope" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </top>
+   
+   <left>
+      <VBox prefWidth="320.0" styleClass="sidebar">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label styleClass="sidebar-title" text="🛡️ VaultScope" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label styleClass="sidebar-version" text="v1.0.0" />
+               </children>
+            </HBox>
+            <Label styleClass="sidebar-subtitle" text="Enterprise API Security Assessment" />
+            
+            <Separator>
+               <VBox.margin>
+                  <Insets bottom="20.0" top="20.0" />
+               </VBox.margin>
+            </Separator>
+            
+            <VBox styleClass="enterprise-card" spacing="15.0">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label styleClass="section-header" text="🎯 Target Configuration" />
+                  <TextField fx:id="targetUrlField" promptText="localhost:8080/api" styleClass="url-field" />
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Label styleClass="status-indicator" />
+                        <Label fx:id="urlStatusLabel" styleClass="validation-message" text="Enter target URL" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <VBox styleClass="enterprise-card" spacing="15.0">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label styleClass="section-header" text="🔐 Authentication" />
+                  <ComboBox fx:id="authTypeComboBox" promptText="Select Authentication Type" styleClass="auth-combo" maxWidth="Infinity" />
+                  <VBox fx:id="authConfigContainer" spacing="10.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </VBox>
+            
+            <VBox styleClass="enterprise-card" spacing="15.0">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label styleClass="section-header" text="⚡ Scan Options" />
+                  <CheckBox text="Enable Deep Scanning" selected="true" />
+                  <CheckBox text="Check for OWASP Top 10" selected="true" />
+                  <CheckBox text="Test Rate Limiting" selected="false" />
+                  <CheckBox text="Verbose Logging" selected="false" />
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </VBox>
+            
+            <Button fx:id="scanButton" styleClass="primary-button" text="🔍 Start Security Scan" maxWidth="Infinity">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            
+            <VBox styleClass="enterprise-card" spacing="10.0">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label styleClass="section-header" text="📊 Security Score" />
+                  <Label fx:id="securityScoreLabel" styleClass="score-label" text="Score: --/100" />
+                  <ProgressBar fx:id="securityScoreProgress" prefWidth="200.0" progress="0.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </VBox>
+            
+            <VBox styleClass="enterprise-card" spacing="10.0">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <Label styleClass="section-header" text="📤 Export Reports" />
+                  <Button fx:id="exportJsonButton" styleClass="secondary-button" text="📄 Export JSON" maxWidth="Infinity" />
+                  <Button fx:id="exportHtmlButton" styleClass="secondary-button" text="🌐 Export HTML" maxWidth="Infinity" />
+                  <Button fx:id="exportPdfButton" styleClass="secondary-button" text="📋 Export PDF" maxWidth="Infinity" />
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </VBox>
+            
+            <Region VBox.vgrow="ALWAYS" />
+            
+            <Separator>
+               <VBox.margin>
+                  <Insets bottom="15.0" top="15.0" />
+               </VBox.margin>
+            </Separator>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Button fx:id="toggleThemeButton" styleClass="theme-button" text="🌙 Dark Theme" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="settingsButton" styleClass="theme-button" text="⚙️" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </left>
+   
+   <center>
+      <VBox styleClass="main-content">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <ProgressBar fx:id="scanProgress" prefWidth="300.0" visible="false" />
+                  <Label fx:id="statusLabel" styleClass="status-label" text="🛡️ VaultScope Enterprise Ready - Localhost Security Testing" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="timestampLabel" styleClass="timestamp-label" text="" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </HBox>
+            
+            <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab text="🛡️ Vulnerabilities">
+                     <content>
+                        <SplitPane dividerPositions="0.65" orientation="VERTICAL">
+                           <items>
+                              <VBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                       <children>
+                                          <Label styleClass="content-header" text="Security Vulnerabilities" />
+                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="vulnerabilityCountLabel" styleClass="count-label" text="0 vulnerabilities" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <TableView fx:id="vulnerabilityTable" VBox.vgrow="ALWAYS">
+                                       <columns>
+                                          <TableColumn fx:id="severityColumn" prefWidth="100.0" text="Severity" />
+                                          <TableColumn fx:id="typeColumn" prefWidth="200.0" text="Type" />
+                                          <TableColumn fx:id="endpointColumn" prefWidth="250.0" text="Endpoint" />
+                                          <TableColumn fx:id="descriptionColumn" prefWidth="400.0" text="Description" />
+                                          <TableColumn fx:id="cweColumn" prefWidth="100.0" text="CWE ID" />
+                                          <TableColumn fx:id="cvssColumn" prefWidth="100.0" text="CVSS" />
+                                       </columns>
+                                       <contextMenu>
+                                          <ContextMenu>
+                                             <items>
+                                                <MenuItem text="View Details" />
+                                                <MenuItem text="Mark as False Positive" />
+                                                <MenuItem text="Export Selected" />
+                                             </items>
+                                          </ContextMenu>
+                                       </contextMenu>
+                                    </TableView>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="content-header" text="Vulnerability Details">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <TextArea fx:id="vulnerabilityDetailsArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </items>
+                        </SplitPane>
+                     </content>
+                  </Tab>
+                  
+                  <Tab text="📊 Security Analysis">
+                     <content>
+                        <VBox spacing="20.0">
+                           <children>
+                              <HBox spacing="20.0">
+                                 <children>
+                                    <VBox styleClass="enterprise-card" spacing="10.0" HBox.hgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <children>
+                                          <Label styleClass="section-header" text="🎯 Security Overview" />
+                                          <Label fx:id="overallStatusLabel" text="Status: Not Scanned" />
+                                          <Label fx:id="targetInfoLabel" text="Target: Not Set" />
+                                          <Label fx:id="scanTimeLabel" text="Scan Time: --" />
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="enterprise-card" spacing="10.0" HBox.hgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <children>
+                                          <Label styleClass="section-header" text="📈 Vulnerability Stats" />
+                                          <Label fx:id="criticalCountLabel" text="Critical: 0" />
+                                          <Label fx:id="highCountLabel" text="High: 0" />
+                                          <Label fx:id="mediumCountLabel" text="Medium: 0" />
+                                          <Label fx:id="lowCountLabel" text="Low: 0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <VBox styleClass="enterprise-card" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="section-header" text="🔍 Detailed Analysis" />
+                                    <TextArea fx:id="analysisDetailsArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  
+                  <Tab text="🌐 Traffic Log">
+                     <content>
+                        <VBox>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="content-header" text="HTTP Traffic Monitor" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="clearLogButton" styleClass="secondary-button" text="Clear Log" />
+                                    <Button fx:id="exportLogButton" styleClass="secondary-button" text="Export Log" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <TextArea fx:id="trafficLogArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  
+                  <Tab text="📚 Scan History">
+                     <content>
+                        <VBox>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="content-header" text="Previous Scans" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="refreshHistoryButton" styleClass="secondary-button" text="Refresh" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <TableView fx:id="scanHistoryTable" VBox.vgrow="ALWAYS">
+                                 <columns>
+                                    <TableColumn fx:id="historyTimestampColumn" prefWidth="150.0" text="Timestamp" />
+                                    <TableColumn fx:id="historyTargetColumn" prefWidth="200.0" text="Target" />
+                                    <TableColumn fx:id="historyAuthColumn" prefWidth="120.0" text="Auth Type" />
+                                    <TableColumn fx:id="historyVulnsColumn" prefWidth="100.0" text="Vulnerabilities" />
+                                    <TableColumn fx:id="historyScoreColumn" prefWidth="100.0" text="Score" />
+                                    <TableColumn fx:id="historyStatusColumn" prefWidth="100.0" text="Status" />
+                                 </columns>
+                                 <contextMenu>
+                                    <ContextMenu>
+                                       <items>
+                                          <MenuItem text="View Details" />
+                                          <MenuItem text="Export Report" />
+                                          <MenuItem text="Delete Scan" />
+                                       </items>
+                                    </ContextMenu>
+                                 </contextMenu>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+   
+   <bottom>
+      <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="status-bar">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+         <children>
+            <Label fx:id="connectionStatusLabel" text="🔗 Ready" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="scanStatusLabel" text="📊 Idle" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="databaseStatusLabel" text="💾 Connected" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="systemInfoLabel" text="🖥️ System: OK" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="memoryUsageLabel" text="🧠 Memory: 45%" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

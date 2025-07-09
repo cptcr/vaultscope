@@ -12,24 +12,8 @@ on:
         default: '1.0.0'
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            build-type: windows
-            installer-ext: exe
-            installer-type: exe
-          - os: windows-latest
-            build-type: windows-msi
-            installer-ext: msi
-            installer-type: msi
-          - os: ubuntu-latest
-            build-type: linux
-            installer-ext: deb
-            installer-type: deb
-
+  build-windows:
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -47,87 +31,75 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    - name: Install WiX Toolset (Windows only)
-      if: matrix.os == 'windows-latest'
+    - name: Install WiX Toolset
       run: |
         choco install wixtoolset -y
         echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - name: Build with Maven
-      run: mvn clean compile package -DskipTests
+    - name: Build with Maven and create EXE installer
+      run: mvn clean package -Pjpackage -Djpackage.type=exe -DskipTests
 
-    - name: Create runtime image (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        mkdir target\modules
-        copy target\vaultscope-1.0.0.jar target\modules\
-        jlink --module-path "target\modules;%JAVA_HOME%\jmods" --add-modules vaultscope --launcher vaultscope=vaultscope/dev.cptcr.vaultscope.VaultScopeApplication --output target\java-runtime --compress=2 --no-header-files --no-man-pages
-      continue-on-error: true
-
-    - name: Create runtime image (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        mkdir -p target/modules
-        cp target/vaultscope-1.0.0.jar target/modules/
-        jlink --module-path "target/modules:$JAVA_HOME/jmods" --add-modules vaultscope --launcher vaultscope=vaultscope/dev.cptcr.vaultscope.VaultScopeApplication --output target/java-runtime --compress=2 --no-header-files --no-man-pages
-      continue-on-error: true
-
-    - name: Create installer (Windows EXE)
-      if: matrix.build-type == 'windows'
-      run: |
-        jpackage --input target\modules --name VaultScope --main-jar vaultscope-1.0.0.jar --main-class dev.cptcr.vaultscope.VaultScopeApplication --runtime-image target\java-runtime --dest target\dist --type exe --vendor "CPTCR" --app-version "${{ github.event.inputs.version || '1.0.0' }}" --description "Enterprise API Security Assessment Tool" --win-dir-chooser --win-menu --win-shortcut
-      continue-on-error: true
-
-    - name: Create installer (Windows MSI)
-      if: matrix.build-type == 'windows-msi'
-      run: |
-        jpackage --input target\modules --name VaultScope --main-jar vaultscope-1.0.0.jar --main-class dev.cptcr.vaultscope.VaultScopeApplication --runtime-image target\java-runtime --dest target\dist --type msi --vendor "CPTCR" --app-version "${{ github.event.inputs.version || '1.0.0' }}" --description "Enterprise API Security Assessment Tool" --win-dir-chooser --win-menu --win-shortcut
-      continue-on-error: true
-
-    - name: Create installer (Linux DEB)
-      if: matrix.build-type == 'linux'
-      run: |
-        jpackage --input target/modules --name vaultscope --main-jar vaultscope-1.0.0.jar --main-class dev.cptcr.vaultscope.VaultScopeApplication --runtime-image target/java-runtime --dest target/dist --type deb --vendor "CPTCR" --app-version "${{ github.event.inputs.version || '1.0.0' }}" --description "Enterprise API Security Assessment Tool" --linux-shortcut
-      continue-on-error: true
+    - name: Build MSI installer
+      run: mvn package -Pjpackage -Djpackage.type=msi -DskipTests
 
     - name: List build artifacts
       run: |
         echo "Build artifacts:"
-        ls -la target/dist/ || dir target\dist\ || echo "No dist directory found"
-        ls -la target/ || dir target\ || echo "No target directory found"
+        dir target\dist\ || echo "No dist directory found"
 
-    - name: Upload JAR artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: vaultscope-jar-${{ matrix.os }}
-        path: target/vaultscope-1.0.0.jar
-
-    - name: Upload installer artifact (Windows EXE)
-      if: matrix.build-type == 'windows'
+    - name: Upload Windows EXE
       uses: actions/upload-artifact@v4
       with:
         name: vaultscope-windows-exe
         path: target/dist/VaultScope-*.exe
-      continue-on-error: true
 
-    - name: Upload installer artifact (Windows MSI)
-      if: matrix.build-type == 'windows-msi'
+    - name: Upload Windows MSI
       uses: actions/upload-artifact@v4
       with:
         name: vaultscope-windows-msi
         path: target/dist/VaultScope-*.msi
-      continue-on-error: true
 
-    - name: Upload installer artifact (Linux DEB)
-      if: matrix.build-type == 'linux'
+    - name: Upload JAR
+      uses: actions/upload-artifact@v4
+      with:
+        name: vaultscope-jar
+        path: target/vaultscope-*.jar
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Build with Maven and create DEB package
+      run: mvn clean package -Pjpackage -Djpackage.type=deb -DskipTests
+
+    - name: List build artifacts
+      run: |
+        echo "Build artifacts:"
+        ls -la target/dist/ || echo "No dist directory found"
+
+    - name: Upload Linux DEB
       uses: actions/upload-artifact@v4
       with:
         name: vaultscope-linux-deb
         path: target/dist/vaultscope_*.deb
-      continue-on-error: true
 
   release:
-    needs: build
+    needs: [build-windows, build-linux]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     
@@ -145,13 +117,10 @@ jobs:
         find artifacts -type f -name "*" | sort
 
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name || format('v{0}', github.event.inputs.version) }}
-        release_name: VaultScope ${{ github.ref_name || format('v{0}', github.event.inputs.version) }}
+        name: VaultScope ${{ github.ref_name || format('v{0}', github.event.inputs.version) }}
         body: |
           ## VaultScope - Enterprise API Security Assessment Tool
           
@@ -163,15 +132,15 @@ jobs:
           - Production-ready security testing framework
           
           ### 📦 Downloads
-          - **Windows EXE**: For Windows 10/11 systems
-          - **Windows MSI**: For enterprise deployment
-          - **Linux DEB**: For Ubuntu/Debian systems
+          - **Windows EXE**: Standalone installer for Windows 10/11
+          - **Windows MSI**: Enterprise deployment package
+          - **Linux DEB**: Ubuntu/Debian package
           - **JAR**: Cross-platform (requires Java 17+)
           
-          ### 🔧 Requirements
-          - Java 17 or later (for JAR)
-          - Windows 10/11 (for EXE/MSI)
-          - Ubuntu/Debian (for DEB)
+          ### 🔧 Installation
+          - **Windows**: Download and run the .exe or .msi file
+          - **Linux**: Download and install with `sudo dpkg -i vaultscope-*.deb`
+          - **Cross-platform**: Download JAR and run with `java -jar vaultscope-*.jar`
           
           ### 🛡️ Security
           - Designed for localhost API testing only
@@ -182,48 +151,12 @@ jobs:
           - Setup instructions: See SETUP.md in repository
           - GitHub: https://github.com/cptcr/vaultscope
           - License: Apache License 2.0
+        files: |
+          artifacts/vaultscope-windows-exe/VaultScope-*.exe
+          artifacts/vaultscope-windows-msi/VaultScope-*.msi
+          artifacts/vaultscope-linux-deb/vaultscope_*.deb
+          artifacts/vaultscope-jar/vaultscope-*.jar
         draft: false
         prerelease: false
-
-    - name: Upload JAR to Release
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/vaultscope-jar-ubuntu-latest/vaultscope-1.0.0.jar
-        asset_name: vaultscope-${{ github.ref_name || format('v{0}', github.event.inputs.version) }}.jar
-        asset_content_type: application/java-archive
-
-    - name: Upload Windows EXE to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/vaultscope-windows-exe/VaultScope-${{ github.event.inputs.version || '1.0.0' }}.exe
-        asset_name: VaultScope-${{ github.ref_name || format('v{0}', github.event.inputs.version) }}.exe
-        asset_content_type: application/octet-stream
-      continue-on-error: true
-
-    - name: Upload Windows MSI to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/vaultscope-windows-msi/VaultScope-${{ github.event.inputs.version || '1.0.0' }}.msi
-        asset_name: VaultScope-${{ github.ref_name || format('v{0}', github.event.inputs.version) }}.msi
-        asset_content_type: application/octet-stream
-      continue-on-error: true
-
-    - name: Upload Linux DEB to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/vaultscope-linux-deb/vaultscope_${{ github.event.inputs.version || '1.0.0' }}_amd64.deb
-        asset_name: vaultscope-${{ github.ref_name || format('v{0}', github.event.inputs.version) }}.deb
-        asset_content_type: application/octet-stream
-      continue-on-error: true

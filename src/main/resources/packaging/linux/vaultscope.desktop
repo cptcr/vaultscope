@@ -1,0 +1,25 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=VaultScope
+GenericName=API Security Assessment Tool
+Comment=Enterprise API Security Assessment Tool for localhost testing
+Exec=vaultscope
+Icon=vaultscope
+Terminal=false
+Categories=Development;Security;Network;
+Keywords=security;api;testing;vulnerability;assessment;penetration;localhost;
+StartupNotify=true
+StartupWMClass=VaultScope
+MimeType=application/x-vaultscope-project;
+Actions=NewScan;ViewHistory;
+
+[Desktop Action NewScan]
+Name=New Security Scan
+Exec=vaultscope --new-scan
+Icon=vaultscope
+
+[Desktop Action ViewHistory]
+Name=View Scan History
+Exec=vaultscope --history
+Icon=vaultscope

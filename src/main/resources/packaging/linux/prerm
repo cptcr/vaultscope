@@ -1,0 +1,16 @@
+#!/bin/bash
+# VaultScope pre-removal script for Debian/Ubuntu
+
+set -e
+
+# Stop any running VaultScope processes
+pkill -f "vaultscope" || true
+
+# Remove command line symlink
+if [[ -L "/usr/local/bin/vaultscope" ]]; then
+    rm -f /usr/local/bin/vaultscope
+fi
+
+echo "🧹 VaultScope cleanup completed"
+
+exit 0

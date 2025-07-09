@@ -7,6 +7,14 @@ module vaultscope {
     requires com.fasterxml.jackson.datatype.jsr310;
     requires org.slf4j;
     requires org.jsoup;
+    requires com.auth0.jwt;
+    requires com.nimbusds.jose.jwt;
+    requires com.nimbusds.oauth2.sdk;
+    requires org.bouncycastle.provider;
+    requires java.net.http;
+    requires java.desktop;
+    requires java.sql;
+    requires java.prefs;
 
     opens dev.cptcr.vaultscope to javafx.fxml;
     opens dev.cptcr.vaultscope.controller to javafx.fxml;
@@ -16,4 +24,5 @@ module vaultscope {
     exports dev.cptcr.vaultscope.controller;
     exports dev.cptcr.vaultscope.model;
     exports dev.cptcr.vaultscope.service;
+    exports dev.cptcr.vaultscope.util;
 }
