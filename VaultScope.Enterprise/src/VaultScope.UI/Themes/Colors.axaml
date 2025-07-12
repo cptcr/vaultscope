@@ -1,0 +1,67 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Purple Palette -->
+    <Color x:Key="Purple50">#FAF5FF</Color>
+    <Color x:Key="Purple100">#F3E8FF</Color>
+    <Color x:Key="Purple200">#E9D5FF</Color>
+    <Color x:Key="Purple300">#D8B4FE</Color>
+    <Color x:Key="Purple400">#C084FC</Color>
+    <Color x:Key="Purple500">#A855F7</Color>
+    <Color x:Key="Purple600">#9333EA</Color>
+    <Color x:Key="Purple700">#7C3AED</Color>
+    <Color x:Key="Purple800">#6B21A8</Color>
+    <Color x:Key="Purple900">#581C87</Color>
+    <Color x:Key="Purple950">#3B0764</Color>
+    
+    <!-- Gradient Definitions -->
+    <LinearGradientBrush x:Key="PurpleGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="{StaticResource Purple600}" Offset="0"/>
+        <GradientStop Color="{StaticResource Purple800}" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="PurpleGradientHorizontal" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Color="{StaticResource Purple700}" Offset="0"/>
+        <GradientStop Color="{StaticResource Purple500}" Offset="0.5"/>
+        <GradientStop Color="{StaticResource Purple700}" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <RadialGradientBrush x:Key="PurpleRadialGradient">
+        <GradientStop Color="{StaticResource Purple500}" Offset="0"/>
+        <GradientStop Color="{StaticResource Purple900}" Offset="1"/>
+    </RadialGradientBrush>
+    
+    <!-- Dark Theme Palette -->
+    <Color x:Key="Dark50">#FAFAFA</Color>
+    <Color x:Key="Dark100">#F4F4F5</Color>
+    <Color x:Key="Dark200">#E4E4E7</Color>
+    <Color x:Key="Dark300">#D4D4D8</Color>
+    <Color x:Key="Dark400">#A1A1AA</Color>
+    <Color x:Key="Dark500">#71717A</Color>
+    <Color x:Key="Dark600">#52525B</Color>
+    <Color x:Key="Dark700">#3F3F46</Color>
+    <Color x:Key="Dark800">#27272A</Color>
+    <Color x:Key="Dark900">#18181B</Color>
+    <Color x:Key="Dark950">#0F0F0F</Color>
+    
+    <!-- Status Color Palette -->
+    <LinearGradientBrush x:Key="SuccessGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#10B981" Offset="0"/>
+        <GradientStop Color="#059669" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="ErrorGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#EF4444" Offset="0"/>
+        <GradientStop Color="#DC2626" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="WarningGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#F59E0B" Offset="0"/>
+        <GradientStop Color="#D97706" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="InfoGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#3B82F6" Offset="0"/>
+        <GradientStop Color="#2563EB" Offset="1"/>
+    </LinearGradientBrush>
+</ResourceDictionary>

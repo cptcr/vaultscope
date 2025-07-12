@@ -1,0 +1,208 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VaultScope.UI.ViewModels"
+             xmlns:controls="using:VaultScope.UI.Controls"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="VaultScope.UI.Views.ReportsView"
+             x:DataType="vm:ReportsViewModel">
+    
+    <Design.DataContext>
+        <vm:ReportsViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="page-header">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Classes="page-title" Text="Security Reports" />
+                    <TextBlock Classes="page-subtitle" Text="View and manage your security scan reports" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                    <Button Classes="secondary-button" Command="{Binding ExportAllCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path Data="{StaticResource DownloadIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
+                                  Width="16" Height="16" />
+                            <TextBlock Text="Export All" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="secondary-button" Command="{Binding RefreshCommand}">
+                        <Path Data="{StaticResource RefreshIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
+                              Width="16" Height="16" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Filters and Search -->
+        <Border Grid.Row="1" Classes="filter-bar" Margin="20,20,20,0">
+            <Grid ColumnDefinitions="2*,*,*,Auto" ColumnSpacing="15">
+                <!-- Search -->
+                <TextBox Grid.Column="0" Text="{Binding SearchQuery}" 
+                         Watermark="Search by URL or vulnerability..."
+                         Classes="search-input">
+                    <TextBox.InnerLeftContent>
+                        <Path Data="{StaticResource SearchIcon}" Fill="{DynamicResource TextColorMuted}"
+                              Width="16" Height="16" Margin="10,0,0,0" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                
+                <!-- Filter by Severity -->
+                <ComboBox Grid.Column="1" SelectedItem="{Binding FilterOption}" 
+                          Classes="modern-input">
+                    <ComboBoxItem>All</ComboBoxItem>
+                    <ComboBoxItem>Critical</ComboBoxItem>
+                    <ComboBoxItem>High</ComboBoxItem>
+                    <ComboBoxItem>Medium</ComboBoxItem>
+                    <ComboBoxItem>Low</ComboBoxItem>
+                    <ComboBoxItem>Clean</ComboBoxItem>
+                </ComboBox>
+                
+                <!-- Sort By -->
+                <ComboBox Grid.Column="2" SelectedItem="{Binding SortOption}" 
+                          Classes="modern-input">
+                    <ComboBoxItem>Date (Newest)</ComboBoxItem>
+                    <ComboBoxItem>Date (Oldest)</ComboBoxItem>
+                    <ComboBoxItem>Score (Highest)</ComboBoxItem>
+                    <ComboBoxItem>Score (Lowest)</ComboBoxItem>
+                    <ComboBoxItem>Vulnerabilities (Most)</ComboBoxItem>
+                    <ComboBoxItem>Vulnerabilities (Least)</ComboBoxItem>
+                </ComboBox>
+                
+                <!-- Results Count -->
+                <TextBlock Grid.Column="3" VerticalAlignment="Center"
+                           Text="{Binding FilteredReports, StringFormat='Showing {0} of '}"
+                           Foreground="{DynamicResource TextColorMuted}">
+                    <TextBlock.Inlines>
+                        <Run Text="{Binding TotalReports}" />
+                        <Run Text=" reports" />
+                    </TextBlock.Inlines>
+                </TextBlock>
+            </Grid>
+        </Border>
+        
+        <!-- Reports Grid -->
+        <Border Grid.Row="2" Margin="20">
+            <Grid>
+                <!-- Reports List -->
+                <ScrollViewer IsVisible="{Binding Reports.Count}">
+                    <ItemsControl ItemsSource="{Binding Reports}" Margin="0,0,0,20">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="15" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Classes="report-card">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+                                        <!-- Report Info -->
+                                        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                            <!-- Header -->
+                                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding TargetUrl}" 
+                                                           Classes="report-title" />
+                                                <Border Grid.Column="1" Classes="score-badge"
+                                                        Background="{Binding SecurityScore, Converter={StaticResource ScoreToColorConverter}}">
+                                                    <TextBlock Text="{Binding SecurityScore, StringFormat='{}{0:F1}'}"
+                                                               FontWeight="Bold" />
+                                                </Border>
+                                            </Grid>
+                                            
+                                            <!-- Meta Info -->
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="20">
+                                                <TextBlock Foreground="{DynamicResource TextColorMuted}">
+                                                    <TextBlock.Inlines>
+                                                        <Run Text="Scanned on" />
+                                                        <Run Text="{Binding ScanDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" 
+                                                             FontWeight="SemiBold" />
+                                                    </TextBlock.Inlines>
+                                                </TextBlock>
+                                                
+                                                <TextBlock Foreground="{DynamicResource TextColorMuted}">
+                                                    <TextBlock.Inlines>
+                                                        <Run Text="Duration:" />
+                                                        <Run Text="{Binding Duration}" FontWeight="SemiBold" />
+                                                    </TextBlock.Inlines>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            
+                                            <!-- Vulnerability Summary -->
+                                            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="15">
+                                                <Border Classes="severity-badge critical" 
+                                                        IsVisible="{Binding CriticalCount}">
+                                                    <TextBlock Text="{Binding CriticalCount, StringFormat='Critical: {0}'}" />
+                                                </Border>
+                                                <Border Classes="severity-badge high" 
+                                                        IsVisible="{Binding HighCount}">
+                                                    <TextBlock Text="{Binding HighCount, StringFormat='High: {0}'}" />
+                                                </Border>
+                                                <Border Classes="severity-badge medium" 
+                                                        IsVisible="{Binding MediumCount}">
+                                                    <TextBlock Text="{Binding MediumCount, StringFormat='Medium: {0}'}" />
+                                                </Border>
+                                                <Border Classes="severity-badge low" 
+                                                        IsVisible="{Binding LowCount}">
+                                                    <TextBlock Text="{Binding LowCount, StringFormat='Low: {0}'}" />
+                                                </Border>
+                                                <Border Classes="severity-badge clean" 
+                                                        IsVisible="{Binding !VulnerabilityCount}">
+                                                    <TextBlock Text="Clean" />
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                        
+                                        <!-- Actions -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" 
+                                                    VerticalAlignment="Center">
+                                            <Button Classes="icon-button" ToolTip.Tip="View Details"
+                                                    Command="{Binding $parent[UserControl].DataContext.ViewReportCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Path Data="{StaticResource ViewIcon}" Fill="{DynamicResource AccentColor}" 
+                                                      Width="20" Height="20" />
+                                            </Button>
+                                            <Button Classes="icon-button" ToolTip.Tip="Export Report"
+                                                    Command="{Binding $parent[UserControl].DataContext.ExportReportCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Path Data="{StaticResource DownloadIcon}" Fill="{DynamicResource TextColor}" 
+                                                      Width="20" Height="20" />
+                                            </Button>
+                                            <Button Classes="icon-button" ToolTip.Tip="Delete Report"
+                                                    Command="{Binding $parent[UserControl].DataContext.DeleteReportCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Path Data="{StaticResource DeleteIcon}" Fill="{DynamicResource ErrorColor}" 
+                                                      Width="20" Height="20" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                
+                <!-- Empty State -->
+                <Border IsVisible="{Binding !Reports.Count}" 
+                        Background="{DynamicResource CardBackgroundDarker}"
+                        CornerRadius="12" Padding="60">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+                        <Path Data="{StaticResource ReportIcon}" Fill="{DynamicResource TextColorMuted}"
+                              Width="64" Height="64" HorizontalAlignment="Center" />
+                        <TextBlock Text="No reports found" FontSize="20" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextColorMuted}" HorizontalAlignment="Center" />
+                        <TextBlock Text="Run a security scan to generate your first report"
+                                   Foreground="{DynamicResource TextColorMuted}" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+                
+                <!-- Loading overlay -->
+                <controls:AnimatedSpinner IsVisible="{Binding IsLoading}" 
+                                          HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

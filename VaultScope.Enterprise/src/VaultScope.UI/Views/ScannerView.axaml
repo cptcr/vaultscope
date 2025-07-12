@@ -1,0 +1,196 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VaultScope.UI.ViewModels"
+             xmlns:controls="using:VaultScope.UI.Controls"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="VaultScope.UI.Views.ScannerView"
+             x:DataType="vm:ScannerViewModel">
+    
+    <Design.DataContext>
+        <vm:ScannerViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="page-header">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Classes="page-title" Text="Security Scanner" />
+                    <TextBlock Classes="page-subtitle" Text="Scan your localhost applications for vulnerabilities" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                    <Button Classes="primary-button" Command="{Binding StartScanCommand}"
+                            IsVisible="{Binding !IsScanning}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path Data="{StaticResource PlayIcon}" Fill="{DynamicResource PrimaryButtonForeground}" 
+                                  Width="16" Height="16" />
+                            <TextBlock Text="Start Scan" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="danger-button" Command="{Binding StopScanCommand}"
+                            IsVisible="{Binding IsScanning}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path Data="{StaticResource StopIcon}" Fill="{DynamicResource DangerButtonForeground}" 
+                                  Width="16" Height="16" />
+                            <TextBlock Text="Stop Scan" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="400,*" ColumnSpacing="20" Margin="20">
+            <!-- Configuration Panel -->
+            <ScrollViewer Grid.Column="0">
+                <StackPanel Spacing="20">
+                    <!-- Target Configuration -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="15">
+                            <TextBlock Classes="card-title" Text="Target Configuration" />
+                            
+                            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                <TextBlock Grid.Row="0" Text="Target URL" Classes="input-label" />
+                                <TextBox Grid.Row="1" Text="{Binding TargetUrl}" 
+                                         Watermark="http://localhost:3000"
+                                         Classes="modern-input" />
+                                <TextBlock Grid.Row="2" Text="Only localhost URLs are allowed for security scanning"
+                                           Classes="input-hint" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Authentication -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="15">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Classes="card-title" Text="Authentication" />
+                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding IncludeAuthentication}" />
+                            </Grid>
+                            
+                            <StackPanel Spacing="10" IsVisible="{Binding IncludeAuthentication}">
+                                <ComboBox SelectedItem="{Binding AuthenticationType}" 
+                                          Classes="modern-input" HorizontalAlignment="Stretch">
+                                    <ComboBoxItem>None</ComboBoxItem>
+                                    <ComboBoxItem>Bearer</ComboBoxItem>
+                                    <ComboBoxItem>Basic</ComboBoxItem>
+                                    <ComboBoxItem>ApiKey</ComboBoxItem>
+                                </ComboBox>
+                                
+                                <TextBox Text="{Binding AuthenticationToken}" 
+                                         Watermark="Enter authentication token"
+                                         PasswordChar="•" Classes="modern-input" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Scan Options -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="15">
+                            <TextBlock Classes="card-title" Text="Scan Options" />
+                            
+                            <StackPanel Spacing="10">
+                                <CheckBox IsChecked="{Binding TestAllHttpMethods}" 
+                                          Content="Test all HTTP methods" />
+                                <CheckBox IsChecked="{Binding TestCommonEndpoints}" 
+                                          Content="Test common endpoints" />
+                                <CheckBox IsChecked="{Binding GenerateDetailedReport}" 
+                                          Content="Generate detailed report" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Vulnerability Detectors -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="15">
+                            <TextBlock Classes="card-title" Text="Vulnerability Detectors" />
+                            
+                            <StackPanel Spacing="10">
+                                <CheckBox IsChecked="{Binding EnableSqlInjection}" 
+                                          Content="SQL Injection" />
+                                <CheckBox IsChecked="{Binding EnableXss}" 
+                                          Content="Cross-Site Scripting (XSS)" />
+                                <CheckBox IsChecked="{Binding EnableCommandInjection}" 
+                                          Content="Command Injection" />
+                                <CheckBox IsChecked="{Binding EnableXxe}" 
+                                          Content="XML External Entity (XXE)" />
+                                <CheckBox IsChecked="{Binding EnableSsrf}" 
+                                          Content="Server-Side Request Forgery (SSRF)" />
+                                <CheckBox IsChecked="{Binding EnablePathTraversal}" 
+                                          Content="Path Traversal" />
+                                <CheckBox IsChecked="{Binding EnableAuthBypass}" 
+                                          Content="Authentication Bypass" />
+                                <CheckBox IsChecked="{Binding EnableSecurityHeaders}" 
+                                          Content="Security Headers" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- Scan Progress and Log -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*">
+                <!-- Progress Section -->
+                <Border Grid.Row="0" Classes="card" Margin="0,0,0,20" IsVisible="{Binding IsScanning}">
+                    <StackPanel Spacing="15">
+                        <TextBlock Classes="card-title" Text="Scan Progress" />
+                        
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                            <ProgressBar Grid.Row="0" Value="{Binding ScanProgress}" 
+                                         Maximum="100" Height="8" Classes="modern-progress" />
+                            
+                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="{Binding CurrentOperation}" 
+                                           Classes="progress-text" />
+                                <TextBlock Grid.Column="1" Text="{Binding ScanProgress, StringFormat='{}{0:F0}%'}" 
+                                           Classes="progress-percentage" />
+                            </Grid>
+                            
+                            <controls:AnimatedSpinner Grid.Row="2" Size="Small" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Scan Log -->
+                <Border Grid.Row="1" Classes="card">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,15">
+                            <TextBlock Grid.Column="0" Classes="card-title" Text="Scan Log" />
+                            <Button Grid.Column="1" Classes="text-button" Command="{Binding ClearLogCommand}">
+                                <TextBlock Text="Clear" />
+                            </Button>
+                        </Grid>
+                        
+                        <Border Grid.Row="1" Background="{DynamicResource CardBackgroundDarker}" 
+                                CornerRadius="8" Padding="15">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding ScanLog}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" FontFamily="Consolas,Courier New,monospace"
+                                                       FontSize="12" Margin="0,2" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                        
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,15,0,0"
+                                    IsVisible="{Binding CurrentScanResult, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <Button Classes="primary-button" Command="{Binding ViewLastResultCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Path Data="{StaticResource ReportIcon}" Fill="{DynamicResource PrimaryButtonForeground}" 
+                                          Width="16" Height="16" />
+                                    <TextBlock Text="View Results" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

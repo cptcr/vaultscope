@@ -1,0 +1,210 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:VaultScope.UI.ViewModels"
+             xmlns:controls="using:VaultScope.UI.Controls"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="VaultScope.UI.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+    
+    <Design.DataContext>
+        <vm:DashboardViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="page-header">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Classes="page-title" Text="Security Dashboard" />
+                    <TextBlock Classes="page-subtitle" Text="Monitor your application security at a glance" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                    <Button Classes="primary-button" Command="{Binding StartNewScanCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path Data="{StaticResource ScanIcon}" Fill="{DynamicResource PrimaryButtonForeground}" Width="16" Height="16" />
+                            <TextBlock Text="New Scan" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="secondary-button" Command="{Binding RefreshCommand}">
+                        <Path Data="{StaticResource RefreshIcon}" Fill="{DynamicResource SecondaryButtonForeground}" Width="16" Height="16" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="20">
+            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="20">
+                <!-- Statistics Cards -->
+                <Grid Grid.Row="0" ColumnDefinitions="*,*,*,*,*" ColumnSpacing="15">
+                    <!-- Total Scans -->
+                    <Border Classes="stat-card">
+                        <Grid RowDefinitions="Auto,Auto,Auto">
+                            <Path Grid.Row="0" Data="{StaticResource DatabaseIcon}" Fill="{DynamicResource AccentColor}" 
+                                  Width="24" Height="24" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding TotalScans}" Margin="0,10,0,5" />
+                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Total Scans" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Critical Vulnerabilities -->
+                    <Border Classes="stat-card critical">
+                        <Grid RowDefinitions="Auto,Auto,Auto">
+                            <Path Grid.Row="0" Data="{StaticResource AlertIcon}" Fill="#FF3B30" 
+                                  Width="24" Height="24" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding CriticalVulnerabilities}" 
+                                       Foreground="#FF3B30" Margin="0,10,0,5" />
+                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Critical" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- High Vulnerabilities -->
+                    <Border Classes="stat-card high">
+                        <Grid RowDefinitions="Auto,Auto,Auto">
+                            <Path Grid.Row="0" Data="{StaticResource WarningIcon}" Fill="#FF9500" 
+                                  Width="24" Height="24" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding HighVulnerabilities}" 
+                                       Foreground="#FF9500" Margin="0,10,0,5" />
+                            <TextBlock Grid.Row="2" Classes="stat-label" Text="High" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Medium Vulnerabilities -->
+                    <Border Classes="stat-card medium">
+                        <Grid RowDefinitions="Auto,Auto,Auto">
+                            <Path Grid.Row="0" Data="{StaticResource InfoIcon}" Fill="#FFCC00" 
+                                  Width="24" Height="24" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding MediumVulnerabilities}" 
+                                       Foreground="#FFCC00" Margin="0,10,0,5" />
+                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Medium" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Low Vulnerabilities -->
+                    <Border Classes="stat-card low">
+                        <Grid RowDefinitions="Auto,Auto,Auto">
+                            <Path Grid.Row="0" Data="{StaticResource CheckIcon}" Fill="#34C759" 
+                                  Width="24" Height="24" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding LowVulnerabilities}" 
+                                       Foreground="#34C759" Margin="0,10,0,5" />
+                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Low" />
+                        </Grid>
+                    </Border>
+                </Grid>
+                
+                <!-- Charts Section -->
+                <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="20">
+                    <!-- Vulnerability Trends Chart -->
+                    <Border Grid.Column="0" Classes="card">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Classes="card-title" Text="Vulnerability Trends" Margin="0,0,0,20" />
+                            
+                            <!-- Chart placeholder - in real app, use OxyPlot or similar -->
+                            <Border Grid.Row="1" Background="{DynamicResource CardBackgroundDarker}" 
+                                    CornerRadius="8" MinHeight="250">
+                                <TextBlock Text="Vulnerability trend chart will be displayed here" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextColorMuted}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Security Score Gauge -->
+                    <Border Grid.Column="1" Classes="card">
+                        <Grid RowDefinitions="Auto,*,Auto">
+                            <TextBlock Grid.Row="0" Classes="card-title" Text="Average Security Score" />
+                            
+                            <!-- Score display -->
+                            <Grid Grid.Row="1" VerticalAlignment="Center">
+                                <Ellipse Width="150" Height="150" StrokeThickness="15"
+                                         Stroke="{DynamicResource CardBackgroundDarker}" />
+                                <Ellipse Width="150" Height="150" StrokeThickness="15"
+                                         Stroke="{DynamicResource AccentColor}"
+                                         StrokeDashArray="2,1" RenderTransformOrigin="0.5,0.5">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="-90" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding AverageSecurityScore, StringFormat='{}{0:F1}'}" 
+                                               FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="/100" FontSize="16" Foreground="{DynamicResource TextColorMuted}" 
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                            
+                            <TextBlock Grid.Row="2" Text="Last 30 days" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextColorMuted}" FontSize="12" />
+                        </Grid>
+                    </Border>
+                </Grid>
+                
+                <!-- Recent Scans -->
+                <Border Grid.Row="2" Classes="card">
+                    <Grid RowDefinitions="Auto,*">
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                            <TextBlock Grid.Column="0" Classes="card-title" Text="Recent Scans" />
+                            <TextBlock Grid.Column="1" Text="View All →" Classes="link-text" />
+                        </Grid>
+                        
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding RecentScans}" 
+                                  AutoGenerateColumns="False" CanUserSortColumns="True"
+                                  GridLinesVisibility="Horizontal" BorderThickness="0"
+                                  RowHeight="50">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Target URL" Binding="{Binding TargetUrl}" Width="3*" />
+                                <DataGridTextColumn Header="Date" Binding="{Binding ScanDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Width="2*" />
+                                <DataGridTextColumn Header="Vulnerabilities" Binding="{Binding VulnerabilityCount}" Width="*" />
+                                <DataGridTemplateColumn Header="Score" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{Binding SecurityScore, Converter={StaticResource ScoreToColorConverter}}"
+                                                    CornerRadius="4" Padding="8,4">
+                                                <TextBlock Text="{Binding SecurityScore, StringFormat='{}{0:F1}'}"
+                                                           HorizontalAlignment="Center" FontWeight="SemiBold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Actions" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Classes="table-action-button" 
+                                                    Command="{Binding $parent[UserControl].DataContext.ViewScanDetailsCommand}"
+                                                    CommandParameter="{Binding Id}">
+                                                <TextBlock Text="View Details" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <!-- Empty state -->
+                        <Border Grid.Row="1" IsVisible="{Binding !RecentScans.Count}"
+                                Background="{DynamicResource CardBackgroundDarker}" 
+                                CornerRadius="8" Padding="40">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                                <Path Data="{StaticResource EmptyIcon}" Fill="{DynamicResource TextColorMuted}"
+                                      Width="48" Height="48" HorizontalAlignment="Center" />
+                                <TextBlock Text="No scans found" FontSize="16" 
+                                           Foreground="{DynamicResource TextColorMuted}" />
+                                <Button Classes="primary-button" Command="{Binding StartNewScanCommand}">
+                                    <TextBlock Text="Start Your First Scan" />
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+        
+        <!-- Loading overlay -->
+        <controls:AnimatedSpinner Grid.Row="1" IsVisible="{Binding IsLoading}" 
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,134 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Fade In Animation -->
+    <Animation x:Key="FadeIn" Duration="0:0:0.3" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Fade Out Animation -->
+    <Animation x:Key="FadeOut" Duration="0:0:0.3" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Scale In Animation -->
+    <Animation x:Key="ScaleIn" Duration="0:0:0.3" Easing="BackEaseOut" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="ScaleTransform.ScaleX" Value="0.8"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="0.8"/>
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Slide In From Right Animation -->
+    <Animation x:Key="SlideInFromRight" Duration="0:0:0.3" Easing="CubicEaseOut" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="50"/>
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Slide In From Bottom Animation -->
+    <Animation x:Key="SlideInFromBottom" Duration="0:0:0.3" Easing="CubicEaseOut" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.Y" Value="30"/>
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Pulse Animation -->
+    <Animation x:Key="Pulse" Duration="0:0:1.5" IterationCount="Infinite">
+        <KeyFrame Cue="0%">
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="ScaleTransform.ScaleX" Value="1.05"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1.05"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Rotate Animation -->
+    <Animation x:Key="Rotate" Duration="0:0:2" IterationCount="Infinite">
+        <KeyFrame Cue="0%">
+            <Setter Property="RotateTransform.Angle" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="RotateTransform.Angle" Value="360"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Glow Pulse Animation -->
+    <Animation x:Key="GlowPulse" Duration="0:0:2" IterationCount="Infinite">
+        <KeyFrame Cue="0%">
+            <Setter Property="BoxShadow" Value="0 0 10 #8B5CF6"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="BoxShadow" Value="0 0 20 #8B5CF6"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="BoxShadow" Value="0 0 10 #8B5CF6"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Progress Bar Animation -->
+    <Animation x:Key="ProgressBarAnimation" Duration="0:0:1.5" IterationCount="Infinite">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="-100"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="100"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Notification Slide In -->
+    <Animation x:Key="NotificationSlideIn" Duration="0:0:0.4" Easing="BackEaseOut" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="400"/>
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+    </Animation>
+    
+    <!-- Notification Slide Out -->
+    <Animation x:Key="NotificationSlideOut" Duration="0:0:0.3" Easing="CubicEaseIn" FillMode="Forward">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+            <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="400"/>
+            <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+    </Animation>
+</ResourceDictionary>

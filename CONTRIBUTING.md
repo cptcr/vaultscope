@@ -1,336 +1,195 @@
-# Contributing to VaultScope
+# Contributing to VaultScope Enterprise
 
-Thank you for your interest in contributing to VaultScope! This document provides guidelines and information for contributors.
-
-## Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Pull Request Process](#pull-request-process)
-- [Issue Reporting](#issue-reporting)
-- [Security Policy](#security-policy)
+First off, thank you for considering contributing to VaultScope Enterprise! It's people like you that make VaultScope Enterprise such a great tool.
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our commitment to creating a welcoming and inclusive environment. By participating, you are expected to uphold professional standards and treat all contributors with respect.
+This project and everyone participating in it is governed by the [VaultScope Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [security@vaultscope.io](mailto:security@vaultscope.io).
 
-### Our Standards
+## How Can I Contribute?
 
-- Use welcoming and inclusive language
-- Be respectful of differing viewpoints and experiences
-- Gracefully accept constructive criticism
-- Focus on what is best for the community
-- Show empathy towards other community members
+### Reporting Bugs
 
-## Getting Started
+Before creating bug reports, please check the existing issues as you might find out that you don't need to create one. When you are creating a bug report, please include as many details as possible.
+
+**How Do I Submit A Good Bug Report?**
+
+Bugs are tracked as [GitHub issues](https://github.com/VaultScope/VaultScope-Enterprise/issues). Create an issue and provide the following information:
+
+* **Use a clear and descriptive title** for the issue to identify the problem.
+* **Describe the exact steps which reproduce the problem** in as many details as possible.
+* **Provide specific examples to demonstrate the steps**. Include links to files or GitHub projects, or copy/pasteable snippets.
+* **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
+* **Explain which behavior you expected to see instead and why.**
+* **Include screenshots and animated GIFs** which show you following the described steps and clearly demonstrate the problem.
+* **If the problem is related to performance or memory**, include a CPU profile capture with your report.
+* **Include details about your configuration and environment**:
+  * Which version of VaultScope Enterprise are you using?
+  * What's the name and version of the OS you're using?
+  * Are you running VaultScope Enterprise in a virtual machine? If so, which VM software are you using?
+
+### Suggesting Enhancements
+
+Enhancement suggestions are tracked as [GitHub issues](https://github.com/VaultScope/VaultScope-Enterprise/issues). Create an issue and provide the following information:
+
+* **Use a clear and descriptive title** for the issue to identify the suggestion.
+* **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
+* **Provide specific examples to demonstrate the steps**. Include copy/pasteable snippets which you use in those examples.
+* **Describe the current behavior** and **explain which behavior you expected to see instead** and why.
+* **Include screenshots and animated GIFs** which help you demonstrate the steps or point out the part of VaultScope Enterprise which the suggestion is related to.
+* **Explain why this enhancement would be useful** to most VaultScope Enterprise users.
+
+### Your First Code Contribution
+
+Unsure where to begin contributing to VaultScope Enterprise? You can start by looking through these `beginner` and `help-wanted` issues:
+
+* [Beginner issues](https://github.com/VaultScope/VaultScope-Enterprise/labels/beginner) - issues which should only require a few lines of code, and a test or two.
+* [Help wanted issues](https://github.com/VaultScope/VaultScope-Enterprise/labels/help%20wanted) - issues which should be a bit more involved than `beginner` issues.
+
+### Pull Requests
+
+The process described here has several goals:
+
+- Maintain VaultScope Enterprise's quality
+- Fix problems that are important to users
+- Engage the community in working toward the best possible VaultScope Enterprise
+- Enable a sustainable system for VaultScope Enterprise's maintainers to review contributions
+
+Please follow these steps to have your contribution considered by the maintainers:
+
+1. Fork the repo and create your branch from `main`.
+2. If you've added code that should be tested, add tests.
+3. If you've changed APIs, update the documentation.
+4. Ensure the test suite passes.
+5. Make sure your code lints.
+6. Issue that pull request!
+
+## Development Process
 
 ### Prerequisites
 
-- Java 17 or newer (OpenJDK or Oracle JDK)
-- Maven 3.6 or newer
-- Git
-- IDE with JavaFX support (IntelliJ IDEA, Eclipse, or VS Code)
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+* [Git](https://git-scm.com/)
+* An IDE such as [Visual Studio 2022](https://visualstudio.microsoft.com/), [VS Code](https://code.visualstudio.com/), or [JetBrains Rider](https://www.jetbrains.com/rider/)
 
-### Development Setup
+### Setting Up Your Development Environment
 
-1. **Fork the Repository**
-   ```bash
-   git clone https://github.com/your-username/vaultscope.git
-   cd vaultscope
-   ```
+```bash
+# Clone your fork
+git clone https://github.com/YOUR_USERNAME/VaultScope-Enterprise.git
+cd VaultScope-Enterprise
 
-2. **Set Up Development Environment**
-   ```bash
-   # Verify Java version
-   java -version
-   
-   # Verify Maven installation
-   mvn -version
-   
-   # Install dependencies
-   mvn clean install
-   ```
+# Add upstream remote
+git remote add upstream https://github.com/VaultScope/VaultScope-Enterprise.git
 
-3. **Run the Application**
-   ```bash
-   # Using Maven
-   mvn javafx:run
-   
-   # Or build and run JAR
-   mvn clean package
-   java -jar target/vaultscope-1.0.0.jar
-   ```
+# Install dependencies
+dotnet restore
 
-4. **Run Tests**
-   ```bash
-   mvn test
-   ```
+# Build the project
+dotnet build
 
-## Contribution Guidelines
-
-### Code Style
-
-- Follow existing code formatting and naming conventions
-- Use descriptive variable and method names
-- Write clean, self-documenting code
-- Avoid excessive comments - code should be readable
-- Ensure proper error handling for all new features
+# Run tests
+dotnet test
+```
 
 ### Coding Standards
 
-- **Java**: Follow Oracle Java coding conventions
-- **JavaFX**: Use FXML for UI layouts when possible
-- **CSS**: Maintain consistent styling with existing themes
-- **Documentation**: Update relevant documentation for new features
+* **C# Coding Conventions**: Follow the [Microsoft C# Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+* **File Organization**: 
+  * One type per file
+  * File name should match the type name
+  * Use folders to organize related types
+* **Naming Conventions**:
+  * Use PascalCase for class names, method names, and property names
+  * Use camelCase for local variables and parameters
+  * Use UPPER_CASE for constants
+  * Prefix interfaces with 'I'
+* **Code Style**:
+  * Use 4 spaces for indentation (no tabs)
+  * Place opening braces on a new line
+  * Always use braces for if/for/while/etc., even for single statements
+  * Keep lines under 120 characters when possible
 
-### Branch Naming
+### Testing
 
-Use descriptive branch names that indicate the type of work:
+* Write unit tests for all new functionality
+* Ensure all tests pass before submitting a PR
+* Aim for high code coverage (>80%)
+* Use meaningful test names that describe what is being tested
 
-- `feature/add-oauth2-support`
-- `bugfix/fix-jwt-validation`
-- `enhancement/improve-error-handling`
-- `docs/update-readme`
+```csharp
+[Fact]
+public void SqlInjectionDetector_ShouldDetectBasicSqlInjection()
+{
+    // Arrange
+    var detector = new SqlInjectionDetector();
+    
+    // Act
+    var result = detector.Detect("SELECT * FROM users WHERE id = '1' OR '1'='1'");
+    
+    // Assert
+    Assert.True(result.IsVulnerable);
+}
+```
 
 ### Commit Messages
 
-Write clear, concise commit messages:
-
-```
-type(scope): brief description
-
-Detailed explanation if necessary.
-
-- List specific changes
-- Reference related issues (#123)
-```
-
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code formatting
-- `refactor`: Code restructuring
-- `test`: Adding tests
-- `chore`: Maintenance tasks
-
-## Pull Request Process
-
-### Before Submitting
-
-1. **Create an Issue First**
-   - For significant changes, create an issue to discuss the proposal
-   - Reference the issue number in your pull request
-
-2. **Test Your Changes**
-   - Ensure all existing tests pass
-   - Add tests for new functionality
-   - Test on both Windows and Linux if possible
-   - Verify the application builds and runs correctly
-
-3. **Update Documentation**
-   - Update README.md if needed
-   - Add or update code documentation
-   - Update CHANGELOG.md for significant changes
-
-### Submitting the Pull Request
-
-1. **Create Pull Request**
-   - Use a descriptive title
-   - Fill out the pull request template
-   - Reference related issues
-
-2. **Pull Request Description**
-   ```markdown
-   ## Description
-   Brief description of changes made.
-   
-   ## Type of Change
-   - [ ] Bug fix
-   - [ ] New feature
-   - [ ] Breaking change
-   - [ ] Documentation update
-   
-   ## Testing
-   - [ ] Unit tests pass
-   - [ ] Manual testing completed
-   - [ ] Cross-platform testing (if applicable)
-   
-   ## Checklist
-   - [ ] Code follows project style guidelines
-   - [ ] Self-review completed
-   - [ ] Documentation updated
-   - [ ] No new warnings or errors
-   ```
-
-### Review Process
-
-1. **Automated Checks**
-   - CI/CD pipeline must pass
-   - Code quality checks must pass
-   - Security scans must pass
-
-2. **Code Review**
-   - At least one maintainer review required
-   - Address all review comments
-   - Keep discussions constructive
-
-3. **Merge Requirements**
-   - All checks passing
-   - Approved by maintainer
-   - No merge conflicts
-   - Documentation updated
-
-## Issue Reporting
-
-### Bug Reports
-
-Use the bug report template and include:
-
-- **Environment**: OS, Java version, VaultScope version
-- **Steps to Reproduce**: Clear, numbered steps
-- **Expected Behavior**: What should happen
-- **Actual Behavior**: What actually happens
-- **Screenshots**: If applicable
-- **Additional Context**: Any other relevant information
-
-### Feature Requests
-
-Use the feature request template and include:
-
-- **Problem Description**: What problem does this solve?
-- **Proposed Solution**: Detailed description of the feature
-- **Alternatives Considered**: Other approaches you've considered
-- **Additional Context**: Any other relevant information
-
-### Security Issues
-
-**Do not report security vulnerabilities in public issues.**
-
-For security-related issues:
-1. Email details to [security@cptcr.dev]
-2. Include detailed description and reproduction steps
-3. Allow reasonable time for response before public disclosure
-
-## Development Guidelines
-
-### Adding New Security Tests
-
-When adding new security test functionality:
-
-1. **Test Categories**
-   - Authentication vulnerabilities
-   - Authorization bypasses
-   - Input validation issues
-   - Information disclosure
-   - Session management flaws
-
-2. **Implementation Guidelines**
-   - Add tests to appropriate service class
-   - Follow existing pattern for vulnerability detection
-   - Include proper error handling
-   - Add logging for test progress
-   - Update UI to display new vulnerability types
-
-3. **Testing Requirements**
-   - Test against known vulnerable applications
-   - Verify no false positives
-   - Ensure graceful failure handling
-   - Test performance impact
-
-### Authentication Support
-
-When adding new authentication methods:
-
-1. **Update AuthenticationConfig**
-   - Add new auth type enum
-   - Add required configuration fields
-   - Update UI form generation
-
-2. **Implement in AuthenticationTester**
-   - Add specific vulnerability tests
-   - Follow existing vulnerability detection patterns
-   - Add comprehensive error handling
-
-3. **Update Documentation**
-   - Add to README.md
-   - Update user guide
-   - Add configuration examples
-
-### UI/UX Changes
-
-For interface modifications:
-
-1. **Design Consistency**
-   - Follow existing design patterns
-   - Maintain accessibility standards
-   - Test with both light and dark themes
-
-2. **User Experience**
-   - Ensure intuitive navigation
-   - Provide clear feedback
-   - Maintain responsive design
-
-## Release Process
-
-### Version Numbering
-
-We use Semantic Versioning (SemVer):
-- **Major** (1.0.0): Breaking changes
-- **Minor** (1.1.0): New features, backward compatible
-- **Patch** (1.0.1): Bug fixes, backward compatible
-
-### Release Checklist
-
-1. **Pre-release**
-   - Update version numbers
-   - Update CHANGELOG.md
-   - Run full test suite
-   - Update documentation
-
-2. **Release**
-   - Create release tag
-   - Build release artifacts
-   - Update GitHub release
-   - Announce release
-
-## Getting Help
-
-### Communication Channels
-
-- **GitHub Issues**: Bug reports and feature requests
-- **GitHub Discussions**: General questions and community discussion
-- **Email**: Direct contact for sensitive issues
+* Use the present tense ("Add feature" not "Added feature")
+* Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+* Limit the first line to 72 characters or less
+* Reference issues and pull requests liberally after the first line
+* Consider starting the commit message with an applicable emoji:
+  * 🎨 `:art:` when improving the format/structure of the code
+  * 🐛 `:bug:` when fixing a bug
+  * 🔥 `:fire:` when removing code or files
+  * 📝 `:memo:` when writing docs
+  * 🚀 `:rocket:` when improving performance
+  * ✅ `:white_check_mark:` when adding tests
+  * 🔒 `:lock:` when dealing with security
+  * ⬆️ `:arrow_up:` when upgrading dependencies
+  * ⬇️ `:arrow_down:` when downgrading dependencies
 
 ### Documentation
 
-- **README.md**: Basic setup and usage
-- **Wiki**: Detailed documentation and guides
-- **Code Comments**: Inline documentation
-- **JavaDoc**: API documentation
+* Update the README.md with details of changes to the interface
+* Update the XML documentation comments for public APIs
+* Add or update relevant documentation in the `/docs` folder
+* Include JSDoc comments for any client-side JavaScript
 
-### Community
+## Community
 
-- Be respectful and professional
-- Help others when possible
-- Share knowledge and experiences
-- Contribute to discussions
+### Communication Channels
 
-## Recognition
+* [GitHub Discussions](https://github.com/VaultScope/VaultScope-Enterprise/discussions) - For general discussions
+* [GitHub Issues](https://github.com/VaultScope/VaultScope-Enterprise/issues) - For bugs and feature requests
+* [Security Email](mailto:security@vaultscope.io) - For security-related concerns
 
-Contributors will be recognized in:
-- GitHub contributors list
-- CHANGELOG.md for significant contributions
-- README.md acknowledgments section
+### Code Reviews
 
-## License
+All submissions, including submissions by project members, require review. We use GitHub pull requests for this purpose. Consult [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more information on using pull requests.
 
-By contributing to VaultScope, you agree that your contributions will be licensed under the Apache License 2.0.
+### Recognition
 
----
+Contributors who have made significant contributions will be recognized in our [CONTRIBUTORS.md](CONTRIBUTORS.md) file.
 
-**Questions?** Feel free to open an issue or start a discussion. We're here to help!
+## Additional Notes
 
-**Thank you for contributing to VaultScope!** 🛡️
+### Issue and Pull Request Labels
+
+This section lists the labels we use to help us track and manage issues and pull requests.
+
+* `bug` - Issues that are bugs
+* `enhancement` - Issues that are feature requests
+* `documentation` - Issues or PRs related to documentation
+* `good first issue` - Good for newcomers
+* `help wanted` - Extra attention is needed
+* `question` - Further information is requested
+* `wontfix` - This will not be worked on
+* `duplicate` - This issue or pull request already exists
+* `invalid` - This doesn't seem right
+
+## Questions?
+
+Don't hesitate to ask questions! Open an issue with the `question` label, and we'll be happy to help.
+
+Thank you for contributing to VaultScope Enterprise! 🎉

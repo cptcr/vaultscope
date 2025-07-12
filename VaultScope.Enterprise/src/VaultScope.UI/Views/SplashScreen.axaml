@@ -1,0 +1,149 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="VaultScope.UI.Views.SplashScreen"
+        Title="VaultScope Enterprise"
+        Width="600" Height="400"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        ShowInTaskbar="False">
+
+    <Border Background="#0F0F0F" CornerRadius="12">
+        <Border.Effect>
+            <DropShadowEffect Color="#8B5CF6" Opacity="0.5" BlurRadius="30"/>
+        </Border.Effect>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo and Title -->
+            <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
+                <!-- Animated Logo -->
+                <Border Width="120" Height="120" HorizontalAlignment="Center">
+                    <Border.Background>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#8B5CF6" Offset="0"/>
+                            <GradientStop Color="#6D28D9" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Border.Background>
+                    <Border.RenderTransform>
+                        <RotateTransform/>
+                    </Border.RenderTransform>
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Style.Animations>
+                                <Animation Duration="0:0:2" IterationCount="Infinite">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="RotateTransform.Angle" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="RotateTransform.Angle" Value="360"/>
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Border.Styles>
+                    
+                    <Grid>
+                        <Path Data="M60,20 L80,50 L60,80 L40,50 Z" 
+                              Fill="White" 
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"/>
+                        <Path Data="M30,60 L60,40 L90,60 L60,80 Z" 
+                              Fill="White" 
+                              Opacity="0.7"
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <StackPanel Spacing="5">
+                    <TextBlock Text="VaultScope Enterprise" 
+                              FontSize="32" 
+                              FontWeight="Bold"
+                              HorizontalAlignment="Center"
+                              Foreground="#8B5CF6"/>
+                    
+                    <TextBlock Text="Professional API Security Assessment" 
+                              FontSize="14" 
+                              HorizontalAlignment="Center"
+                              Foreground="#A0A0A0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Loading Progress -->
+            <StackPanel Grid.Row="1" Margin="50,0" Spacing="10">
+                <TextBlock Name="StatusText" 
+                          Text="Initializing..." 
+                          HorizontalAlignment="Center"
+                          Foreground="#A0A0A0"
+                          FontSize="12"/>
+                
+                <ProgressBar Name="LoadingProgress" 
+                            Height="4" 
+                            Minimum="0" 
+                            Maximum="1"
+                            Value="0">
+                    <ProgressBar.Foreground>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                            <GradientStop Color="#6D28D9" Offset="0"/>
+                            <GradientStop Color="#8B5CF6" Offset="0.5"/>
+                            <GradientStop Color="#A78BFA" Offset="1"/>
+                        </LinearGradientBrush>
+                    </ProgressBar.Foreground>
+                    <ProgressBar.Transitions>
+                        <Transitions>
+                            <DoubleTransition Property="Value" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                        </Transitions>
+                    </ProgressBar.Transitions>
+                </ProgressBar>
+            </StackPanel>
+
+            <!-- Copyright -->
+            <TextBlock Grid.Row="2" 
+                      Text="Copyright © 2024 VaultScope Security. All rights reserved." 
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Bottom"
+                      Margin="0,0,0,20"
+                      Foreground="#505050"
+                      FontSize="11"/>
+
+            <!-- Error Message (Hidden by default) -->
+            <Border Name="ErrorContainer" 
+                    Grid.Row="0" 
+                    Grid.RowSpan="3" 
+                    Background="#0F0F0FE6"
+                    IsVisible="False">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20" MaxWidth="400">
+                    <Path Data="M12,2 L22,20 L2,20 Z M12,9 L12,13 M12,16 L12,17" 
+                          Stroke="#EF4444" 
+                          StrokeThickness="2"
+                          Width="48" Height="48"
+                          HorizontalAlignment="Center"/>
+                    
+                    <TextBlock Text="Initialization Error" 
+                              FontSize="20" 
+                              FontWeight="Bold"
+                              HorizontalAlignment="Center"
+                              Foreground="#EF4444"/>
+                    
+                    <TextBlock Name="ErrorText" 
+                              TextWrapping="Wrap"
+                              TextAlignment="Center"
+                              Foreground="#A0A0A0"/>
+                    
+                    <Button Content="Exit" 
+                            HorizontalAlignment="Center"
+                            Click="OnExitClick"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

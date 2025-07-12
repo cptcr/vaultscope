@@ -1,0 +1,224 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:VaultScope.UI.ViewModels"
+        xmlns:controls="using:VaultScope.UI.Controls"
+        xmlns:views="using:VaultScope.UI.Views"
+        x:Class="VaultScope.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/icon.ico"
+        Title="VaultScope Enterprise - Professional API Security Assessment"
+        Width="1400" Height="900"
+        MinWidth="1200" MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent">
+
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#8B5CF6" Opacity="0.3" BlurRadius="20"/>
+                        </Border.Effect>
+                        <VisualLayerManager>
+                            <ContentPresenter Name="PART_ContentPresenter"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </VisualLayerManager>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </Window.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Grid Grid.Row="0" Background="#0F0F0F">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- App Icon and Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10,0">
+                <Image Source="/Assets/icon.png" Width="24" Height="24"/>
+                <TextBlock Text="VaultScope Enterprise" 
+                          VerticalAlignment="Center" 
+                          FontWeight="SemiBold"
+                          Foreground="#8B5CF6"/>
+            </StackPanel>
+
+            <!-- Drag Area -->
+            <Border Grid.Column="1" Background="Transparent" 
+                    PointerPressed="OnTitleBarPointerPressed"
+                    DoubleTapped="OnTitleBarDoubleTapped"/>
+
+            <!-- Window Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0">
+                <Button Classes="titlebar-button" Click="OnMinimizeClick">
+                    <Path Data="M0,0 L10,0" Stroke="White" StrokeThickness="1"/>
+                </Button>
+                <Button Classes="titlebar-button" Click="OnMaximizeClick">
+                    <Rectangle Width="10" Height="10" Stroke="White" StrokeThickness="1"/>
+                </Button>
+                <Button Classes="titlebar-button close" Click="OnCloseClick">
+                    <Path Data="M0,0 L10,10 M10,0 L0,10" Stroke="White" StrokeThickness="1"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation Sidebar -->
+            <Border Grid.Column="0" Background="#1A1A1A">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- User Profile Section -->
+                    <Border Grid.Row="0" Padding="20" BorderThickness="0,0,0,1" BorderBrush="#2A2A2A">
+                        <StackPanel Spacing="10">
+                            <Border Width="60" Height="60" CornerRadius="30" 
+                                    Background="#8B5CF6" HorizontalAlignment="Center">
+                                <TextBlock Text="VS" FontSize="24" FontWeight="Bold"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Foreground="White"/>
+                            </Border>
+                            <TextBlock Text="Security Professional" 
+                                      HorizontalAlignment="Center" 
+                                      Foreground="#A0A0A0" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Navigation Menu -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="5" Margin="10">
+                            <controls:NavigationButton Icon="{StaticResource DashboardIcon}" 
+                                                      Text="Dashboard" 
+                                                      IsSelected="{Binding IsDashboardSelected}"
+                                                      Command="{Binding NavigateToDashboardCommand}"/>
+                            
+                            <controls:NavigationButton Icon="{StaticResource ScannerIcon}" 
+                                                      Text="Security Scanner" 
+                                                      IsSelected="{Binding IsScannerSelected}"
+                                                      Command="{Binding NavigateToScannerCommand}"/>
+                            
+                            <controls:NavigationButton Icon="{StaticResource ReportsIcon}" 
+                                                      Text="Reports" 
+                                                      IsSelected="{Binding IsReportsSelected}"
+                                                      Command="{Binding NavigateToReportsCommand}"/>
+                            
+                            <controls:NavigationButton Icon="{StaticResource HistoryIcon}" 
+                                                      Text="Scan History" 
+                                                      IsSelected="{Binding IsHistorySelected}"
+                                                      Command="{Binding NavigateToHistoryCommand}"/>
+                            
+                            <Rectangle Height="1" Fill="#2A2A2A" Margin="0,10"/>
+                            
+                            <controls:NavigationButton Icon="{StaticResource SettingsIcon}" 
+                                                      Text="Settings" 
+                                                      IsSelected="{Binding IsSettingsSelected}"
+                                                      Command="{Binding NavigateToSettingsCommand}"/>
+                            
+                            <controls:NavigationButton Icon="{StaticResource HelpIcon}" 
+                                                      Text="Help & Support" 
+                                                      Command="{Binding ShowHelpCommand}"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Version Info -->
+                    <Border Grid.Row="2" Padding="20,10" BorderThickness="0,1,0,0" BorderBrush="#2A2A2A">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="VaultScope Enterprise" FontSize="11" Foreground="#606060"/>
+                            <TextBlock Text="Version 1.0.0" FontSize="10" Foreground="#505050"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Separator -->
+            <Rectangle Grid.Column="1" Fill="#2A2A2A"/>
+
+            <!-- Content Area -->
+            <Grid Grid.Column="2" Background="#0F0F0F">
+                <!-- Page Transition -->
+                <TransitioningContentControl Content="{Binding CurrentPage}"
+                                           Duration="0:0:0.3">
+                    <TransitioningContentControl.PageTransition>
+                        <PageSlide Duration="0:0:0.3" Orientation="Horizontal"/>
+                    </TransitioningContentControl.PageTransition>
+                </TransitioningContentControl>
+
+                <!-- Notification Overlay -->
+                <controls:NotificationContainer VerticalAlignment="Top" 
+                                              HorizontalAlignment="Right" 
+                                              Margin="20"/>
+            </Grid>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#1A1A1A" BorderThickness="0,1,0,0" BorderBrush="#2A2A2A">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Status Text -->
+                <TextBlock Grid.Column="0" Text="{Binding StatusText}" 
+                          VerticalAlignment="Center" Margin="10,0"
+                          Foreground="#A0A0A0" FontSize="12"/>
+
+                <!-- Connection Status -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10,0">
+                    <Ellipse Width="8" Height="8" Fill="{Binding ConnectionStatusColor}"/>
+                    <TextBlock Text="{Binding ConnectionStatus}" 
+                              VerticalAlignment="Center" 
+                              Foreground="#A0A0A0" FontSize="12"/>
+                </StackPanel>
+
+                <!-- Scan Activity -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="10,0"
+                           IsVisible="{Binding IsScanning}">
+                    <controls:AnimatedSpinner Width="16" Height="16"/>
+                    <TextBlock Text="Scanning..." 
+                              VerticalAlignment="Center" 
+                              Foreground="#8B5CF6" FontSize="12"/>
+                </StackPanel>
+
+                <!-- Current Time -->
+                <TextBlock Grid.Column="3" Text="{Binding CurrentTime}" 
+                          VerticalAlignment="Center" Margin="10,0"
+                          Foreground="#A0A0A0" FontSize="12"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

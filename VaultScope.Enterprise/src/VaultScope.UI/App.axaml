@@ -1,0 +1,63 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="VaultScope.UI.App"
+             xmlns:local="using:VaultScope.UI"
+             RequestedThemeVariant="Dark">
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Theme resources -->
+                <ResourceInclude Source="/Themes/DarkPurpleTheme.axaml"/>
+                <ResourceInclude Source="/Themes/Colors.axaml"/>
+                <ResourceInclude Source="/Themes/Animations.axaml"/>
+                
+                <!-- Icon resources -->
+                <ResourceInclude Source="/Assets/Icons.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Dark" 
+                                     Accent="#8B5CF6" 
+                                     AltHigh="#1A1A1A"
+                                     AltLow="#0F0F0F"
+                                     AltMedium="#151515"
+                                     AltMediumHigh="#181818"
+                                     AltMediumLow="#121212"
+                                     BaseHigh="#FFFFFF"
+                                     BaseLow="#4A4A4A"
+                                     BaseMedium="#A0A0A0"
+                                     BaseMediumHigh="#C0C0C0"
+                                     BaseMediumLow="#707070"
+                                     ChromeAltLow="#1A1A1A"
+                                     ChromeBlackHigh="#000000"
+                                     ChromeBlackLow="#1A1A1A"
+                                     ChromeBlackMedium="#0A0A0A"
+                                     ChromeBlackMediumLow="#0F0F0F"
+                                     ChromeDisabledHigh="#333333"
+                                     ChromeDisabledLow="#858585"
+                                     ChromeGray="#767676"
+                                     ChromeHigh="#767676"
+                                     ChromeLow="#151515"
+                                     ChromeMedium="#1F1F1F"
+                                     ChromeMediumLow="#2B2B2B"
+                                     ChromeWhite="#FFFFFF"
+                                     ListLow="#1F1F1F"
+                                     ListMedium="#333333"
+                                     RegionColor="#0F0F0F"/>
+            </FluentTheme.Palettes>
+        </FluentTheme>
+        
+        <StyleInclude Source="/Themes/Controls/ButtonStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/TextBoxStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/DataGridStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/TabControlStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/ProgressBarStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/ScrollBarStyles.axaml"/>
+        <StyleInclude Source="/Themes/Controls/TooltipStyles.axaml"/>
+    </Application.Styles>
+</Application>
