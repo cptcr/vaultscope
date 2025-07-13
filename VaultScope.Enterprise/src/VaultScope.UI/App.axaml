@@ -28,41 +28,119 @@
                 <ResourceInclude Source="/Resources/Icons.axaml"/>
             </ResourceDictionary.MergedDictionaries>
             
-            <!-- Professional Enterprise Colors -->
-        <Color x:Key="PrimaryColor">#4A5568</Color>
-        <Color x:Key="BackgroundPrimary">#0A0A0B</Color>
-        <Color x:Key="TextPrimary">#F7FAFC</Color>
-        <Color x:Key="CriticalColor">#E53E3E</Color>
+            <!-- REFINED ENTERPRISE COLOR PALETTE -->
+        <!-- Base Colors -->
+        <Color x:Key="BackgroundPrimary">#0F0F11</Color>
+        <Color x:Key="BackgroundSecondary">#1A1A1E</Color>
+        <Color x:Key="BackgroundTertiary">#25252A</Color>
+        <Color x:Key="SurfacePrimary">#2A2D35</Color>
+        <Color x:Key="SurfaceSecondary">#373943</Color>
+        
+        <!-- Brand Colors -->
+        <Color x:Key="PrimaryColor">#6B73FF</Color>
+        <Color x:Key="PrimaryLight">#8B93FF</Color>
+        <Color x:Key="PrimaryDark">#4B53DF</Color>
+        <Color x:Key="AccentColor">#00D9FF</Color>
+        <Color x:Key="AccentLight">#33E1FF</Color>
+        
+        <!-- Text Colors -->
+        <Color x:Key="TextPrimary">#FFFFFF</Color>
+        <Color x:Key="TextSecondary">#B0B3B8</Color>
+        <Color x:Key="TextTertiary">#6B7280</Color>
+        <Color x:Key="TextMuted">#4B5563</Color>
+        
+        <!-- Status Colors -->
+        <Color x:Key="SuccessColor">#00C851</Color>
+        <Color x:Key="WarningColor">#FFB347</Color>
+        <Color x:Key="CriticalColor">#FF5252</Color>
+        <Color x:Key="InfoColor">#2196F3</Color>
+        <Color x:Key="LowColor">#00C851</Color>
+        
+        <!-- Legacy Compatibility -->
         <Color x:Key="WhiteTextColor">#FFFFFF</Color>
-        <Color x:Key="SuccessColor">#10B981</Color>
-        <Color x:Key="WarningColor">#F59E0B</Color>
-        <Color x:Key="InfoColor">#3B82F6</Color>
-        <Color x:Key="LowColor">#10B981</Color>
         
-        <!-- Professional Brushes -->
-        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0A0A0B"/>
-        <SolidColorBrush x:Key="GlassBrush" Color="#15FFFFFF"/>
-        <SolidColorBrush x:Key="GlassCardBrush" Color="#10FFFFFF"/>
-        <SolidColorBrush x:Key="GlassHoverBrush" Color="#25FFFFFF"/>
-        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F7FAFC"/>
-        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A0AEC0"/>
-        <SolidColorBrush x:Key="CriticalBrush" Color="#E53E3E"/>
-        <SolidColorBrush x:Key="SuccessBrush" Color="#10B981"/>
-        <SolidColorBrush x:Key="WarningBrush" Color="#F59E0B"/>
-        <SolidColorBrush x:Key="InfoBrush" Color="#3B82F6"/>
+        <!-- SOPHISTICATED BRUSHES -->
+        <!-- Backgrounds -->
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0F0F11"/>
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1A1A1E"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#2A2D35"/>
         
-        <!-- Professional Gradients -->
-        <LinearGradientBrush x:Key="SecurityGradientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#4A5568" Offset="0"/>
-            <GradientStop Color="#2D3748" Offset="1"/>
-        </LinearGradientBrush>
+        <!-- Glass Effects -->
+        <SolidColorBrush x:Key="GlassBrush" Color="#20FFFFFF"/>
+        <SolidColorBrush x:Key="GlassCardBrush" Color="#15FFFFFF"/>
+        <SolidColorBrush x:Key="GlassHoverBrush" Color="#30FFFFFF"/>
+        <SolidColorBrush x:Key="GlassActiveBrush" Color="#40FFFFFF"/>
+        
+        <!-- Text Brushes -->
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#B0B3B8"/>
+        <SolidColorBrush x:Key="TertiaryTextBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#4B5563"/>
+        
+        <!-- Status Brushes -->
+        <SolidColorBrush x:Key="SuccessBrush" Color="#00C851"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="#FFB347"/>
+        <SolidColorBrush x:Key="CriticalBrush" Color="#FF5252"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="#2196F3"/>
+        
+        <!-- MODERN GRADIENTS -->
         <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#4A5568" Offset="0"/>
-            <GradientStop Color="#718096" Offset="1"/>
+            <GradientStop Color="#6B73FF" Offset="0"/>
+            <GradientStop Color="#4B53DF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SecurityGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#6B73FF" Offset="0"/>
+            <GradientStop Color="#00D9FF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#00D9FF" Offset="0"/>
+            <GradientStop Color="#33E1FF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SuccessGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#00C851" Offset="0"/>
+            <GradientStop Color="#00E676" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="WarningGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FFB347" Offset="0"/>
+            <GradientStop Color="#FFC947" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="CriticalGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF5252" Offset="0"/>
+            <GradientStop Color="#FF1744" Offset="1"/>
         </LinearGradientBrush>
         
-        <!-- Professional Typography -->
-        <FontFamily x:Key="PrimaryFontFamily">Segoe UI</FontFamily>
+        <!-- PROFESSIONAL TYPOGRAPHY -->
+        <FontFamily x:Key="PrimaryFontFamily">Segoe UI Variable</FontFamily>
+        <FontFamily x:Key="SecondaryFontFamily">Segoe UI</FontFamily>
+        <FontFamily x:Key="MonoFontFamily">Cascadia Code</FontFamily>
+        
+        <!-- Typography Scales -->
+        <x:Double x:Key="FontSizeHuge">32</x:Double>
+        <x:Double x:Key="FontSizeXLarge">28</x:Double>
+        <x:Double x:Key="FontSizeLarge">24</x:Double>
+        <x:Double x:Key="FontSizeMediumLarge">20</x:Double>
+        <x:Double x:Key="FontSizeMedium">16</x:Double>
+        <x:Double x:Key="FontSizeSmallMedium">14</x:Double>
+        <x:Double x:Key="FontSizeSmall">12</x:Double>
+        <x:Double x:Key="FontSizeXSmall">10</x:Double>
+        
+        <!-- Spacing System -->
+        <x:Double x:Key="SpacingXXS">4</x:Double>
+        <x:Double x:Key="SpacingXS">8</x:Double>
+        <x:Double x:Key="SpacingS">12</x:Double>
+        <x:Double x:Key="SpacingM">16</x:Double>
+        <x:Double x:Key="SpacingL">24</x:Double>
+        <x:Double x:Key="SpacingXL">32</x:Double>
+        <x:Double x:Key="SpacingXXL">48</x:Double>
+        <x:Double x:Key="SpacingHuge">64</x:Double>
+        
+        <!-- Border Radius System -->
+        <CornerRadius x:Key="RadiusXS">4</CornerRadius>
+        <CornerRadius x:Key="RadiusS">6</CornerRadius>
+        <CornerRadius x:Key="RadiusM">8</CornerRadius>
+        <CornerRadius x:Key="RadiusL">12</CornerRadius>
+        <CornerRadius x:Key="RadiusXL">16</CornerRadius>
+        <CornerRadius x:Key="RadiusXXL">24</CornerRadius>
         
         <!-- Professional Icons -->
         <PathGeometry x:Key="ShieldCheckIcon">M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z</PathGeometry>
@@ -113,21 +191,40 @@
             </FluentTheme.Palettes>
         </FluentTheme>
         
-        <!-- Modern Navigation Styles -->
+        <!-- REFINED NAVIGATION STYLES -->
         <Style Selector="Button.nav-button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="{StaticResource SpacingS},{StaticResource SpacingXS}"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusM}"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmallMedium}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
         </Style>
         <Style Selector="Button.nav-button:pointerover">
-            <Setter Property="Background" Value="#2A2A2A"/>
+            <Setter Property="Background" Value="{StaticResource GlassBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="RenderTransform" Value="translateX(4px)"/>
         </Style>
         <Style Selector="Button.nav-button:pressed">
-            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="Background" Value="{StaticResource GlassHoverBrush}"/>
+            <Setter Property="RenderTransform" Value="translateX(2px) scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.nav-button.active">
+            <Setter Property="Background" Value="{StaticResource PrimaryGradientBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="RenderTransform" Value="translateX(6px)"/>
         </Style>
         
         <Style Selector="Button.nav-sub-button">

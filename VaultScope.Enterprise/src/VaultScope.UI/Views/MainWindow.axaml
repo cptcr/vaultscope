@@ -15,79 +15,83 @@
     <Window.Styles>
         <!-- 🎨 PROFESSIONAL ENTERPRISE STYLES -->
         
-        <!-- Professional Navigation Button -->
+        <!-- REFINED ENTERPRISE NAVIGATION -->
         <Style Selector="Button.nav-enterprise">
-            <Setter Property="Background" Value="{StaticResource GlassBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
-            <Setter Property="BorderBrush" Value="#30FFFFFF"/>
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource GlassBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="20,16"/>
-            <Setter Property="Margin" Value="8,4"/>
-            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="{StaticResource SpacingM},{StaticResource SpacingS}"/>
+            <Setter Property="Margin" Value="{StaticResource SpacingXXS},2"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusL}"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
             <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmallMedium}"/>
+            <Setter Property="MinHeight" Value="52"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Transitions">
                 <Transitions>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.3" Easing="CubicEaseOut"/>
-                    <BrushTransition Property="Background" Duration="0:0:0.3" Easing="CubicEaseOut"/>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.3" Easing="CubicEaseOut"/>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.25" Easing="CubicEaseOut"/>
                 </Transitions>
             </Setter>
         </Style>
 
         <Style Selector="Button.nav-enterprise:pointerover">
-            <Setter Property="Background" Value="{StaticResource GlassHoverBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
-            <Setter Property="RenderTransform" Value="translateX(4px) scale(1.02)"/>
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="RenderTransform" Value="translateX(8px) scale(1.02)"/>
+            <Setter Property="Opacity" Value="0.95"/>
         </Style>
 
         <Style Selector="Button.nav-enterprise.active">
             <Setter Property="Background" Value="{StaticResource PrimaryGradientBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
-            <Setter Property="RenderTransform" Value="translateX(2px)"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="RenderTransform" Value="translateX(12px)"/>
         </Style>
 
         <Style Selector="Button.nav-enterprise:pressed">
-            <Setter Property="RenderTransform" Value="translateX(1px) scale(0.98)"/>
+            <Setter Property="RenderTransform" Value="translateX(4px) scale(0.98)"/>
         </Style>
 
-        <!-- Professional Action Button -->
+        <!-- MODERN ACTION BUTTON -->
         <Style Selector="Button.action-enterprise">
             <Setter Property="Background" Value="{StaticResource SecurityGradientBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="20,14"/>
-            <Setter Property="Margin" Value="8,6"/>
-            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="{StaticResource SpacingL},{StaticResource SpacingS}"/>
+            <Setter Property="Margin" Value="{StaticResource SpacingXXS},{StaticResource SpacingXXS}"/>
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusL}"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmallMedium}"/>
+            <Setter Property="MinHeight" Value="48"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Transitions">
                 <Transitions>
                     <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3" Easing="CubicEaseOut"/>
                     <DoubleTransition Property="Opacity" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.3" Easing="CubicEaseOut"/>
                 </Transitions>
             </Setter>
         </Style>
 
         <Style Selector="Button.action-enterprise:pointerover">
-            <Setter Property="RenderTransform" Value="scale(1.03) translateY(-2px)"/>
-            <Setter Property="Opacity" Value="0.95"/>
+            <Setter Property="RenderTransform" Value="scale(1.05) translateY(-3px)"/>
+            <Setter Property="Opacity" Value="0.9"/>
         </Style>
 
         <Style Selector="Button.action-enterprise:pressed">
-            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+            <Setter Property="RenderTransform" Value="scale(0.95) translateY(1px)"/>
         </Style>
     </Window.Styles>
 
@@ -98,12 +102,12 @@
             <RowDefinition Height="32"/>    <!-- Status bar -->
         </Grid.RowDefinitions>
 
-        <!-- 🎨 PROFESSIONAL ENTERPRISE TITLE BAR -->
+        <!-- 🎨 REFINED TITLE BAR -->
         <Border Grid.Row="0" 
-                Background="{StaticResource GlassCardBrush}"
+                Background="{StaticResource CardBackgroundBrush}"
                 BorderThickness="0,0,0,1"
-                BorderBrush="{StaticResource PrimaryColor}"
-                Height="50">
+                BorderBrush="{StaticResource GlassBrush}"
+                Height="56">
             <Border.Effect>
                 <DropShadowEffect Color="{StaticResource PrimaryColor}" 
                                 Opacity="0.15" 
@@ -182,16 +186,16 @@
         <!-- 🏗️ PROFESSIONAL MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="360"/>  <!-- Modern responsive sidebar -->
+                <ColumnDefinition Width="320"/>  <!-- Refined sidebar width -->
                 <ColumnDefinition Width="1"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 🎯 PROFESSIONAL NAVIGATION SIDEBAR -->
+            <!-- 🎯 REFINED NAVIGATION SIDEBAR -->
             <Border Grid.Column="0" 
-                    Background="{StaticResource GlassCardBrush}"
+                    Background="{StaticResource CardBackgroundBrush}"
                     BorderThickness="0,0,1,0"
-                    BorderBrush="{StaticResource PrimaryColor}">
+                    BorderBrush="{StaticResource GlassBrush}">
                 <Border.Effect>
                     <DropShadowEffect Color="#000000" 
                                     Opacity="0.1" 
@@ -206,12 +210,12 @@
                         <RowDefinition Height="Auto"/>  <!-- Professional Footer -->
                     </Grid.RowDefinitions>
 
-                    <!-- 👤 PROFESSIONAL USER PROFILE -->
+                    <!-- 👤 REFINED USER PROFILE -->
                     <Border Grid.Row="0" 
-                            Padding="24,20"
+                            Padding="{StaticResource SpacingL},{StaticResource SpacingL}"
                             BorderThickness="0,0,0,1" 
-                            BorderBrush="#20FFFFFF"
-                            Background="{StaticResource GlassBrush}">
+                            BorderBrush="{StaticResource GlassBrush}"
+                            Background="{StaticResource SurfaceBrush}">
                         <StackPanel Spacing="14">
                             <!-- Professional Avatar -->
                             <Border Width="72" Height="72" 
@@ -257,11 +261,11 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- 🧭 PROFESSIONAL NAVIGATION -->
+                    <!-- 🧭 REFINED NAVIGATION -->
                     <ScrollViewer Grid.Row="1" 
                                  VerticalScrollBarVisibility="Auto"
                                  HorizontalScrollBarVisibility="Disabled"
-                                 Padding="16,20">
+                                 Padding="{StaticResource SpacingM},{StaticResource SpacingL}">
                         <StackPanel Spacing="8">
                             
                             <!-- Security Operations -->
@@ -443,12 +447,12 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!-- 📊 PROFESSIONAL FOOTER -->
+                    <!-- 📊 REFINED FOOTER -->
                     <Border Grid.Row="2" 
-                            Padding="20,14" 
+                            Padding="{StaticResource SpacingL},{StaticResource SpacingS}" 
                             BorderThickness="0,1,0,0" 
-                            BorderBrush="#20FFFFFF"
-                            Background="{StaticResource GlassBrush}">
+                            BorderBrush="{StaticResource GlassBrush}"
+                            Background="{StaticResource SurfaceBrush}">
                         <StackPanel Spacing="6">
                             <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock Grid.Column="0"
@@ -476,17 +480,14 @@
             </Border>
 
             <!-- Content Separator -->
-            <Rectangle Grid.Column="1" Fill="{StaticResource PrimaryColor}" Opacity="0.3"/>
+            <Rectangle Grid.Column="1" Fill="{StaticResource GlassBrush}" Opacity="0.8"/>
 
-            <!-- 🎨 PROFESSIONAL CONTENT AREA -->
+            <!-- 🎨 REFINED CONTENT AREA -->
             <Grid Grid.Column="2" Background="{StaticResource AppBackgroundBrush}">
-                <!-- Professional Glass Overlay -->
-                <Border Background="{StaticResource GlassBrush}" 
-                        Opacity="0.05"/>
                         
-                <!-- Professional Page Transitions -->
+                <!-- Smooth Page Transitions -->
                 <TransitioningContentControl Content="{Binding CurrentPage}" 
-                                           Margin="20">
+                                           Margin="{StaticResource SpacingXL}">
                     <TransitioningContentControl.PageTransition>
                         <PageSlide Duration="0:0:0.4" Orientation="Horizontal"/>
                     </TransitioningContentControl.PageTransition>
@@ -494,11 +495,11 @@
             </Grid>
         </Grid>
 
-        <!-- 📊 PROFESSIONAL STATUS BAR -->
+        <!-- 📊 REFINED STATUS BAR -->
         <Border Grid.Row="2" 
-                Background="{StaticResource GlassCardBrush}"
+                Background="{StaticResource CardBackgroundBrush}"
                 BorderThickness="0,1,0,0"
-                BorderBrush="{StaticResource PrimaryColor}">
+                BorderBrush="{StaticResource GlassBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

@@ -13,38 +13,40 @@
     </Design.DataContext>
     
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Spacing="32" Margin="40">
+        <StackPanel Spacing="{StaticResource SpacingXXL}" Margin="{StaticResource SpacingXL}">
             
-            <!-- SECURITY OPERATIONS HEADER -->
+            <!-- REFINED OPERATIONS HEADER -->
             <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0" Spacing="12">
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <!-- Premium Security Icon -->
+                <StackPanel Grid.Column="0" Spacing="{StaticResource SpacingS}">
+                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpacingM}">
+                        <!-- Modern Security Icon -->
                         <Border Background="{StaticResource SecurityGradientBrush}"
-                                Width="48" Height="48" 
-                                CornerRadius="14">
+                                Width="56" Height="56" 
+                                CornerRadius="{StaticResource RadiusXL}">
                             <Border.Effect>
                                 <DropShadowEffect Color="{StaticResource PrimaryColor}" 
-                                                Opacity="0.4" 
-                                                BlurRadius="12"
+                                                Opacity="0.3" 
+                                                BlurRadius="16"
                                                 OffsetY="4"/>
                             </Border.Effect>
                             <Path Data="{StaticResource ShieldIcon}" 
-                                  Fill="White" Width="24" Height="24" 
+                                  Fill="White" Width="28" Height="28" 
                                   Stretch="Uniform"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"/>
                         </Border>
                         
-                        <StackPanel VerticalAlignment="Center" Spacing="4">
+                        <StackPanel VerticalAlignment="Center" Spacing="{StaticResource SpacingXXS}">
                             <TextBlock Text="Security Operations Center" 
-                                      Classes="HeaderLarge"
-                                      FontSize="28" FontWeight="Medium" 
-                                      Foreground="{StaticResource TextPrimary}"/>
-                            <TextBlock Text="Threat Assessment • Vulnerability Management • Real-time Monitoring" 
-                                      Classes="BodyMedium"
-                                      FontSize="12" FontWeight="Normal"
-                                      Foreground="{StaticResource TextTertiary}"/>
+                                      FontFamily="{StaticResource PrimaryFontFamily}"
+                                      FontSize="{StaticResource FontSizeXLarge}" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Text="Advanced Threat Detection • Vulnerability Assessment • Real-time Analytics" 
+                                      FontFamily="{StaticResource SecondaryFontFamily}"
+                                      FontSize="{StaticResource FontSizeSmall}" 
+                                      FontWeight="Normal"
+                                      Foreground="{StaticResource TertiaryTextBrush}"/>
                         </StackPanel>
                     </StackPanel>
                     <TextBlock Text="Monitor your application security posture and recent scan results in real-time" 
