@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:VaultScope.UI.ViewModels"
-             xmlns:controls="using:VaultScope.UI.Controls"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="VaultScope.UI.Views.ScannerView"
              x:DataType="vm:ScannerViewModel">
@@ -12,185 +11,559 @@
         <vm:ScannerViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*">
-        <!-- Header -->
-        <Border Grid.Row="0" Classes="page-header">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0">
-                    <TextBlock Classes="page-title" Text="Security Scanner" />
-                    <TextBlock Classes="page-subtitle" Text="Scan your localhost applications for vulnerabilities" />
-                </StackPanel>
-                
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button Classes="primary-button" Command="{Binding StartScanCommand}"
-                            IsVisible="{Binding !IsScanning}">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Path Data="{StaticResource PlayIcon}" Fill="{DynamicResource PrimaryButtonForeground}" 
-                                  Width="16" Height="16" />
-                            <TextBlock Text="Start Scan" />
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="danger-button" Command="{Binding StopScanCommand}"
-                            IsVisible="{Binding IsScanning}">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Path Data="{StaticResource StopIcon}" Fill="{DynamicResource DangerButtonForeground}" 
-                                  Width="16" Height="16" />
-                            <TextBlock Text="Stop Scan" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-        
-        <!-- Content -->
-        <Grid Grid.Row="1" ColumnDefinitions="400,*" ColumnSpacing="20" Margin="20">
-            <!-- Configuration Panel -->
-            <ScrollViewer Grid.Column="0">
-                <StackPanel Spacing="20">
-                    <!-- Target Configuration -->
-                    <Border Classes="card">
-                        <StackPanel Spacing="15">
-                            <TextBlock Classes="card-title" Text="Target Configuration" />
-                            
-                            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                                <TextBlock Grid.Row="0" Text="Target URL" Classes="input-label" />
-                                <TextBox Grid.Row="1" Text="{Binding TargetUrl}" 
-                                         Watermark="http://localhost:3000"
-                                         Classes="modern-input" />
-                                <TextBlock Grid.Row="2" Text="Only localhost URLs are allowed for security scanning"
-                                           Classes="input-hint" />
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-                    
-                    <!-- Authentication -->
-                    <Border Classes="card">
-                        <StackPanel Spacing="15">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0" Classes="card-title" Text="Authentication" />
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding IncludeAuthentication}" />
-                            </Grid>
-                            
-                            <StackPanel Spacing="10" IsVisible="{Binding IncludeAuthentication}">
-                                <ComboBox SelectedItem="{Binding AuthenticationType}" 
-                                          Classes="modern-input" HorizontalAlignment="Stretch">
-                                    <ComboBoxItem>None</ComboBoxItem>
-                                    <ComboBoxItem>Bearer</ComboBoxItem>
-                                    <ComboBoxItem>Basic</ComboBoxItem>
-                                    <ComboBoxItem>ApiKey</ComboBoxItem>
-                                </ComboBox>
-                                
-                                <TextBox Text="{Binding AuthenticationToken}" 
-                                         Watermark="Enter authentication token"
-                                         PasswordChar="•" Classes="modern-input" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    
-                    <!-- Scan Options -->
-                    <Border Classes="card">
-                        <StackPanel Spacing="15">
-                            <TextBlock Classes="card-title" Text="Scan Options" />
-                            
-                            <StackPanel Spacing="10">
-                                <CheckBox IsChecked="{Binding TestAllHttpMethods}" 
-                                          Content="Test all HTTP methods" />
-                                <CheckBox IsChecked="{Binding TestCommonEndpoints}" 
-                                          Content="Test common endpoints" />
-                                <CheckBox IsChecked="{Binding GenerateDetailedReport}" 
-                                          Content="Generate detailed report" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    
-                    <!-- Vulnerability Detectors -->
-                    <Border Classes="card">
-                        <StackPanel Spacing="15">
-                            <TextBlock Classes="card-title" Text="Vulnerability Detectors" />
-                            
-                            <StackPanel Spacing="10">
-                                <CheckBox IsChecked="{Binding EnableSqlInjection}" 
-                                          Content="SQL Injection" />
-                                <CheckBox IsChecked="{Binding EnableXss}" 
-                                          Content="Cross-Site Scripting (XSS)" />
-                                <CheckBox IsChecked="{Binding EnableCommandInjection}" 
-                                          Content="Command Injection" />
-                                <CheckBox IsChecked="{Binding EnableXxe}" 
-                                          Content="XML External Entity (XXE)" />
-                                <CheckBox IsChecked="{Binding EnableSsrf}" 
-                                          Content="Server-Side Request Forgery (SSRF)" />
-                                <CheckBox IsChecked="{Binding EnablePathTraversal}" 
-                                          Content="Path Traversal" />
-                                <CheckBox IsChecked="{Binding EnableAuthBypass}" 
-                                          Content="Authentication Bypass" />
-                                <CheckBox IsChecked="{Binding EnableSecurityHeaders}" 
-                                          Content="Security Headers" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="24" Margin="32">
             
-            <!-- Scan Progress and Log -->
-            <Grid Grid.Column="1" RowDefinitions="Auto,*">
-                <!-- Progress Section -->
-                <Border Grid.Row="0" Classes="card" Margin="0,0,0,20" IsVisible="{Binding IsScanning}">
-                    <StackPanel Spacing="15">
-                        <TextBlock Classes="card-title" Text="Scan Progress" />
-                        
-                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                            <ProgressBar Grid.Row="0" Value="{Binding ScanProgress}" 
-                                         Maximum="100" Height="8" Classes="modern-progress" />
-                            
-                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0" Text="{Binding CurrentOperation}" 
-                                           Classes="progress-text" />
-                                <TextBlock Grid.Column="1" Text="{Binding ScanProgress, StringFormat='{}{0:F0}%'}" 
-                                           Classes="progress-percentage" />
-                            </Grid>
-                            
-                            <controls:AnimatedSpinner Grid.Row="2" Size="Small" />
-                        </Grid>
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Path Data="{StaticResource ScanIcon}" 
+                              Fill="#8B5CF6" Width="32" Height="32" 
+                              Stretch="Uniform"/>
+                        <TextBlock Text="Security Scanner" 
+                                  FontSize="32" FontWeight="Bold" 
+                                  Foreground="#FFFFFF" VerticalAlignment="Center"/>
                     </StackPanel>
-                </Border>
+                    <TextBlock Text="Configure and run comprehensive security scans on your applications" 
+                              FontSize="16" 
+                              Foreground="#A0A0A0"/>
+                </StackPanel>
                 
-                <!-- Scan Log -->
-                <Border Grid.Row="1" Classes="card">
-                    <Grid RowDefinitions="Auto,*,Auto">
-                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,15">
-                            <TextBlock Grid.Column="0" Classes="card-title" Text="Scan Log" />
-                            <Button Grid.Column="1" Classes="text-button" Command="{Binding ClearLogCommand}">
-                                <TextBlock Text="Clear" />
-                            </Button>
-                        </Grid>
+                <Button Grid.Column="1" 
+                        Background="#10B981" 
+                        Foreground="White"
+                        Padding="16,12"
+                        CornerRadius="8"
+                        FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Path Data="{StaticResource HistoryIcon}" 
+                              Fill="White" Width="16" Height="16" 
+                              Stretch="Uniform"/>
+                        <TextBlock Text="Scan History"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Main Content Grid -->
+            <Grid ColumnDefinitions="2*,*">
+                
+                <!-- Scan Configuration Panel -->
+                <Border Grid.Column="0" 
+                        Background="#1F1F1F" 
+                        CornerRadius="12" 
+                        Padding="32"
+                        BorderBrush="#2A2A2A" 
+                        BorderThickness="1"
+                        Margin="0,0,12,0">
+                    <StackPanel Spacing="32">
                         
-                        <Border Grid.Row="1" Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding ScanLog}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" FontFamily="Consolas,Courier New,monospace"
-                                                       FontSize="12" Margin="0,2" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Border>
-                        
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,15,0,0"
-                                    IsVisible="{Binding CurrentScanResult, Converter={x:Static ObjectConverters.IsNotNull}}">
-                            <Button Classes="primary-button" Command="{Binding ViewLastResultCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Path Data="{StaticResource ReportIcon}" Fill="{DynamicResource PrimaryButtonForeground}" 
-                                          Width="16" Height="16" />
-                                    <TextBlock Text="View Results" />
+                        <!-- Target Configuration -->
+                        <StackPanel Spacing="20">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Path Data="{StaticResource SearchIcon}" 
+                                      Fill="#8B5CF6" Width="20" Height="20" 
+                                      Stretch="Uniform"/>
+                                <TextBlock Text="Target Configuration" 
+                                          FontSize="20" FontWeight="SemiBold" 
+                                          Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="16">
+                                <!-- URL Input -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Target URL *" 
+                                              FontSize="14" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#FFFFFF"/>
+                                    <TextBox Text="{Binding TargetUrl}" 
+                                            Watermark="https://api.example.com"
+                                            FontSize="14"
+                                            Padding="12"
+                                            Background="#2A2A2A"
+                                            Foreground="#FFFFFF"
+                                            BorderBrush="#8B5CF6"
+                                            BorderThickness="2"
+                                            CornerRadius="6"/>
+                                    <TextBlock Text="Enter the base URL of the application you want to scan" 
+                                              FontSize="12" 
+                                              Foreground="#A0A0A0"/>
+                                </StackPanel>
+
+                                <!-- Scan Type Selection -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Scan Type" 
+                                              FontSize="14" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#FFFFFF"/>
+                                    <ComboBox SelectedIndex="0"
+                                             FontSize="14"
+                                             Padding="12"
+                                             Background="#2A2A2A"
+                                             Foreground="#FFFFFF"
+                                             BorderBrush="#8B5CF6"
+                                             BorderThickness="2"
+                                             CornerRadius="6">
+                                        <ComboBoxItem Content="Quick Scan (5-10 minutes)"/>
+                                        <ComboBoxItem Content="Deep Scan (30-60 minutes)"/>
+                                        <ComboBoxItem Content="Enterprise Scan (2-4 hours)"/>
+                                        <ComboBoxItem Content="Custom Configuration"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Authentication -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Authentication (Optional)" 
+                                              FontSize="14" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#FFFFFF"/>
+                                    <Grid ColumnDefinitions="*,*">
+                                        <TextBox Grid.Column="0" 
+                                                Watermark="Username/API Key"
+                                                FontSize="14"
+                                                Padding="12"
+                                                Background="#2A2A2A"
+                                                Foreground="#FFFFFF"
+                                                BorderBrush="#2A2A2A"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Margin="0,0,6,0"/>
+                                        <TextBox Grid.Column="1" 
+                                                Watermark="Password/Token"
+                                                PasswordChar="*"
+                                                FontSize="14"
+                                                Padding="12"
+                                                Background="#2A2A2A"
+                                                Foreground="#FFFFFF"
+                                                BorderBrush="#2A2A2A"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Margin="6,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Scan Options -->
+                        <StackPanel Spacing="20">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Path Data="{StaticResource SettingsIcon}" 
+                                      Fill="#8B5CF6" Width="20" Height="20" 
+                                      Stretch="Uniform"/>
+                                <TextBlock Text="Scan Options" 
+                                          FontSize="20" FontWeight="SemiBold" 
+                                          Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <Grid ColumnDefinitions="*,*">
+                                <!-- Vulnerability Types -->
+                                <StackPanel Grid.Column="0" Spacing="12" Margin="0,0,12,0">
+                                    <TextBlock Text="Vulnerability Types" 
+                                              FontSize="14" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#A0A0A0"/>
+                                    <StackPanel Spacing="8">
+                                        <CheckBox Content="SQL Injection" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Cross-Site Scripting (XSS)" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Command Injection" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Authentication Issues" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Authorization Flaws" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Path Traversal" IsChecked="False" Foreground="#FFFFFF"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Advanced Options -->
+                                <StackPanel Grid.Column="1" Spacing="12" Margin="12,0,0,0">
+                                    <TextBlock Text="Advanced Options" 
+                                              FontSize="14" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#A0A0A0"/>
+                                    <StackPanel Spacing="8">
+                                        <CheckBox Content="Follow redirects" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Use session cookies" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Respect robots.txt" IsChecked="False" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Aggressive scanning" IsChecked="False" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Generate detailed report" IsChecked="True" Foreground="#FFFFFF"/>
+                                        <CheckBox Content="Email notifications" IsChecked="False" Foreground="#FFFFFF"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Action Buttons -->
+                        <Grid ColumnDefinitions="2*,*">
+                            <Button Grid.Column="0"
+                                    Background="#8B5CF6" 
+                                    Foreground="White"
+                                    Padding="20,16"
+                                    CornerRadius="8"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Margin="0,0,8,0"
+                                    Command="{Binding StartScanCommand}"
+                                    IsEnabled="{Binding !IsScanning}">
+                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                    <TextBlock Text="🚀" FontSize="20"/>
+                                    <TextBlock Text="Start Security Scan"/>
                                 </StackPanel>
                             </Button>
-                        </StackPanel>
-                    </Grid>
+                            
+                            <Button Grid.Column="1"
+                                    Background="#2A2A2A"
+                                    Foreground="#8B5CF6"
+                                    Padding="12,16"
+                                    CornerRadius="8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Margin="8,0,0,0"
+                                    Command="{Binding LoadExampleDataCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                    <TextBlock Text="📋" FontSize="16"/>
+                                    <TextBlock Text="Load Example"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        
+                    </StackPanel>
                 </Border>
+
+                <!-- Scan Status & Quick Actions -->
+                <StackPanel Grid.Column="1" Spacing="20" Margin="12,0,0,0">
+                    
+                    <!-- Current Scan Status -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="📊 Scan Status" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <!-- Status Card -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0" Text="🟢" FontSize="20"/>
+                                        <TextBlock Grid.Column="1" 
+                                                  Text="{Binding StatusMessage}" 
+                                                  FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="#10B981" 
+                                                  Margin="12,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Progress Bar -->
+                            <StackPanel Spacing="8" IsVisible="{Binding IsScanning}">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="Scanning..." FontSize="14" Foreground="#FFFFFF"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat='{}{0}%'}" FontSize="14" Foreground="#8B5CF6"/>
+                                </Grid>
+                                <ProgressBar Value="{Binding Progress}" 
+                                            Height="8" 
+                                            CornerRadius="4"
+                                            Background="#2A2A2A"
+                                            Foreground="#8B5CF6"/>
+                                <TextBlock Text="{Binding StatusMessage}" 
+                                          FontSize="12" 
+                                          Foreground="#A0A0A0"/>
+                            </StackPanel>
+                            
+                            <!-- Scan Control Buttons -->
+                            <Grid ColumnDefinitions="*,*" IsVisible="{Binding IsScanning}">
+                                <Button Grid.Column="0"
+                                        Background="#EF4444"
+                                        Foreground="White"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        Margin="0,0,4,0"
+                                        Command="{Binding StopScanCommand}">
+                                    <TextBlock Text="Stop Scan"/>
+                                </Button>
+                                <Button Grid.Column="1"
+                                        Background="#2A2A2A"
+                                        Foreground="#FFFFFF"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        Margin="4,0,0,0"
+                                        Command="{Binding ClearLogCommand}">
+                                    <TextBlock Text="Clear Log"/>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Recent Scans -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="📋 Recent Scans" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <StackPanel Spacing="8">
+                                <!-- Recent Scan Item 1 -->
+                                <Border Background="#151515" 
+                                        CornerRadius="6" 
+                                        Padding="12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Border Grid.Column="0" 
+                                                Background="#10B981" 
+                                                CornerRadius="4" 
+                                                Width="8" Height="8"
+                                                VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Margin="12,0">
+                                            <TextBlock Text="api.example.com" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold" 
+                                                      Foreground="#FFFFFF"/>
+                                            <TextBlock Text="2 hours ago" 
+                                                      FontSize="12" 
+                                                      Foreground="#A0A0A0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="23 issues" 
+                                                  FontSize="12" 
+                                                  Foreground="#EF4444"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Recent Scan Item 2 -->
+                                <Border Background="#151515" 
+                                        CornerRadius="6" 
+                                        Padding="12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Border Grid.Column="0" 
+                                                Background="#F59E0B" 
+                                                CornerRadius="4" 
+                                                Width="8" Height="8"
+                                                VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Margin="12,0">
+                                            <TextBlock Text="app.mysite.org" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold" 
+                                                      Foreground="#FFFFFF"/>
+                                            <TextBlock Text="Running..." 
+                                                      FontSize="12" 
+                                                      Foreground="#F59E0B"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="45%" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Recent Scan Item 3 -->
+                                <Border Background="#151515" 
+                                        CornerRadius="6" 
+                                        Padding="12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Border Grid.Column="0" 
+                                                Background="#10B981" 
+                                                CornerRadius="4" 
+                                                Width="8" Height="8"
+                                                VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Margin="12,0">
+                                            <TextBlock Text="demo.webapp.net" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold" 
+                                                      Foreground="#FFFFFF"/>
+                                            <TextBlock Text="1 day ago" 
+                                                      FontSize="12" 
+                                                      Foreground="#A0A0A0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="7 issues" 
+                                                  FontSize="12" 
+                                                  Foreground="#F97316"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <Button Content="View All Scans" 
+                                    Foreground="#8B5CF6" 
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    FontSize="14"
+                                    HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Quick Templates -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="⚡ Quick Templates" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <StackPanel Spacing="8">
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        HorizontalAlignment="Stretch"
+                                        FontSize="14">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="🌐" FontSize="14"/>
+                                        <TextBlock Text="Web Application"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        HorizontalAlignment="Stretch"
+                                        FontSize="14">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="🔌" FontSize="14"/>
+                                        <TextBlock Text="REST API"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        HorizontalAlignment="Stretch"
+                                        FontSize="14">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="📱" FontSize="14"/>
+                                        <TextBlock Text="Mobile Backend"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                </StackPanel>
             </Grid>
-        </Grid>
-    </Grid>
+            
+            <!-- Scan Results Section -->
+            <Border Background="#1F1F1F" 
+                    CornerRadius="12" 
+                    Padding="32"
+                    BorderBrush="#2A2A2A" 
+                    BorderThickness="1">
+                <StackPanel Spacing="24">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Path Data="{StaticResource AlertIcon}" 
+                              Fill="#EF4444" Width="24" Height="24" 
+                              Stretch="Uniform"/>
+                        <TextBlock Text="Detected Vulnerabilities" 
+                                  FontSize="24" FontWeight="Bold" 
+                                  Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                        <Border Background="#EF4444" 
+                                CornerRadius="10" 
+                                Padding="8,4">
+                            <TextBlock Text="{Binding DetectedVulnerabilities.Count}" 
+                                      FontSize="14" FontWeight="Bold" 
+                                      Foreground="White"/>
+                        </Border>
+                    </StackPanel>
+                    
+                    <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding DetectedVulnerabilities}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#151515" 
+                                            CornerRadius="8" 
+                                            Padding="16" 
+                                            Margin="0,0,0,12"
+                                            BorderBrush="#EF4444"
+                                            BorderThickness="2">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Grid.Column="0" 
+                                                    Background="#EF4444"
+                                                    CornerRadius="4" 
+                                                    Width="4" Height="40"
+                                                    VerticalAlignment="Top"/>
+                                            <StackPanel Grid.Column="1" Spacing="8" Margin="16,0">
+                                                <TextBlock Text="{Binding Title}" 
+                                                          FontSize="16" FontWeight="SemiBold" 
+                                                          Foreground="#FFFFFF"/>
+                                                <TextBlock Text="{Binding Description}" 
+                                                          FontSize="14" 
+                                                          Foreground="#A0A0A0"
+                                                          TextWrapping="Wrap"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="16">
+                                                    <TextBlock Text="{Binding AffectedEndpoint}" 
+                                                              FontSize="12" 
+                                                              Foreground="#8B5CF6"/>
+                                                    <TextBlock Text="{Binding HttpMethod}" 
+                                                              FontSize="12" 
+                                                              Foreground="#F59E0B"/>
+                                                    <TextBlock Text="{Binding ConfidenceScore, StringFormat='Score: {0:F1}'}" 
+                                                              FontSize="12" 
+                                                              Foreground="#FFFFFF"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Border Grid.Column="2" 
+                                                    Background="#EF4444"
+                                                    CornerRadius="12" 
+                                                    Padding="8,4">
+                                                <TextBlock Text="{Binding Severity}" 
+                                                          FontSize="12" FontWeight="Bold" 
+                                                          Foreground="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+            
+            <!-- Scan Log Section -->
+            <Border Background="#1F1F1F" 
+                    CornerRadius="12" 
+                    Padding="32"
+                    BorderBrush="#2A2A2A" 
+                    BorderThickness="1">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Path Data="{StaticResource FileTextIcon}" 
+                              Fill="#8B5CF6" Width="20" Height="20" 
+                              Stretch="Uniform"/>
+                        <TextBlock Text="Scan Log" 
+                                  FontSize="20" FontWeight="SemiBold" 
+                                  Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ScanLog}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" 
+                                              FontSize="12" 
+                                              FontFamily="Consolas,Monaco,monospace"
+                                              Foreground="#A0A0A0"
+                                              Margin="0,2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+            
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

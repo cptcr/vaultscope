@@ -7,13 +7,13 @@
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=.net)](https://dotnet.microsoft.com/)
-  [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/VaultScope/VaultScope-Enterprise)
-  [![Build Status](https://img.shields.io/github/workflow/status/VaultScope/VaultScope-Enterprise/CI)](https://github.com/VaultScope/VaultScope-Enterprise/actions)
+  [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/cptcr/vaultscope)
+  [![Build Status](https://img.shields.io/github/workflow/status/cptcr/vaultscope/CI)](https://github.com/cptcr/vaultscope/actions)
 </div>
 
 ## 🛡️ Overview
 
-VaultScope Enterprise is a professional-grade security assessment tool designed specifically for testing localhost applications. Built with .NET 8.0 and Avalonia UI, it provides comprehensive vulnerability scanning capabilities with a modern, cross-platform interface.
+VaultScope Enterprise is a professional-grade security assessment tool designed for testing localhost applications. Built with .NET 8.0 and Avalonia UI, it provides comprehensive vulnerability scanning capabilities with a modern, cross-platform interface.
 
 ### ✨ Key Features
 
@@ -60,14 +60,14 @@ VaultScope Enterprise is a professional-grade security assessment tool designed 
 
 #### Option 1: Download Pre-built Binaries
 
-Download the latest release for your platform from the [Releases](https://github.com/VaultScope/VaultScope-Enterprise/releases) page.
+Download the latest release for your platform from the [Releases](https://github.com/cptcr/vaultscope/releases) page.
 
 #### Option 2: Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/VaultScope/VaultScope-Enterprise.git
-cd VaultScope-Enterprise
+git clone https://github.com/cptcr/vaultscope.git
+cd vaultscope
 
 # Restore dependencies
 dotnet restore
@@ -101,7 +101,7 @@ vaultscope scan http://localhost:8080 --all-detectors --output report.html
 ## 🏗️ Architecture
 
 ```
-VaultScope.Enterprise/
+vaultscope/
 ├── src/
 │   ├── VaultScope.Core/           # Core models and interfaces
 │   ├── VaultScope.Security/       # Vulnerability detectors
@@ -147,9 +147,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: [docs.vaultscope.io](https://docs.vaultscope.io)
-- **Issues**: [GitHub Issues](https://github.com/VaultScope/VaultScope-Enterprise/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/VaultScope/VaultScope-Enterprise/discussions)
+- **Documentation**: [vaultscope.dev/docs](https://vaultscope.dev/docs)
+- **Issues**: [GitHub Issues](https://github.com/cptcr/vaultscope/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/cptcr/vaultscope/discussions)
 
 ---
 

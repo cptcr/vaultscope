@@ -198,10 +198,12 @@ public class RateLimitingDetector : IVulnerabilityDetector
         
         return new RateLimitTest
         {
-            IsVulnerable = false, // Slow requests typically shouldn't trigger rate limits
+            IsVulnerable = !rateLimitDetected, // If no rate limiting detected, it's vulnerable
             Type = "Slow Request Pattern",
             RequestCount = successCount,
-            Evidence = $"Slow requests ({delayMs}ms delay) completed {successCount}/{requestCount} successfully"
+            Evidence = rateLimitDetected 
+                ? $"Rate limiting detected during slow request testing" 
+                : $"Slow requests ({delayMs}ms delay) completed {successCount}/{requestCount} successfully - no rate limiting detected"
         };
     }
     

@@ -1,4 +1,7 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,12 +24,18 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection") 
             ?? "Data Source=vaultscope.db;Cache=Shared";
         
-        services.AddDbContext<VaultScopeDbContext>(options =>
+        // Use connection pooling for better performance
+        services.AddDbContextPool<VaultScopeDbContext>(options =>
         {
             options.UseSqlite(connectionString);
             options.EnableSensitiveDataLogging(false);
             options.EnableServiceProviderCaching();
-        });
+            options.EnableDetailedErrors(false); // Disable in production for security
+            
+            // Configure connection pool settings
+            options.ConfigureWarnings(warnings =>
+                warnings.Log(RelationalEventId.CommandExecuting));
+        }, poolSize: 128); // Allow up to 128 pooled contexts
         
         // Repositories
         services.AddScoped<IScanResultRepository, ScanResultRepository>();

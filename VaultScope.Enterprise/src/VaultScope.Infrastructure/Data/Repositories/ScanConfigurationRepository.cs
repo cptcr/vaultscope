@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using VaultScope.Core.Models;
 using VaultScope.Infrastructure.Data.Entities;
+using VaultScope.Infrastructure.Json;
 
 namespace VaultScope.Infrastructure.Data.Repositories;
 
@@ -59,7 +60,7 @@ public class ScanConfigurationRepository : IScanConfigurationRepository
             existingEntity.AuthType = configuration.Authentication?.Type.ToString();
             existingEntity.AuthToken = configuration.Authentication?.Token;
             existingEntity.AuthHeaders = configuration.Authentication != null 
-                ? System.Text.Json.JsonSerializer.Serialize(configuration.Authentication.Headers) 
+                ? System.Text.Json.JsonSerializer.Serialize(configuration.Authentication.Headers, VaultScopeJsonContext.Default.DictionaryStringString) 
                 : null;
             existingEntity.IsActive = true;
         }

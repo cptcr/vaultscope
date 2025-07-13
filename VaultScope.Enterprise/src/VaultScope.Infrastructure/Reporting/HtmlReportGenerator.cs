@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using VaultScope.Core.Interfaces;
 using VaultScope.Core.Models;
 
@@ -8,10 +10,10 @@ public class HtmlReportGenerator : IReportGenerator
 {
     public ReportFormat Format => ReportFormat.Html;
     
-    public async Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
+    public Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
     {
         var html = GenerateHtml(scanResult, options);
-        return Encoding.UTF8.GetBytes(html);
+        return Task.FromResult(Encoding.UTF8.GetBytes(html));
     }
     
     public async Task SaveToFileAsync(ScanResult scanResult, string filePath, ReportOptions options)

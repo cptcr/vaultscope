@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        x:Class="VaultScope.UI.Views.ConfirmationDialog"
+        Title="Confirmation"
+        Width="400"
+        Height="200"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" 
+                   Name="MessageText"
+                   Text="{Binding Message}"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+        
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="10"
+                    Margin="0,20,0,0">
+            <Button Name="CancelButton"
+                    Content="Cancel"
+                    Width="80"
+                    Click="CancelButton_Click"/>
+            <Button Name="OkButton"
+                    Content="OK"
+                    Width="80"
+                    Classes="accent"
+                    Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -11,256 +11,542 @@
         <vm:SettingsViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*,Auto">
-        <!-- Header -->
-        <Border Grid.Row="0" Classes="page-header">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="24" Margin="32">
+            
+            <!-- Header Section -->
             <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0">
-                    <TextBlock Classes="page-title" Text="Settings" />
-                    <TextBlock Classes="page-subtitle" Text="Configure your VaultScope preferences" />
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="Settings &amp; Configuration" 
+                              FontSize="32" FontWeight="Bold" 
+                              Foreground="#FFFFFF"/>
+                    <TextBlock Text="Customize your VaultScope experience and configure security scanning options" 
+                              FontSize="16" 
+                              Foreground="#A0A0A0"/>
                 </StackPanel>
                 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button Classes="primary-button" Command="{Binding SaveSettingsCommand}"
-                            IsEnabled="{Binding IsDirty}">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Path Data="{StaticResource SaveIcon}" Fill="{DynamicResource PrimaryButtonForeground}" 
-                                  Width="16" Height="16" />
-                            <TextBlock Text="Save Changes" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                    <Button Background="#10B981" 
+                            Foreground="White"
+                            Padding="16,12"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Save" FontSize="16"/>
+                            <TextBlock Text="Save Changes"/>
                         </StackPanel>
                     </Button>
-                    <Button Classes="secondary-button" Command="{Binding ResetSettingsCommand}">
-                        <TextBlock Text="Reset to Defaults" />
+                    <Button Background="#EF4444" 
+                            Foreground="White"
+                            Padding="16,12"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Reset" FontSize="16"/>
+                            <TextBlock Text="Reset Defaults"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
-        </Border>
-        
-        <!-- Settings Content -->
-        <ScrollViewer Grid.Row="1" Padding="20">
-            <StackPanel Spacing="20" MaxWidth="800">
-                <!-- General Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="20">
-                        <TextBlock Classes="card-title" Text="General" />
-                        
-                        <!-- Theme Selection -->
-                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                            <TextBlock Grid.Row="0" Text="Theme" Classes="input-label" />
-                            <ComboBox Grid.Row="1" SelectedItem="{Binding SelectedTheme}" 
-                                      Classes="modern-input" HorizontalAlignment="Stretch">
-                                <ComboBoxItem>DarkPurple</ComboBoxItem>
-                                <ComboBoxItem>DarkBlue</ComboBoxItem>
-                                <ComboBoxItem>Light</ComboBoxItem>
-                            </ComboBox>
-                            <TextBlock Grid.Row="2" Text="Choose your preferred color theme"
-                                       Classes="input-hint" />
-                        </Grid>
-                        
-                        <!-- Notifications -->
-                        <Border Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Enable Notifications" FontWeight="SemiBold" />
-                                    <TextBlock Text="Show system notifications for important events"
-                                               Classes="input-hint" />
-                                </StackPanel>
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableNotifications}" />
-                            </Grid>
-                        </Border>
-                        
-                        <!-- Sound Effects -->
-                        <Border Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Enable Sound Effects" FontWeight="SemiBold" />
-                                    <TextBlock Text="Play sounds for scan completion and alerts"
-                                               Classes="input-hint" />
-                                </StackPanel>
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableSoundEffects}" />
-                            </Grid>
-                        </Border>
-                        
-                        <!-- Auto Save -->
-                        <Border Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Enable Auto-Save" FontWeight="SemiBold" />
-                                        <TextBlock Text="Automatically save scan results"
-                                                   Classes="input-hint" />
+
+            <!-- Main Settings Grid -->
+            <Grid ColumnDefinitions="*,*">
+                
+                <!-- Left Column -->
+                <StackPanel Grid.Column="0" Spacing="20" Margin="0,0,12,0">
+                    
+                    <!-- General Settings -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <TextBlock Text="General Settings" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <!-- Theme Selection -->
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="Application Theme" 
+                                          FontSize="14" 
+                                          FontWeight="SemiBold"
+                                          Foreground="#FFFFFF"/>
+                                <ComboBox SelectedIndex="0"
+                                         FontSize="14"
+                                         Padding="12"
+                                         Background="#2A2A2A"
+                                         Foreground="#FFFFFF"
+                                         BorderBrush="#8B5CF6"
+                                         BorderThickness="2"
+                                         CornerRadius="6">
+                                    <ComboBoxItem Content="Dark Purple (Current)"/>
+                                    <ComboBoxItem Content="Dark Blue"/>
+                                    <ComboBoxItem Content="Light Theme"/>
+                                    <ComboBoxItem Content="Auto (System)"/>
+                                </ComboBox>
+                            </StackPanel>
+                            
+                            <!-- Notifications Toggle -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Enable Notifications" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold" 
+                                                  Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Get notified when scans complete or issues are found" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
                                     </StackPanel>
-                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableAutoSave}" />
+                                    <CheckBox Grid.Column="1" 
+                                             IsChecked="True" 
+                                             Foreground="#8B5CF6"/>
                                 </Grid>
-                                
-                                <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10"
-                                      IsVisible="{Binding EnableAutoSave}">
-                                    <TextBlock Grid.Column="0" Text="Save every" VerticalAlignment="Center" />
-                                    <Slider Grid.Column="1" Minimum="60" Maximum="600" 
-                                            Value="{Binding AutoSaveInterval}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding AutoSaveInterval, StringFormat='{}{0} seconds'}"
-                                               VerticalAlignment="Center" MinWidth="80" />
+                            </Border>
+                            
+                            <!-- Sound Effects Toggle -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Sound Effects" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold" 
+                                                  Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Play audio alerts for scan events" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" 
+                                             IsChecked="False" 
+                                             Foreground="#8B5CF6"/>
                                 </Grid>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-                </Border>
-                
-                <!-- Network Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="20">
-                        <TextBlock Classes="card-title" Text="Network" />
-                        
-                        <!-- SSL Validation -->
-                        <Border Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="SSL Certificate Validation" FontWeight="SemiBold" />
-                                    <TextBlock Text="Validate SSL certificates (disable for self-signed certs)"
-                                               Classes="input-hint" />
+                            </Border>
+                            
+                            <!-- Auto-Save Toggle -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="Auto-Save Results" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold" 
+                                                      Foreground="#FFFFFF"/>
+                                            <TextBlock Text="Automatically save scan results" 
+                                                      FontSize="12" 
+                                                      Foreground="#A0A0A0"/>
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="1" 
+                                                 IsChecked="True" 
+                                                 Foreground="#8B5CF6"/>
+                                    </Grid>
+                                    
+                                    <!-- Auto-save interval -->
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0" 
+                                                  Text="Save every" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,8,0"/>
+                                        <Slider Grid.Column="1" 
+                                               Value="300" 
+                                               Minimum="60" 
+                                               Maximum="600"
+                                               Background="#2A2A2A"
+                                               Foreground="#8B5CF6"
+                                               Margin="8,0,8,0"/>
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="5 min" 
+                                                  FontSize="12" 
+                                                  Foreground="#8B5CF6"
+                                                  VerticalAlignment="Center"
+                                                  Margin="8,0,0,0"/>
+                                    </Grid>
                                 </StackPanel>
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableSslValidation}" />
-                            </Grid>
-                        </Border>
-                        
-                        <!-- Request Timeout -->
-                        <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                            <TextBlock Grid.Row="0" Text="Request Timeout" Classes="input-label" />
-                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                                <Slider Grid.Column="0" Minimum="5" Maximum="120" 
-                                        Value="{Binding RequestTimeout}" />
-                                <TextBlock Grid.Column="1" Text="{Binding RequestTimeout, StringFormat='{}{0} seconds'}"
-                                           VerticalAlignment="Center" MinWidth="80" />
-                            </Grid>
-                        </Grid>
-                        
-                        <!-- Concurrent Requests -->
-                        <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                            <TextBlock Grid.Row="0" Text="Max Concurrent Requests" Classes="input-label" />
-                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                                <Slider Grid.Column="0" Minimum="1" Maximum="50" 
-                                        Value="{Binding MaxConcurrentRequests}" />
-                                <TextBlock Grid.Column="1" Text="{Binding MaxConcurrentRequests}"
-                                           VerticalAlignment="Center" MinWidth="40" />
-                            </Grid>
-                        </Grid>
-                        
-                        <!-- User Agent -->
-                        <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                            <TextBlock Grid.Row="0" Text="User Agent" Classes="input-label" />
-                            <TextBox Grid.Row="1" Text="{Binding UserAgent}" Classes="modern-input" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Network Settings -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <TextBlock Text="Network Configuration" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <!-- Request Timeout -->
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="Request Timeout" 
+                                          FontSize="14" 
+                                          FontWeight="SemiBold"
+                                          Foreground="#FFFFFF"/>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Slider Grid.Column="0" 
+                                           Value="30" 
+                                           Minimum="5" 
+                                           Maximum="120"
+                                           Background="#2A2A2A"
+                                           Foreground="#8B5CF6"
+                                           Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Column="1" 
+                                              Text="30 seconds" 
+                                              FontSize="14" 
+                                              Foreground="#A0A0A0"
+                                              VerticalAlignment="Center"
+                                              Margin="12,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- Max Concurrent Requests -->
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="Concurrent Requests" 
+                                          FontSize="14" 
+                                          FontWeight="SemiBold"
+                                          Foreground="#FFFFFF"/>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Slider Grid.Column="0" 
+                                           Value="10" 
+                                           Minimum="1" 
+                                           Maximum="50"
+                                           Background="#2A2A2A"
+                                           Foreground="#8B5CF6"
+                                           Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Column="1" 
+                                              Text="10 requests" 
+                                              FontSize="14" 
+                                              Foreground="#A0A0A0"
+                                              VerticalAlignment="Center"
+                                              Margin="12,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- SSL Validation -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="SSL Certificate Validation" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold" 
+                                                  Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Validate SSL certificates (disable for self-signed)" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" 
+                                             IsChecked="True" 
+                                             Foreground="#8B5CF6"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- User Agent -->
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="User Agent String" 
+                                          FontSize="14" 
+                                          FontWeight="SemiBold"
+                                          Foreground="#FFFFFF"/>
+                                <TextBox Text="VaultScope/1.0 Security Scanner"
+                                        Watermark="Enter custom user agent..."
+                                        FontSize="14"
+                                        Padding="12"
+                                        Background="#2A2A2A"
+                                        Foreground="#FFFFFF"
+                                        BorderBrush="#2A2A2A"
+                                        BorderThickness="1"
+                                        CornerRadius="6"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
                 
-                <!-- Proxy Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="20">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Classes="card-title" Text="Proxy" />
-                            <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableProxyDetection}" />
-                        </Grid>
-                        
-                        <StackPanel Spacing="15" IsVisible="{Binding EnableProxyDetection}">
-                            <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                                <TextBlock Grid.Row="0" Text="Proxy Address" Classes="input-label" />
-                                <TextBox Grid.Row="1" Text="{Binding ProxyAddress}" 
-                                         Watermark="e.g., proxy.company.com"
-                                         Classes="modern-input" />
+                <!-- Right Column -->
+                <StackPanel Grid.Column="1" Spacing="20" Margin="12,0,0,0">
+                    
+                    <!-- Proxy Settings -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" 
+                                          Text="Proxy Configuration" 
+                                          FontSize="18" 
+                                          FontWeight="SemiBold" 
+                                          Foreground="#FFFFFF"/>
+                                <CheckBox Grid.Column="1" 
+                                         Content="Enable" 
+                                         IsChecked="False" 
+                                         Foreground="#8B5CF6"/>
                             </Grid>
                             
-                            <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                                <TextBlock Grid.Row="0" Text="Proxy Port" Classes="input-label" />
-                                <NumericUpDown Grid.Row="1" Value="{Binding ProxyPort}" 
-                                               Minimum="1" Maximum="65535"
-                                               Classes="modern-input" />
-                            </Grid>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-                
-                <!-- Database Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="20">
-                        <TextBlock Classes="card-title" Text="Database" />
-                        
-                        <!-- Auto Cleanup -->
-                        <Border Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="15">
-                            <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Enable Auto-Cleanup" FontWeight="SemiBold" />
-                                        <TextBlock Text="Automatically remove old scan results"
-                                                   Classes="input-hint" />
-                                    </StackPanel>
-                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableDatabaseCleanup}" />
-                                </Grid>
+                            <!-- Proxy fields (shown as disabled) -->
+                            <StackPanel Spacing="12" Opacity="0.5">
+                                <TextBox Watermark="Proxy Host (e.g., proxy.company.com)"
+                                        FontSize="14"
+                                        Padding="12"
+                                        Background="#2A2A2A"
+                                        Foreground="#FFFFFF"
+                                        BorderBrush="#2A2A2A"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        IsEnabled="False"/>
                                 
-                                <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10"
-                                      IsVisible="{Binding EnableDatabaseCleanup}">
-                                    <TextBlock Grid.Column="0" Text="Keep data for" VerticalAlignment="Center" />
-                                    <Slider Grid.Column="1" Minimum="7" Maximum="365" 
-                                            Value="{Binding DatabaseCleanupDays}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding DatabaseCleanupDays, StringFormat='{}{0} days'}"
-                                               VerticalAlignment="Center" MinWidth="80" />
+                                <Grid ColumnDefinitions="*,*">
+                                    <TextBox Grid.Column="0" 
+                                            Watermark="Port (8080)"
+                                            FontSize="14"
+                                            Padding="12"
+                                            Background="#2A2A2A"
+                                            Foreground="#FFFFFF"
+                                            BorderBrush="#2A2A2A"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            IsEnabled="False"
+                                            Margin="0,0,6,0"/>
+                                    <ComboBox Grid.Column="1" 
+                                             SelectedIndex="0"
+                                             FontSize="14"
+                                             Padding="12"
+                                             Background="#2A2A2A"
+                                             Foreground="#FFFFFF"
+                                             BorderBrush="#2A2A2A"
+                                             BorderThickness="1"
+                                             CornerRadius="6"
+                                             IsEnabled="False"
+                                             Margin="6,0,0,0">
+                                        <ComboBoxItem Content="HTTP"/>
+                                        <ComboBoxItem Content="HTTPS"/>
+                                        <ComboBoxItem Content="SOCKS5"/>
+                                    </ComboBox>
                                 </Grid>
-                            </Grid>
-                        </Border>
-                        
-                        <!-- Database Size -->
-                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                            <TextBlock Grid.Row="0" Text="Maximum Database Size" Classes="input-label" />
-                            <TextBlock Grid.Row="1" Text="{Binding MaxDatabaseSizeMB}" FontSize="24" FontWeight="Bold" />
-                            <Button Grid.Row="2" Classes="danger-button" Command="{Binding ClearDatabaseCommand}"
-                                    HorizontalAlignment="Left">
-                                <TextBlock Text="Clear Database" />
-                            </Button>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-                
-                <!-- Import/Export -->
-                <Border Classes="card">
-                    <StackPanel Spacing="20">
-                        <TextBlock Classes="card-title" Text="Import/Export" />
-                        
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Classes="secondary-button" Command="{Binding ExportSettingsCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
-                                          Width="16" Height="16" />
-                                    <TextBlock Text="Export Settings" />
-                                </StackPanel>
-                            </Button>
-                            <Button Classes="secondary-button" Command="{Binding ImportSettingsCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Path Data="{StaticResource ImportIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
-                                          Width="16" Height="16" />
-                                    <TextBlock Text="Import Settings" />
-                                </StackPanel>
-                            </Button>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
-        
-        <!-- Unsaved Changes Warning -->
-        <Border Grid.Row="2" Classes="warning-bar" IsVisible="{Binding IsDirty}"
-                Margin="20,0,20,20">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-                <Path Grid.Column="0" Data="{StaticResource WarningIcon}" Fill="{DynamicResource WarningColor}"
-                      Width="20" Height="20" />
-                <TextBlock Grid.Column="1" Text="You have unsaved changes" VerticalAlignment="Center" />
-                <Button Grid.Column="2" Classes="primary-button" Command="{Binding SaveSettingsCommand}">
-                    <TextBlock Text="Save Now" />
-                </Button>
+                    </Border>
+
+                    <!-- Database Settings -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <TextBlock Text="Database Management" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <!-- Database Stats -->
+                            <Grid ColumnDefinitions="*,*">
+                                <Border Grid.Column="0" 
+                                        Background="#151515" 
+                                        CornerRadius="6" 
+                                        Padding="12"
+                                        Margin="0,0,8,0">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Database Size" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
+                                        <TextBlock Text="247 MB" 
+                                                  FontSize="18" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="#FFFFFF"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" 
+                                        Background="#151515" 
+                                        CornerRadius="6" 
+                                        Padding="12"
+                                        Margin="8,0,0,0">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Total Records" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"/>
+                                        <TextBlock Text="1,429" 
+                                                  FontSize="18" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="#FFFFFF"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <!-- Auto Cleanup -->
+                            <Border Background="#151515" 
+                                    CornerRadius="8" 
+                                    Padding="16">
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="Auto-Cleanup" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold" 
+                                                      Foreground="#FFFFFF"/>
+                                            <TextBlock Text="Automatically remove old scan results" 
+                                                      FontSize="12" 
+                                                      Foreground="#A0A0A0"/>
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="1" 
+                                                 IsChecked="True" 
+                                                 Foreground="#8B5CF6"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0" 
+                                                  Text="Keep data for" 
+                                                  FontSize="12" 
+                                                  Foreground="#A0A0A0"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,8,0"/>
+                                        <Slider Grid.Column="1" 
+                                               Value="90" 
+                                               Minimum="7" 
+                                               Maximum="365"
+                                               Background="#2A2A2A"
+                                               Foreground="#8B5CF6"
+                                               Margin="8,0,8,0"/>
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="90 days" 
+                                                  FontSize="12" 
+                                                  Foreground="#8B5CF6"
+                                                  VerticalAlignment="Center"
+                                                  Margin="8,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Database Actions -->
+                            <StackPanel Spacing="12">
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="16,12"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="Optimize" FontSize="14"/>
+                                        <TextBlock Text="Database"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Background="#EF4444" 
+                                        Foreground="White" 
+                                        Padding="16,12"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="Clear" FontSize="14"/>
+                                        <TextBlock Text="Clear All Data"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Import/Export Settings -->
+                    <Border Background="#1F1F1F" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#2A2A2A" 
+                            BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <TextBlock Text="Import &amp; Export" 
+                                      FontSize="18" 
+                                      FontWeight="SemiBold" 
+                                      Foreground="#FFFFFF"/>
+                            
+                            <StackPanel Spacing="12">
+                                <Button Background="#8B5CF6" 
+                                        Foreground="White" 
+                                        Padding="16,12"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="Export" FontSize="14"/>
+                                        <TextBlock Text="Settings"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="16,12"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="Import" FontSize="14"/>
+                                        <TextBlock Text="Settings"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Background="#2A2A2A" 
+                                        Foreground="#FFFFFF" 
+                                        Padding="16,12"
+                                        CornerRadius="6"
+                                        FontSize="14"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="Export" FontSize="14"/>
+                                        <TextBlock Text="Export All Reports"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                            
+                            <TextBlock Text="Tip: Export your settings to backup your configuration or share with team members" 
+                                      FontSize="12" 
+                                      Foreground="#A0A0A0"
+                                      TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
             </Grid>
-        </Border>
-    </Grid>
+
+            <!-- Unsaved Changes Warning (if applicable) -->
+            <Border Background="#D97706" 
+                    CornerRadius="8" 
+                    Padding="16"
+                    IsVisible="False">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Column="0" 
+                              Text="Warning:" 
+                              FontSize="18"
+                              VerticalAlignment="Center"
+                              Margin="0,0,12,0"/>
+                    <TextBlock Grid.Column="1" 
+                              Text="You have unsaved changes that will be lost if you navigate away." 
+                              FontSize="14" 
+                              Foreground="White"
+                              VerticalAlignment="Center"/>
+                    <Button Grid.Column="2" 
+                            Background="#FFFFFF" 
+                            Foreground="#D97706" 
+                            Padding="12,6"
+                            CornerRadius="4"
+                            FontSize="14"
+                            FontWeight="SemiBold">
+                        <TextBlock Text="Save Now"/>
+                    </Button>
+                </Grid>
+            </Border>
+            
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

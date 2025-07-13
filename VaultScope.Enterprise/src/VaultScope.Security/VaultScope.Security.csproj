@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>VaultScope.Security</RootNamespace>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>

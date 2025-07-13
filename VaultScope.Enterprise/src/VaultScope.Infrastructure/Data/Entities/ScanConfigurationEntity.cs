@@ -1,4 +1,5 @@
 using VaultScope.Core.Models;
+using VaultScope.Infrastructure.Json;
 
 namespace VaultScope.Infrastructure.Data.Entities;
 
@@ -88,7 +89,7 @@ public class ScanConfigurationEntity : BaseEntity
                 Type = Enum.Parse<AuthenticationType>(AuthType),
                 Token = AuthToken,
                 Headers = !string.IsNullOrEmpty(AuthHeaders) 
-                    ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(AuthHeaders) ?? new()
+                    ? System.Text.Json.JsonSerializer.Deserialize(AuthHeaders, VaultScopeJsonContext.Default.DictionaryStringString) ?? new()
                     : new()
             };
         }

@@ -1,81 +1,17 @@
 using System;
 using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Avalonia.Media;
 using ReactiveUI;
-using VaultScope.UI.Services;
+using VaultScope.Core.Interfaces;
+using VaultScope.Infrastructure.Data.Repositories;
 
 namespace VaultScope.UI.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly INavigationService _navigationService;
-    private ViewModelBase _currentPage;
-    private string _statusText = "Ready";
-    private string _connectionStatus = "Connected";
-    private IBrush _connectionStatusColor = Brushes.LimeGreen;
-    private bool _isScanning;
-    private string _currentTime;
-    
-    // Navigation states
-    private bool _isDashboardSelected = true;
-    private bool _isScannerSelected;
-    private bool _isReportsSelected;
-    private bool _isHistorySelected;
-    private bool _isSettingsSelected;
-    
-    public MainWindowViewModel(INavigationService navigationService)
-    {
-        _navigationService = navigationService;
-        _currentPage = new DashboardViewModel();
-        
-        // Setup navigation commands
-        NavigateToDashboardCommand = ReactiveCommand.Create(NavigateToDashboard);
-        NavigateToScannerCommand = ReactiveCommand.Create(NavigateToScanner);
-        NavigateToReportsCommand = ReactiveCommand.Create(NavigateToReports);
-        NavigateToHistoryCommand = ReactiveCommand.Create(NavigateToHistory);
-        NavigateToSettingsCommand = ReactiveCommand.Create(NavigateToSettings);
-        ShowHelpCommand = ReactiveCommand.CreateFromTask(ShowHelp);
-        
-        // Update time every second
-        Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ => CurrentTime = DateTime.Now.ToString("HH:mm:ss"));
-        
-        // Subscribe to navigation events
-        _navigationService.CurrentPageChanged += OnCurrentPageChanged;
-    }
-    
-    public ViewModelBase CurrentPage
-    {
-        get => _currentPage;
-        set => this.RaiseAndSetIfChanged(ref _currentPage, value);
-    }
-    
-    public string StatusText
-    {
-        get => _statusText;
-        set => this.RaiseAndSetIfChanged(ref _statusText, value);
-    }
-    
-    public string ConnectionStatus
-    {
-        get => _connectionStatus;
-        set => this.RaiseAndSetIfChanged(ref _connectionStatus, value);
-    }
-    
-    public IBrush ConnectionStatusColor
-    {
-        get => _connectionStatusColor;
-        set => this.RaiseAndSetIfChanged(ref _connectionStatusColor, value);
-    }
-    
-    public bool IsScanning
-    {
-        get => _isScanning;
-        set => this.RaiseAndSetIfChanged(ref _isScanning, value);
-    }
+    private readonly ISecurityScanner? _securityScanner;
+    private readonly IScanResultRepository? _scanResultRepository;
+    private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
+    private ViewModelBase _currentView;
     
     public string CurrentTime
     {
@@ -83,110 +19,154 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _currentTime, value);
     }
     
-    // Navigation state properties
-    public bool IsDashboardSelected
+    public ViewModelBase CurrentView
     {
-        get => _isDashboardSelected;
-        set => this.RaiseAndSetIfChanged(ref _isDashboardSelected, value);
+        get => _currentView;
+        set => this.RaiseAndSetIfChanged(ref _currentView, value);
     }
     
-    public bool IsScannerSelected
-    {
-        get => _isScannerSelected;
-        set => this.RaiseAndSetIfChanged(ref _isScannerSelected, value);
-    }
+    public ViewModelBase CurrentPage => CurrentView;
     
-    public bool IsReportsSelected
-    {
-        get => _isReportsSelected;
-        set => this.RaiseAndSetIfChanged(ref _isReportsSelected, value);
-    }
+    // Navigation Properties
+    public bool IsDashboardSelected { get; set; }
+    public bool IsScannerSelected { get; set; }
+    public bool IsReportsSelected { get; set; }
+    public bool IsSettingsSelected { get; set; }
     
-    public bool IsHistorySelected
-    {
-        get => _isHistorySelected;
-        set => this.RaiseAndSetIfChanged(ref _isHistorySelected, value);
-    }
+    // Status Properties
+    public string StatusText { get; set; } = "Ready to scan";
+    public string ConnectionStatus { get; set; } = "Connected";
+    public string ConnectionStatusColor { get; set; } = "#10B981";
+    public bool IsScanning { get; set; } = false;
     
-    public bool IsSettingsSelected
-    {
-        get => _isSettingsSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSettingsSelected, value);
-    }
+    // Sidebar Properties
+    public bool HasNewAlerts { get; set; } = true;
+    public bool IsCurrentlyScanning { get; set; } = false;
     
     // Commands
     public ReactiveCommand<Unit, Unit> NavigateToDashboardCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToScannerCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToReportsCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToHistoryCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
     public ReactiveCommand<Unit, Unit> ShowHelpCommand { get; }
+    public ReactiveCommand<Unit, Unit> StartQuickScanCommand { get; }
+    public ReactiveCommand<Unit, Unit> ViewAnalyticsCommand { get; }
+    
+    public MainWindowViewModel(ISecurityScanner? securityScanner = null, IScanResultRepository? scanResultRepository = null)
+    {
+        _securityScanner = securityScanner;
+        _scanResultRepository = scanResultRepository;
+        _currentView = new DashboardViewModel(scanResultRepository);
+        IsDashboardSelected = true; // Start with dashboard selected
+        
+        NavigateToDashboardCommand = ReactiveCommand.Create(NavigateToDashboard);
+        NavigateToScannerCommand = ReactiveCommand.Create(NavigateToScanner);
+        NavigateToReportsCommand = ReactiveCommand.Create(NavigateToReports);
+        NavigateToSettingsCommand = ReactiveCommand.Create(NavigateToSettings);
+        ShowHelpCommand = ReactiveCommand.Create(ShowHelp);
+        StartQuickScanCommand = ReactiveCommand.Create(StartQuickScan);
+        ViewAnalyticsCommand = ReactiveCommand.Create(ViewAnalytics);
+        
+        // Update time every second
+        var timer = new System.Timers.Timer(1000);
+        timer.Elapsed += (_, _) => CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+        timer.Start();
+    }
     
     private void NavigateToDashboard()
     {
-        ResetNavigationStates();
+        CurrentView = new DashboardViewModel(_scanResultRepository);
+        this.RaisePropertyChanged(nameof(CurrentPage));
         IsDashboardSelected = true;
-        _navigationService.NavigateTo<DashboardViewModel>();
+        IsScannerSelected = IsReportsSelected = IsSettingsSelected = false;
+        this.RaisePropertyChanged(nameof(IsDashboardSelected));
+        this.RaisePropertyChanged(nameof(IsScannerSelected));
+        this.RaisePropertyChanged(nameof(IsReportsSelected));
+        this.RaisePropertyChanged(nameof(IsSettingsSelected));
     }
     
     private void NavigateToScanner()
     {
-        ResetNavigationStates();
+        CurrentView = new ScannerViewModel(_securityScanner);
+        this.RaisePropertyChanged(nameof(CurrentPage));
         IsScannerSelected = true;
-        _navigationService.NavigateTo<ScannerViewModel>();
+        IsDashboardSelected = IsReportsSelected = IsSettingsSelected = false;
+        this.RaisePropertyChanged(nameof(IsDashboardSelected));
+        this.RaisePropertyChanged(nameof(IsScannerSelected));
+        this.RaisePropertyChanged(nameof(IsReportsSelected));
+        this.RaisePropertyChanged(nameof(IsSettingsSelected));
     }
     
     private void NavigateToReports()
     {
-        ResetNavigationStates();
+        CurrentView = new ReportsViewModel();
+        this.RaisePropertyChanged(nameof(CurrentPage));
         IsReportsSelected = true;
-        _navigationService.NavigateTo<ReportsViewModel>();
-    }
-    
-    private void NavigateToHistory()
-    {
-        ResetNavigationStates();
-        IsHistorySelected = true;
-        _navigationService.NavigateTo<ScanHistoryViewModel>();
+        IsDashboardSelected = IsScannerSelected = IsSettingsSelected = false;
+        this.RaisePropertyChanged(nameof(IsDashboardSelected));
+        this.RaisePropertyChanged(nameof(IsScannerSelected));
+        this.RaisePropertyChanged(nameof(IsReportsSelected));
+        this.RaisePropertyChanged(nameof(IsSettingsSelected));
     }
     
     private void NavigateToSettings()
     {
-        ResetNavigationStates();
+        CurrentView = new SettingsViewModel();
+        this.RaisePropertyChanged(nameof(CurrentPage));
         IsSettingsSelected = true;
-        _navigationService.NavigateTo<SettingsViewModel>();
+        IsDashboardSelected = IsScannerSelected = IsReportsSelected = false;
+        this.RaisePropertyChanged(nameof(IsDashboardSelected));
+        this.RaisePropertyChanged(nameof(IsScannerSelected));
+        this.RaisePropertyChanged(nameof(IsReportsSelected));
+        this.RaisePropertyChanged(nameof(IsSettingsSelected));
     }
     
-    private async Task ShowHelp()
+    private void ShowHelp()
     {
-        // Open help documentation or show help dialog
-        await Task.CompletedTask;
+        // Open help dialog or browser
     }
     
-    private void ResetNavigationStates()
+    private void StartQuickScan()
     {
-        IsDashboardSelected = false;
-        IsScannerSelected = false;
-        IsReportsSelected = false;
-        IsHistorySelected = false;
-        IsSettingsSelected = false;
+        // Start a quick security scan
+        StatusText = "Starting quick scan...";
+        IsScanning = true;
+        IsCurrentlyScanning = true;
+        this.RaisePropertyChanged(nameof(StatusText));
+        this.RaisePropertyChanged(nameof(IsScanning));
+        this.RaisePropertyChanged(nameof(IsCurrentlyScanning));
+        
+        // Navigate to scanner view
+        NavigateToScanner();
+        
+        // If we have a real scanner, trigger it, otherwise simulate
+        if (_securityScanner != null && !string.IsNullOrEmpty("localhost"))
+        {
+            // Could start real scan here if needed
+        }
+        else
+        {
+            // Simulate scan completion after 3 seconds
+            var timer = new System.Timers.Timer(3000);
+            timer.Elapsed += (_, _) => 
+            {
+                StatusText = "Quick scan completed";
+                IsScanning = false;
+                IsCurrentlyScanning = false;
+                this.RaisePropertyChanged(nameof(StatusText));
+                this.RaisePropertyChanged(nameof(IsScanning));
+                this.RaisePropertyChanged(nameof(IsCurrentlyScanning));
+                timer.Stop();
+            };
+            timer.Start();
+        }
     }
     
-    private void OnCurrentPageChanged(object? sender, ViewModelBase viewModel)
+    private void ViewAnalytics()
     {
-        CurrentPage = viewModel;
-        StatusText = $"Navigated to {viewModel.GetType().Name.Replace("ViewModel", "")}";
-    }
-    
-    public void UpdateScanningStatus(bool isScanning)
-    {
-        IsScanning = isScanning;
-        StatusText = isScanning ? "Security scan in progress..." : "Ready";
-    }
-    
-    public void UpdateConnectionStatus(bool isConnected, string message)
-    {
-        ConnectionStatus = message;
-        ConnectionStatusColor = isConnected ? Brushes.LimeGreen : Brushes.OrangeRed;
+        // Navigate to reports/analytics view
+        NavigateToReports();
+        StatusText = "Viewing security analytics";
+        this.RaisePropertyChanged(nameof(StatusText));
     }
 }

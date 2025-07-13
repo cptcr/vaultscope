@@ -1,8 +1,11 @@
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using VaultScope.Core.Interfaces;
 using VaultScope.Core.Models;
+using VaultScope.Infrastructure.Json;
 
 namespace VaultScope.Infrastructure.Reporting;
 
@@ -26,17 +29,17 @@ public class JsonReportGenerator : IReportGenerator
         };
     }
     
-    public async Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
+    public Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
     {
         var report = CreateJsonReport(scanResult, options);
-        var json = JsonSerializer.Serialize(report, _options);
-        return Encoding.UTF8.GetBytes(json);
+        var json = JsonSerializer.Serialize(report, VaultScopeJsonContext.Default.JsonReport);
+        return Task.FromResult(Encoding.UTF8.GetBytes(json));
     }
     
     public async Task SaveToFileAsync(ScanResult scanResult, string filePath, ReportOptions options)
     {
         var report = CreateJsonReport(scanResult, options);
-        var json = JsonSerializer.Serialize(report, _options);
+        var json = JsonSerializer.Serialize(report, VaultScopeJsonContext.Default.JsonReport);
         await File.WriteAllTextAsync(filePath, json);
     }
     

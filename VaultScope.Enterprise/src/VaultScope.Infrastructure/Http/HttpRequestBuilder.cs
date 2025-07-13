@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using VaultScope.Core.Models;
+using VaultScope.Infrastructure.Json;
 
 namespace VaultScope.Infrastructure.Http;
 
@@ -114,7 +115,7 @@ public class HttpRequestBuilder
     
     public HttpRequestBuilder WithJsonContent(object content)
     {
-        var json = System.Text.Json.JsonSerializer.Serialize(content);
+        var json = System.Text.Json.JsonSerializer.Serialize(content, VaultScopeJsonContext.Default.Object);
         _request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         return this;
     }

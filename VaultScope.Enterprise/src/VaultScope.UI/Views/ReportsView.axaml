@@ -12,197 +12,420 @@
         <vm:ReportsViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,Auto,*">
-        <!-- Header -->
-        <Border Grid.Row="0" Classes="page-header">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="24" Margin="32">
+            
+            <!-- Header Section -->
             <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0">
-                    <TextBlock Classes="page-title" Text="Security Reports" />
-                    <TextBlock Classes="page-subtitle" Text="View and manage your security scan reports" />
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="📊 Security Reports" 
+                              FontSize="32" FontWeight="Bold" 
+                              Foreground="#FFFFFF"/>
+                    <TextBlock Text="Analyze your security scan results and export detailed reports" 
+                              FontSize="16" 
+                              Foreground="#A0A0A0"/>
                 </StackPanel>
                 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button Classes="secondary-button" Command="{Binding ExportAllCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Path Data="{StaticResource DownloadIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
-                                  Width="16" Height="16" />
-                            <TextBlock Text="Export All" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                    <Button Background="#10B981" 
+                            Foreground="White"
+                            Padding="16,12"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="📤" FontSize="16"/>
+                            <TextBlock Text="Export All"/>
                         </StackPanel>
                     </Button>
-                    <Button Classes="secondary-button" Command="{Binding RefreshCommand}">
-                        <Path Data="{StaticResource RefreshIcon}" Fill="{DynamicResource SecondaryButtonForeground}" 
-                              Width="16" Height="16" />
+                    <Button Background="#2A2A2A" 
+                            Foreground="#FFFFFF"
+                            Padding="16,12"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="🔄" FontSize="16"/>
+                            <TextBlock Text="Refresh"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
-        </Border>
-        
-        <!-- Filters and Search -->
-        <Border Grid.Row="1" Classes="filter-bar" Margin="20,20,20,0">
-            <Grid ColumnDefinitions="2*,*,*,Auto" ColumnSpacing="15">
-                <!-- Search -->
-                <TextBox Grid.Column="0" Text="{Binding SearchQuery}" 
-                         Watermark="Search by URL or vulnerability..."
-                         Classes="search-input">
-                    <TextBox.InnerLeftContent>
-                        <Path Data="{StaticResource SearchIcon}" Fill="{DynamicResource TextColorMuted}"
-                              Width="16" Height="16" Margin="10,0,0,0" />
-                    </TextBox.InnerLeftContent>
-                </TextBox>
+
+            <!-- Filters and Search Panel -->
+            <Border Background="#1F1F1F" 
+                    CornerRadius="12" 
+                    Padding="24"
+                    BorderBrush="#2A2A2A" 
+                    BorderThickness="1">
+                <Grid ColumnDefinitions="2*,*,*,Auto">
+                    <!-- Search -->
+                    <TextBox Grid.Column="0" 
+                            Watermark="Search by URL, vulnerability type, or severity..."
+                            FontSize="14"
+                            Padding="12"
+                            Background="#2A2A2A"
+                            Foreground="#FFFFFF"
+                            BorderBrush="#8B5CF6"
+                            BorderThickness="2"
+                            CornerRadius="6"
+                            Margin="0,0,8,0"/>
+                    
+                    <!-- Filter by Severity -->
+                    <ComboBox Grid.Column="1" 
+                             SelectedIndex="0"
+                             FontSize="14"
+                             Padding="12"
+                             Background="#2A2A2A"
+                             Foreground="#FFFFFF"
+                             BorderBrush="#2A2A2A"
+                             BorderThickness="1"
+                             CornerRadius="6"
+                             Margin="8,0,8,0">
+                        <ComboBoxItem Content="🎯 All Severities"/>
+                        <ComboBoxItem Content="🔴 Critical Only"/>
+                        <ComboBoxItem Content="🟠 High Severity"/>
+                        <ComboBoxItem Content="🟡 Medium Severity"/>
+                        <ComboBoxItem Content="🟢 Low Severity"/>
+                        <ComboBoxItem Content="✅ Clean Reports"/>
+                    </ComboBox>
+                    
+                    <!-- Sort By -->
+                    <ComboBox Grid.Column="2" 
+                             SelectedIndex="0"
+                             FontSize="14"
+                             Padding="12"
+                             Background="#2A2A2A"
+                             Foreground="#FFFFFF"
+                             BorderBrush="#2A2A2A"
+                             BorderThickness="1"
+                             CornerRadius="6"
+                             Margin="8,0,8,0">
+                        <ComboBoxItem Content="📅 Date (Newest)"/>
+                        <ComboBoxItem Content="📅 Date (Oldest)"/>
+                        <ComboBoxItem Content="📈 Score (Highest)"/>
+                        <ComboBoxItem Content="📉 Score (Lowest)"/>
+                        <ComboBoxItem Content="⚠️ Issues (Most)"/>
+                        <ComboBoxItem Content="✅ Issues (Least)"/>
+                    </ComboBox>
+                    
+                    <!-- Results Count -->
+                    <TextBlock Grid.Column="3" 
+                              VerticalAlignment="Center"
+                              Text="Showing 47 reports"
+                              FontSize="14" 
+                              Foreground="#A0A0A0"
+                              Margin="8,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Reports Grid -->
+            <StackPanel Spacing="16">
                 
-                <!-- Filter by Severity -->
-                <ComboBox Grid.Column="1" SelectedItem="{Binding FilterOption}" 
-                          Classes="modern-input">
-                    <ComboBoxItem>All</ComboBoxItem>
-                    <ComboBoxItem>Critical</ComboBoxItem>
-                    <ComboBoxItem>High</ComboBoxItem>
-                    <ComboBoxItem>Medium</ComboBoxItem>
-                    <ComboBoxItem>Low</ComboBoxItem>
-                    <ComboBoxItem>Clean</ComboBoxItem>
-                </ComboBox>
-                
-                <!-- Sort By -->
-                <ComboBox Grid.Column="2" SelectedItem="{Binding SortOption}" 
-                          Classes="modern-input">
-                    <ComboBoxItem>Date (Newest)</ComboBoxItem>
-                    <ComboBoxItem>Date (Oldest)</ComboBoxItem>
-                    <ComboBoxItem>Score (Highest)</ComboBoxItem>
-                    <ComboBoxItem>Score (Lowest)</ComboBoxItem>
-                    <ComboBoxItem>Vulnerabilities (Most)</ComboBoxItem>
-                    <ComboBoxItem>Vulnerabilities (Least)</ComboBoxItem>
-                </ComboBox>
-                
-                <!-- Results Count -->
-                <TextBlock Grid.Column="3" VerticalAlignment="Center"
-                           Text="{Binding FilteredReports, StringFormat='Showing {0} of '}"
-                           Foreground="{DynamicResource TextColorMuted}">
-                    <TextBlock.Inlines>
-                        <Run Text="{Binding TotalReports}" />
-                        <Run Text=" reports" />
-                    </TextBlock.Inlines>
-                </TextBlock>
-            </Grid>
-        </Border>
-        
-        <!-- Reports Grid -->
-        <Border Grid.Row="2" Margin="20">
-            <Grid>
-                <!-- Reports List -->
-                <ScrollViewer IsVisible="{Binding Reports.Count}">
-                    <ItemsControl ItemsSource="{Binding Reports}" Margin="0,0,0,20">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Spacing="15" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Classes="report-card">
-                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
-                                        <!-- Report Info -->
-                                        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                                            <!-- Header -->
-                                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                                                <TextBlock Grid.Column="0" Text="{Binding TargetUrl}" 
-                                                           Classes="report-title" />
-                                                <Border Grid.Column="1" Classes="score-badge"
-                                                        Background="{Binding SecurityScore, Converter={StaticResource ScoreToColorConverter}}">
-                                                    <TextBlock Text="{Binding SecurityScore, StringFormat='{}{0:F1}'}"
-                                                               FontWeight="Bold" />
-                                                </Border>
-                                            </Grid>
-                                            
-                                            <!-- Meta Info -->
-                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="20">
-                                                <TextBlock Foreground="{DynamicResource TextColorMuted}">
-                                                    <TextBlock.Inlines>
-                                                        <Run Text="Scanned on" />
-                                                        <Run Text="{Binding ScanDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" 
-                                                             FontWeight="SemiBold" />
-                                                    </TextBlock.Inlines>
-                                                </TextBlock>
-                                                
-                                                <TextBlock Foreground="{DynamicResource TextColorMuted}">
-                                                    <TextBlock.Inlines>
-                                                        <Run Text="Duration:" />
-                                                        <Run Text="{Binding Duration}" FontWeight="SemiBold" />
-                                                    </TextBlock.Inlines>
-                                                </TextBlock>
-                                            </StackPanel>
-                                            
-                                            <!-- Vulnerability Summary -->
-                                            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="15">
-                                                <Border Classes="severity-badge critical" 
-                                                        IsVisible="{Binding CriticalCount}">
-                                                    <TextBlock Text="{Binding CriticalCount, StringFormat='Critical: {0}'}" />
-                                                </Border>
-                                                <Border Classes="severity-badge high" 
-                                                        IsVisible="{Binding HighCount}">
-                                                    <TextBlock Text="{Binding HighCount, StringFormat='High: {0}'}" />
-                                                </Border>
-                                                <Border Classes="severity-badge medium" 
-                                                        IsVisible="{Binding MediumCount}">
-                                                    <TextBlock Text="{Binding MediumCount, StringFormat='Medium: {0}'}" />
-                                                </Border>
-                                                <Border Classes="severity-badge low" 
-                                                        IsVisible="{Binding LowCount}">
-                                                    <TextBlock Text="{Binding LowCount, StringFormat='Low: {0}'}" />
-                                                </Border>
-                                                <Border Classes="severity-badge clean" 
-                                                        IsVisible="{Binding !VulnerabilityCount}">
-                                                    <TextBlock Text="Clean" />
-                                                </Border>
-                                            </StackPanel>
-                                        </Grid>
-                                        
-                                        <!-- Actions -->
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" 
-                                                    VerticalAlignment="Center">
-                                            <Button Classes="icon-button" ToolTip.Tip="View Details"
-                                                    Command="{Binding $parent[UserControl].DataContext.ViewReportCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Path Data="{StaticResource ViewIcon}" Fill="{DynamicResource AccentColor}" 
-                                                      Width="20" Height="20" />
-                                            </Button>
-                                            <Button Classes="icon-button" ToolTip.Tip="Export Report"
-                                                    Command="{Binding $parent[UserControl].DataContext.ExportReportCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Path Data="{StaticResource DownloadIcon}" Fill="{DynamicResource TextColor}" 
-                                                      Width="20" Height="20" />
-                                            </Button>
-                                            <Button Classes="icon-button" ToolTip.Tip="Delete Report"
-                                                    Command="{Binding $parent[UserControl].DataContext.DeleteReportCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Path Data="{StaticResource DeleteIcon}" Fill="{DynamicResource ErrorColor}" 
-                                                      Width="20" Height="20" />
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
+                <!-- Report Item 1 -->
+                <Border Background="#1F1F1F" 
+                        CornerRadius="12" 
+                        Padding="24"
+                        BorderBrush="#2A2A2A" 
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <!-- Report Details -->
+                        <StackPanel Grid.Column="0" Spacing="16">
+                            <!-- Header -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="api.example.com" 
+                                              FontSize="18" 
+                                              FontWeight="SemiBold" 
+                                              Foreground="#FFFFFF"/>
+                                    <TextBlock Text="Scanned on July 13, 2025 at 10:45 AM • Duration: 42 minutes" 
+                                              FontSize="12" 
+                                              Foreground="#A0A0A0"/>
+                                </StackPanel>
+                                
+                                <!-- Security Score -->
+                                <Border Grid.Column="1" 
+                                        Background="#EF4444" 
+                                        CornerRadius="6" 
+                                        Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="🚨" FontSize="14"/>
+                                        <TextBlock Text="Score: C-" 
+                                                  FontSize="14" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="White"/>
+                                    </StackPanel>
                                 </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-                
-                <!-- Empty State -->
-                <Border IsVisible="{Binding !Reports.Count}" 
-                        Background="{DynamicResource CardBackgroundDarker}"
-                        CornerRadius="12" Padding="60">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-                        <Path Data="{StaticResource ReportIcon}" Fill="{DynamicResource TextColorMuted}"
-                              Width="64" Height="64" HorizontalAlignment="Center" />
-                        <TextBlock Text="No reports found" FontSize="20" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextColorMuted}" HorizontalAlignment="Center" />
-                        <TextBlock Text="Run a security scan to generate your first report"
-                                   Foreground="{DynamicResource TextColorMuted}" HorizontalAlignment="Center" />
-                    </StackPanel>
+                            </Grid>
+                            
+                            <!-- Vulnerability Summary -->
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Border Background="#DC2626" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🔴 5 Critical" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <Border Background="#EA580C" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🟠 12 High" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <Border Background="#D97706" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🟡 18 Medium" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <Border Background="#65A30D" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🟢 7 Low" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="20,0">
+                            <Button Background="#8B5CF6" 
+                                    Foreground="White" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="👁️" FontSize="12"/>
+                                    <TextBlock Text="View"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Background="#2A2A2A" 
+                                    Foreground="#FFFFFF" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="📄" FontSize="12"/>
+                                    <TextBlock Text="Export"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Border>
-                
-                <!-- Loading overlay -->
-                <controls:AnimatedSpinner IsVisible="{Binding IsLoading}" 
-                                          HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Grid>
-        </Border>
-    </Grid>
+
+                <!-- Report Item 2 -->
+                <Border Background="#1F1F1F" 
+                        CornerRadius="12" 
+                        Padding="24"
+                        BorderBrush="#2A2A2A" 
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <StackPanel Grid.Column="0" Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="app.mysite.org" 
+                                              FontSize="18" 
+                                              FontWeight="SemiBold" 
+                                              Foreground="#FFFFFF"/>
+                                    <TextBlock Text="Scanned on July 12, 2025 at 2:30 PM • Duration: 1 hour 15 minutes" 
+                                              FontSize="12" 
+                                              Foreground="#A0A0A0"/>
+                                </StackPanel>
+                                
+                                <Border Grid.Column="1" 
+                                        Background="#F59E0B" 
+                                        CornerRadius="6" 
+                                        Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="⚡" FontSize="14"/>
+                                        <TextBlock Text="Running..." 
+                                                  FontSize="14" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="Scan Progress" FontSize="14" Foreground="#FFFFFF"/>
+                                    <TextBlock Grid.Column="1" Text="67%" FontSize="14" Foreground="#F59E0B"/>
+                                </Grid>
+                                <ProgressBar Value="67" 
+                                            Height="8" 
+                                            CornerRadius="4"
+                                            Background="#2A2A2A"
+                                            Foreground="#F59E0B"/>
+                                <TextBlock Text="Currently checking for authentication vulnerabilities..." 
+                                          FontSize="12" 
+                                          Foreground="#A0A0A0"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="20,0">
+                            <Button Background="#EF4444" 
+                                    Foreground="White" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="⏹️" FontSize="12"/>
+                                    <TextBlock Text="Stop"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Report Item 3 -->
+                <Border Background="#1F1F1F" 
+                        CornerRadius="12" 
+                        Padding="24"
+                        BorderBrush="#2A2A2A" 
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <StackPanel Grid.Column="0" Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="demo.webapp.net" 
+                                              FontSize="18" 
+                                              FontWeight="SemiBold" 
+                                              Foreground="#FFFFFF"/>
+                                    <TextBlock Text="Scanned on July 11, 2025 at 9:15 AM • Duration: 28 minutes" 
+                                              FontSize="12" 
+                                              Foreground="#A0A0A0"/>
+                                </StackPanel>
+                                
+                                <Border Grid.Column="1" 
+                                        Background="#8B5CF6" 
+                                        CornerRadius="6" 
+                                        Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="🎯" FontSize="14"/>
+                                        <TextBlock Text="Score: B+" 
+                                                  FontSize="14" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Border Background="#D97706" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🟡 4 Medium" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <Border Background="#65A30D" 
+                                        CornerRadius="4" 
+                                        Padding="8,4">
+                                    <TextBlock Text="🟢 3 Low" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="20,0">
+                            <Button Background="#8B5CF6" 
+                                    Foreground="White" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="👁️" FontSize="12"/>
+                                    <TextBlock Text="View"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Background="#2A2A2A" 
+                                    Foreground="#FFFFFF" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="📄" FontSize="12"/>
+                                    <TextBlock Text="Export"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Report Item 4 -->
+                <Border Background="#1F1F1F" 
+                        CornerRadius="12" 
+                        Padding="24"
+                        BorderBrush="#2A2A2A" 
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <StackPanel Grid.Column="0" Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="secure.testapp.io" 
+                                              FontSize="18" 
+                                              FontWeight="SemiBold" 
+                                              Foreground="#FFFFFF"/>
+                                    <TextBlock Text="Scanned on July 10, 2025 at 4:20 PM • Duration: 15 minutes" 
+                                              FontSize="12" 
+                                              Foreground="#A0A0A0"/>
+                                </StackPanel>
+                                
+                                <Border Grid.Column="1" 
+                                        Background="#10B981" 
+                                        CornerRadius="6" 
+                                        Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="🛡️" FontSize="14"/>
+                                        <TextBlock Text="Score: A" 
+                                                  FontSize="14" 
+                                                  FontWeight="Bold" 
+                                                  Foreground="White"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <Border Background="#059669" 
+                                    CornerRadius="4" 
+                                    Padding="8,4">
+                                <TextBlock Text="✅ No vulnerabilities found" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                            </Border>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="20,0">
+                            <Button Background="#8B5CF6" 
+                                    Foreground="White" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="👁️" FontSize="12"/>
+                                    <TextBlock Text="View"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Background="#2A2A2A" 
+                                    Foreground="#FFFFFF" 
+                                    Padding="12,8"
+                                    CornerRadius="6"
+                                    FontSize="14">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="📄" FontSize="12"/>
+                                    <TextBlock Text="Export"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+
+            <!-- Load More Button -->
+            <Button Background="Transparent" 
+                    Foreground="#8B5CF6"
+                    Padding="20,12"
+                    CornerRadius="8"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    HorizontalAlignment="Center"
+                    BorderBrush="#8B5CF6"
+                    BorderThickness="2">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="📂" FontSize="16"/>
+                    <TextBlock Text="Load More Reports"/>
+                </StackPanel>
+            </Button>
+            
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

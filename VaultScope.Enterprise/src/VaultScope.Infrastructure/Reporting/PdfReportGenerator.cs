@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -16,16 +20,18 @@ public class PdfReportGenerator : IReportGenerator
     
     public ReportFormat Format => ReportFormat.Pdf;
     
-    public async Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
+    public Task<byte[]> GenerateAsync(ScanResult scanResult, ReportOptions options)
     {
         var document = CreateDocument(scanResult, options);
-        return document.GeneratePdf();
+        var bytes = document.GeneratePdf();
+        return Task.FromResult(bytes);
     }
     
-    public async Task SaveToFileAsync(ScanResult scanResult, string filePath, ReportOptions options)
+    public Task SaveToFileAsync(ScanResult scanResult, string filePath, ReportOptions options)
     {
         var document = CreateDocument(scanResult, options);
-        document.GeneratePdfAndShow(filePath);
+        document.GeneratePdf(filePath);
+        return Task.CompletedTask;
     }
     
     private Document CreateDocument(ScanResult scanResult, ReportOptions options)
@@ -213,14 +219,14 @@ public class PdfReportGenerator : IReportGenerator
                         col.Item().Row(catRow =>
                         {
                             catRow.RelativeItem().Text(category.Category);
-                            catRow.ConstantItem(100).Text($"{category.Score:F0}%")
-                                .AlignRight().FontColor(GetScoreColor(category.Score));
+                            catRow.ConstantItem(100).AlignRight().Text($"{category.Score:F0}%")
+                                .FontColor(GetScoreColor(category.Score));
                         });
                         
                         col.Item().Height(10).Background(Colors.Grey.Lighten3)
                             .Layers(layers =>
                             {
-                                layers.Layer().Height(10).Width($"{category.Score}%")
+                                layers.Layer().Height(10).Width((float)category.Score / 100 * 200)
                                     .Background("#8B5CF6");
                             });
                     }
@@ -291,10 +297,10 @@ public class PdfReportGenerator : IReportGenerator
                                 r.RelativeItem().Height(20).Background(Colors.Grey.Lighten3)
                                     .Layers(layers =>
                                     {
-                                        layers.Layer().Height(20).Width($"{percentage}%")
+                                        layers.Layer().Height(20).Width((float)percentage / 100 * 200)
                                             .Background(GetSeverityColor(severity));
                                     });
-                                r.ConstantItem(50).Text($"{count}").AlignRight().FontSize(10);
+                                r.ConstantItem(50).AlignRight().Text($"{count}").FontSize(10);
                             });
                         }
                     }
@@ -316,7 +322,7 @@ public class PdfReportGenerator : IReportGenerator
                         col.Item().Row(r =>
                         {
                             r.RelativeItem().Text(group.Key).FontSize(10);
-                            r.ConstantItem(50).Text(group.Count().ToString()).AlignRight().FontSize(10);
+                            r.ConstantItem(50).AlignRight().Text(group.Count().ToString()).FontSize(10);
                         });
                     }
                 });

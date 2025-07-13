@@ -1,3 +1,5 @@
+using System;
+
 namespace VaultScope.Infrastructure.Data.Entities;
 
 public abstract class BaseEntity

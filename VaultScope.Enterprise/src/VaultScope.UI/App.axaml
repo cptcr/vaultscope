@@ -2,21 +2,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="VaultScope.UI.App"
              xmlns:local="using:VaultScope.UI"
+             xmlns:vm="using:VaultScope.UI.ViewModels"
+             xmlns:views="using:VaultScope.UI.Views"
              RequestedThemeVariant="Dark">
     
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- Theme resources -->
-                <ResourceInclude Source="/Themes/DarkPurpleTheme.axaml"/>
-                <ResourceInclude Source="/Themes/Colors.axaml"/>
-                <ResourceInclude Source="/Themes/Animations.axaml"/>
+                <ResourceInclude Source="avares://VaultScope.UI/Themes/DarkPurpleTheme.axaml"/>
                 
                 <!-- Icon resources -->
-                <ResourceInclude Source="/Assets/Icons.axaml"/>
+                <ResourceInclude Source="avares://VaultScope.UI/Resources/Icons.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
+    <Application.DataTemplates>
+        <!-- Map ViewModels to Views -->
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScannerViewModel}">
+            <views:ScannerView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+            <views:ReportsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+    </Application.DataTemplates>
 
     <Application.Styles>
         <FluentTheme>
@@ -52,12 +68,63 @@
             </FluentTheme.Palettes>
         </FluentTheme>
         
-        <StyleInclude Source="/Themes/Controls/ButtonStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/TextBoxStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/DataGridStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/TabControlStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/ProgressBarStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/ScrollBarStyles.axaml"/>
-        <StyleInclude Source="/Themes/Controls/TooltipStyles.axaml"/>
+        <!-- Modern Navigation Styles -->
+        <Style Selector="Button.nav-button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.nav-button:pointerover">
+            <Setter Property="Background" Value="#2A2A2A"/>
+        </Style>
+        <Style Selector="Button.nav-button:pressed">
+            <Setter Property="Background" Value="#3A3A3A"/>
+        </Style>
+        
+        <Style Selector="Button.nav-sub-button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+        </Style>
+        <Style Selector="Button.nav-sub-button:pointerover">
+            <Setter Property="Background" Value="#1A1A1A"/>
+        </Style>
+        
+        <Style Selector="Button.quick-action-button">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="Button.quick-action-button:pointerover">
+            <Setter Property="Opacity" Value="0.9"/>
+        </Style>
+        
+        <Style Selector="Button.titlebar-button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.titlebar-button:pointerover">
+            <Setter Property="Background" Value="#2A2A2A"/>
+        </Style>
+        <Style Selector="Button.titlebar-button.close:pointerover">
+            <Setter Property="Background" Value="#E53E3E"/>
+        </Style>
+        
     </Application.Styles>
 </Application>

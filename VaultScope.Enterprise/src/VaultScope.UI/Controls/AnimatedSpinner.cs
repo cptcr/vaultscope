@@ -2,6 +2,10 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
+using Avalonia.Controls.Templates;
+using Avalonia.Data;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
 using System;
@@ -67,7 +71,7 @@ public class AnimatedSpinner : TemplatedControl
                 }
             };
             
-            animation.RunAsync(spinner, null);
+            animation.RunAsync(spinner, default);
         }
     }
 }
@@ -79,7 +83,7 @@ public class AnimatedSpinnerTheme : ControlTheme
     protected AnimatedSpinnerTheme(Type targetType) : base(targetType)
     {
         Add(new Setter(AnimatedSpinner.TemplateProperty, CreateTemplate()));
-        Add(new Setter(AnimatedSpinner.StrokeBrushProperty, new DynamicResourceExtension("AccentBrush")));
+        Add(new Setter(AnimatedSpinner.StrokeBrushProperty, new SolidColorBrush(Colors.Blue)));
     }
     
     private static IControlTemplate CreateTemplate()
@@ -93,7 +97,7 @@ public class AnimatedSpinnerTheme : ControlTheme
                 Height = spinner.Height,
                 RenderTransform = new RotateTransform(),
                 RenderTransformOrigin = new RelativePoint(0.5, 0.5, RelativeUnit.Relative),
-                Child = new Path
+                Child = new Avalonia.Controls.Shapes.Path
                 {
                     Data = StreamGeometry.Parse("M12,2 A10,10 0 0,1 22,12"),
                     Stroke = spinner.StrokeBrush,

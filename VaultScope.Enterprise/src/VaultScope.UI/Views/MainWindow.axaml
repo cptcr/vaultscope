@@ -5,219 +5,588 @@
         xmlns:views="using:VaultScope.UI.Views"
         x:Class="VaultScope.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/icon.ico"
-        Title="VaultScope Enterprise - Professional API Security Assessment"
-        Width="1400" Height="900"
-        MinWidth="1200" MinHeight="700"
+        Icon="/Assets/icon.png"
+        Title="VaultScope Enterprise - Professional Security Assessment Platform"
+        Width="1680" Height="1050"
+        MinWidth="1366" MinHeight="768"
         WindowStartupLocation="CenterScreen"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1"
-        TransparencyLevelHint="AcrylicBlur"
-        Background="Transparent">
+        Background="{StaticResource AppBackgroundBrush}">
 
     <Window.Styles>
-        <Style Selector="Window">
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#8B5CF6" Opacity="0.3" BlurRadius="20"/>
-                        </Border.Effect>
-                        <VisualLayerManager>
-                            <ContentPresenter Name="PART_ContentPresenter"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            Margin="{TemplateBinding Padding}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </VisualLayerManager>
-                    </Border>
-                </ControlTemplate>
+        <!-- 🎨 PROFESSIONAL ENTERPRISE STYLES -->
+        
+        <!-- Professional Navigation Button -->
+        <Style Selector="Button.nav-enterprise">
+            <Setter Property="Background" Value="{StaticResource GlassBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="#30FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Margin" Value="8,4"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                </Transitions>
             </Setter>
+        </Style>
+
+        <Style Selector="Button.nav-enterprise:pointerover">
+            <Setter Property="Background" Value="{StaticResource GlassHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
+            <Setter Property="RenderTransform" Value="translateX(4px) scale(1.02)"/>
+        </Style>
+
+        <Style Selector="Button.nav-enterprise.active">
+            <Setter Property="Background" Value="{StaticResource PrimaryGradientBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
+            <Setter Property="RenderTransform" Value="translateX(2px)"/>
+        </Style>
+
+        <Style Selector="Button.nav-enterprise:pressed">
+            <Setter Property="RenderTransform" Value="translateX(1px) scale(0.98)"/>
+        </Style>
+
+        <!-- Professional Action Button -->
+        <Style Selector="Button.action-enterprise">
+            <Setter Property="Background" Value="{StaticResource SecurityGradientBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource WhiteTextColor}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,14"/>
+            <Setter Property="Margin" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.action-enterprise:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.03) translateY(-2px)"/>
+            <Setter Property="Opacity" Value="0.95"/>
+        </Style>
+
+        <Style Selector="Button.action-enterprise:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
         </Style>
     </Window.Styles>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>  <!-- Default title bar -->
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="32"/>    <!-- Status bar -->
         </Grid.RowDefinitions>
 
-        <!-- Custom Title Bar -->
-        <Grid Grid.Row="0" Background="#0F0F0F">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <!-- 🎨 PROFESSIONAL ENTERPRISE TITLE BAR -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource GlassCardBrush}"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{StaticResource PrimaryColor}"
+                Height="50">
+            <Border.Effect>
+                <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                Opacity="0.15" 
+                                BlurRadius="8"
+                                OffsetY="1"/>
+            </Border.Effect>
+            
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- App Icon and Title -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10,0">
-                <Image Source="/Assets/icon.png" Width="24" Height="24"/>
-                <TextBlock Text="VaultScope Enterprise" 
-                          VerticalAlignment="Center" 
-                          FontWeight="SemiBold"
-                          Foreground="#8B5CF6"/>
-            </StackPanel>
+                <!-- 🏢 ENTERPRISE BRANDING -->
+                <StackPanel Grid.Column="0" 
+                           Orientation="Horizontal" 
+                           Spacing="12" 
+                           VerticalAlignment="Center">
+                    <!-- Professional App Icon -->
+                    <Border Width="32" Height="32" 
+                            CornerRadius="6"
+                            Background="{StaticResource SecurityGradientBrush}">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                            Opacity="0.4" 
+                                            BlurRadius="8"/>
+                        </Border.Effect>
+                        <Path Data="{StaticResource ShieldCheckIcon}" 
+                              Fill="White" 
+                              Width="18" Height="18"
+                              Stretch="Uniform"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <!-- Modern Typography Title -->
+                    <StackPanel VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="VaultScope Enterprise" 
+                                  FontFamily="{StaticResource PrimaryFontFamily}"
+                                  FontWeight="SemiBold"
+                                  FontSize="16"
+                                  Foreground="{StaticResource WhiteTextColor}"/>
+                        <TextBlock Text="Professional Security Assessment Platform" 
+                                  FontFamily="{StaticResource PrimaryFontFamily}"
+                                  FontSize="11"
+                                  FontWeight="Medium"
+                                  Foreground="{StaticResource SecondaryTextBrush}"/>
+                    </StackPanel>
+                </StackPanel>
 
-            <!-- Drag Area -->
-            <Border Grid.Column="1" Background="Transparent" 
-                    PointerPressed="OnTitleBarPointerPressed"
-                    DoubleTapped="OnTitleBarDoubleTapped"/>
+                <!-- Status Information -->
+                <StackPanel Grid.Column="2" 
+                           Orientation="Horizontal" 
+                           Spacing="16"
+                           VerticalAlignment="Center">
+                    <!-- Connection Status -->
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Ellipse Width="8" Height="8" 
+                                Fill="{StaticResource SuccessBrush}">
+                            <Ellipse.Effect>
+                                <DropShadowEffect Color="#10B981" 
+                                                Opacity="0.6" 
+                                                BlurRadius="4"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <TextBlock Text="SECURE CONNECTION" 
+                                  FontSize="9" 
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource SuccessBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <!-- Window Controls -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0">
-                <Button Classes="titlebar-button" Click="OnMinimizeClick">
-                    <Path Data="M0,0 L10,0" Stroke="White" StrokeThickness="1"/>
-                </Button>
-                <Button Classes="titlebar-button" Click="OnMaximizeClick">
-                    <Rectangle Width="10" Height="10" Stroke="White" StrokeThickness="1"/>
-                </Button>
-                <Button Classes="titlebar-button close" Click="OnCloseClick">
-                    <Path Data="M0,0 L10,10 M10,0 L0,10" Stroke="White" StrokeThickness="1"/>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <!-- Main Content -->
+        <!-- 🏗️ PROFESSIONAL MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="360"/>  <!-- Modern responsive sidebar -->
                 <ColumnDefinition Width="1"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Navigation Sidebar -->
-            <Border Grid.Column="0" Background="#1A1A1A">
+            <!-- 🎯 PROFESSIONAL NAVIGATION SIDEBAR -->
+            <Border Grid.Column="0" 
+                    Background="{StaticResource GlassCardBrush}"
+                    BorderThickness="0,0,1,0"
+                    BorderBrush="{StaticResource PrimaryColor}">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" 
+                                    Opacity="0.1" 
+                                    BlurRadius="10"
+                                    OffsetX="2"/>
+                </Border.Effect>
+                
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>  <!-- Professional Profile -->
+                        <RowDefinition Height="*"/>     <!-- Navigation -->
+                        <RowDefinition Height="Auto"/>  <!-- Professional Footer -->
                     </Grid.RowDefinitions>
 
-                    <!-- User Profile Section -->
-                    <Border Grid.Row="0" Padding="20" BorderThickness="0,0,0,1" BorderBrush="#2A2A2A">
-                        <StackPanel Spacing="10">
-                            <Border Width="60" Height="60" CornerRadius="30" 
-                                    Background="#8B5CF6" HorizontalAlignment="Center">
-                                <TextBlock Text="VS" FontSize="24" FontWeight="Bold"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Foreground="White"/>
+                    <!-- 👤 PROFESSIONAL USER PROFILE -->
+                    <Border Grid.Row="0" 
+                            Padding="24,20"
+                            BorderThickness="0,0,0,1" 
+                            BorderBrush="#20FFFFFF"
+                            Background="{StaticResource GlassBrush}">
+                        <StackPanel Spacing="14">
+                            <!-- Professional Avatar -->
+                            <Border Width="72" Height="72" 
+                                    CornerRadius="36"
+                                    Background="{StaticResource SecurityGradientBrush}"
+                                    HorizontalAlignment="Center">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                                    Opacity="0.3" 
+                                                    BlurRadius="12"/>
+                                </Border.Effect>
+                                <Path Data="{StaticResource ShieldIcon}" 
+                                      Fill="White" 
+                                      Width="36" Height="36"
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Security Professional" 
-                                      HorizontalAlignment="Center" 
-                                      Foreground="#A0A0A0" FontSize="12"/>
+                            
+                            <!-- Professional User Info -->
+                            <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Administrator" 
+                                          HorizontalAlignment="Center"
+                                          FontWeight="Medium"
+                                          FontSize="13"
+                                          Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="Enterprise Security Suite" 
+                                          HorizontalAlignment="Center"
+                                          FontSize="12"
+                                          FontWeight="Medium"
+                                          Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <Border Background="{StaticResource SuccessBrush}"
+                                        CornerRadius="10"
+                                        Padding="8,3"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,4,0,0">
+                                    <TextBlock Text="● AUTHENTICATED" 
+                                              FontSize="9"
+                                              FontWeight="Bold"
+                                              Foreground="White"/>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <!-- Navigation Menu -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Spacing="5" Margin="10">
-                            <controls:NavigationButton Icon="{StaticResource DashboardIcon}" 
-                                                      Text="Dashboard" 
-                                                      IsSelected="{Binding IsDashboardSelected}"
-                                                      Command="{Binding NavigateToDashboardCommand}"/>
+                    <!-- 🧭 PROFESSIONAL NAVIGATION -->
+                    <ScrollViewer Grid.Row="1" 
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled"
+                                 Padding="16,20">
+                        <StackPanel Spacing="8">
                             
-                            <controls:NavigationButton Icon="{StaticResource ScannerIcon}" 
-                                                      Text="Security Scanner" 
-                                                      IsSelected="{Binding IsScannerSelected}"
-                                                      Command="{Binding NavigateToScannerCommand}"/>
+                            <!-- Security Operations -->
+                            <TextBlock Text="SECURITY OPERATIONS" 
+                                      FontSize="11" 
+                                      FontWeight="Bold" 
+                                      Foreground="{StaticResource PrimaryColor}" 
+                                      Margin="10,0,0,10"/>
                             
-                            <controls:NavigationButton Icon="{StaticResource ReportsIcon}" 
-                                                      Text="Reports" 
-                                                      IsSelected="{Binding IsReportsSelected}"
-                                                      Command="{Binding NavigateToReportsCommand}"/>
+                            <!-- Professional Dashboard -->
+                            <Button Classes="nav-enterprise active" 
+                                    Command="{Binding NavigateToDashboardCommand}">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" 
+                                            Background="{StaticResource SecurityGradientBrush}"
+                                            CornerRadius="5"
+                                            Padding="5"
+                                            Margin="0,0,14,0">
+                                        <Path Data="{StaticResource DashboardIcon}" 
+                                              Fill="White" 
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Security Dashboard" 
+                                                  FontWeight="SemiBold"
+                                                  FontSize="13"/>
+                                        <TextBlock Text="Real-time security overview" 
+                                                  FontSize="10"
+                                                  Opacity="0.8"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="2" 
+                                            Background="{StaticResource CriticalBrush}" 
+                                            CornerRadius="10" 
+                                            Padding="6,3"
+                                            IsVisible="{Binding HasCriticalAlerts}">
+                                        <TextBlock Text="!" 
+                                                  FontSize="10" 
+                                                  FontWeight="Bold"
+                                                  Foreground="White"/>
+                                    </Border>
+                                </Grid>
+                            </Button>
                             
-                            <controls:NavigationButton Icon="{StaticResource HistoryIcon}" 
-                                                      Text="Scan History" 
-                                                      IsSelected="{Binding IsHistorySelected}"
-                                                      Command="{Binding NavigateToHistoryCommand}"/>
+                            <!-- Professional Scanner -->
+                            <Button Classes="nav-enterprise" 
+                                    Command="{Binding NavigateToScannerCommand}">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" 
+                                            Background="{StaticResource InfoBrush}"
+                                            CornerRadius="5"
+                                            Padding="5"
+                                            Margin="0,0,14,0">
+                                        <Path Data="{StaticResource ScanIcon}" 
+                                              Fill="White" 
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Vulnerability Scanner" 
+                                                  FontWeight="SemiBold"
+                                                  FontSize="13"/>
+                                        <TextBlock Text="Advanced threat detection" 
+                                                  FontSize="10"
+                                                  Opacity="0.8"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="2"
+                                            Background="{StaticResource SuccessBrush}"
+                                            CornerRadius="8"
+                                            Padding="4"
+                                            IsVisible="{Binding IsCurrentlyScanning}">
+                                        <Path Data="{StaticResource PlayIcon}" 
+                                              Fill="White" 
+                                              Width="8" Height="8"
+                                              Stretch="Uniform"/>
+                                    </Border>
+                                </Grid>
+                            </Button>
                             
-                            <Rectangle Height="1" Fill="#2A2A2A" Margin="0,10"/>
+                            <!-- Professional Reports -->
+                            <Button Classes="nav-enterprise" 
+                                    Command="{Binding NavigateToReportsCommand}">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" 
+                                            Background="{StaticResource WarningBrush}"
+                                            CornerRadius="5"
+                                            Padding="5"
+                                            Margin="0,0,14,0">
+                                        <Path Data="{StaticResource ReportsIcon}" 
+                                              Fill="White" 
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Reports &amp; Analytics" 
+                                                  FontWeight="SemiBold"
+                                                  FontSize="13"/>
+                                        <TextBlock Text="Comprehensive security reports" 
+                                                  FontSize="10"
+                                                  Opacity="0.8"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" 
+                                              Text="{Binding TotalReports}" 
+                                              FontSize="11" 
+                                              FontWeight="Bold"
+                                              Foreground="{StaticResource PrimaryColor}"/>
+                                </Grid>
+                            </Button>
                             
-                            <controls:NavigationButton Icon="{StaticResource SettingsIcon}" 
-                                                      Text="Settings" 
-                                                      IsSelected="{Binding IsSettingsSelected}"
-                                                      Command="{Binding NavigateToSettingsCommand}"/>
+                            <!-- Professional Divider -->
+                            <Rectangle Height="1" 
+                                      Fill="#30FFFFFF" 
+                                      Margin="10,16"/>
                             
-                            <controls:NavigationButton Icon="{StaticResource HelpIcon}" 
-                                                      Text="Help & Support" 
-                                                      Command="{Binding ShowHelpCommand}"/>
+                            <!-- Quick Actions -->
+                            <TextBlock Text="QUICK ACTIONS" 
+                                      FontSize="11" 
+                                      FontWeight="Bold" 
+                                      Foreground="{StaticResource PrimaryColor}" 
+                                      Margin="10,8,0,10"/>
+                            
+                            <!-- Professional Quick Scan -->
+                            <Button Classes="action-enterprise" 
+                                    Command="{Binding StartQuickScanCommand}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Path Grid.Column="0" 
+                                          Data="{StaticResource ZapIcon}" 
+                                          Fill="White" 
+                                          Width="16" Height="16" 
+                                          Stretch="Uniform" 
+                                          Margin="0,0,10,0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Quick Security Scan" 
+                                                  FontWeight="Bold"
+                                                  FontSize="13"/>
+                                        <TextBlock Text="Rapid vulnerability assessment" 
+                                                  FontSize="10"
+                                                  Opacity="0.9"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                            
+                            <!-- Professional Divider -->
+                            <Rectangle Height="1" 
+                                      Fill="#20FFFFFF" 
+                                      Margin="10,16"/>
+                            
+                            <!-- Administration -->
+                            <TextBlock Text="ADMINISTRATION" 
+                                      FontSize="11" 
+                                      FontWeight="Bold" 
+                                      Foreground="{StaticResource PrimaryColor}" 
+                                      Margin="10,0,0,10"/>
+                                      
+                            <!-- Settings -->
+                            <Button Classes="nav-enterprise" 
+                                    Command="{Binding NavigateToSettingsCommand}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" 
+                                            Background="{StaticResource SecondaryTextBrush}"
+                                            CornerRadius="5"
+                                            Padding="5"
+                                            Margin="0,0,14,0">
+                                        <Path Data="{StaticResource SettingsIcon}" 
+                                              Fill="White" 
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Settings &amp; Configuration" 
+                                                  FontWeight="SemiBold"
+                                                  FontSize="13"/>
+                                        <TextBlock Text="System preferences" 
+                                                  FontSize="10"
+                                                  Opacity="0.8"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!-- Version Info -->
-                    <Border Grid.Row="2" Padding="20,10" BorderThickness="0,1,0,0" BorderBrush="#2A2A2A">
-                        <StackPanel Spacing="5">
-                            <TextBlock Text="VaultScope Enterprise" FontSize="11" Foreground="#606060"/>
-                            <TextBlock Text="Version 1.0.0" FontSize="10" Foreground="#505050"/>
+                    <!-- 📊 PROFESSIONAL FOOTER -->
+                    <Border Grid.Row="2" 
+                            Padding="20,14" 
+                            BorderThickness="0,1,0,0" 
+                            BorderBrush="#20FFFFFF"
+                            Background="{StaticResource GlassBrush}">
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0"
+                                          Text="VaultScope Enterprise" 
+                                          FontSize="12" 
+                                          FontWeight="Bold"
+                                          Foreground="White"/>
+                                <TextBlock Grid.Column="1"
+                                          Text="v1.0.0" 
+                                          FontSize="11" 
+                                          Foreground="{StaticResource SecondaryTextBrush}"/>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border Background="{StaticResource SuccessBrush}"
+                                        Width="6" Height="6"
+                                        CornerRadius="3"/>
+                                <TextBlock Text="All systems operational" 
+                                          FontSize="10" 
+                                          FontWeight="Medium"
+                                          Foreground="{StaticResource SuccessBrush}"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
 
-            <!-- Separator -->
-            <Rectangle Grid.Column="1" Fill="#2A2A2A"/>
+            <!-- Content Separator -->
+            <Rectangle Grid.Column="1" Fill="{StaticResource PrimaryColor}" Opacity="0.3"/>
 
-            <!-- Content Area -->
-            <Grid Grid.Column="2" Background="#0F0F0F">
-                <!-- Page Transition -->
-                <TransitioningContentControl Content="{Binding CurrentPage}"
-                                           Duration="0:0:0.3">
+            <!-- 🎨 PROFESSIONAL CONTENT AREA -->
+            <Grid Grid.Column="2" Background="{StaticResource AppBackgroundBrush}">
+                <!-- Professional Glass Overlay -->
+                <Border Background="{StaticResource GlassBrush}" 
+                        Opacity="0.05"/>
+                        
+                <!-- Professional Page Transitions -->
+                <TransitioningContentControl Content="{Binding CurrentPage}" 
+                                           Margin="20">
                     <TransitioningContentControl.PageTransition>
-                        <PageSlide Duration="0:0:0.3" Orientation="Horizontal"/>
+                        <PageSlide Duration="0:0:0.4" Orientation="Horizontal"/>
                     </TransitioningContentControl.PageTransition>
                 </TransitioningContentControl>
-
-                <!-- Notification Overlay -->
-                <controls:NotificationContainer VerticalAlignment="Top" 
-                                              HorizontalAlignment="Right" 
-                                              Margin="20"/>
             </Grid>
         </Grid>
 
-        <!-- Status Bar -->
-        <Border Grid.Row="2" Background="#1A1A1A" BorderThickness="0,1,0,0" BorderBrush="#2A2A2A">
+        <!-- 📊 PROFESSIONAL STATUS BAR -->
+        <Border Grid.Row="2" 
+                Background="{StaticResource GlassCardBrush}"
+                BorderThickness="0,1,0,0"
+                BorderBrush="{StaticResource PrimaryColor}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Status Text -->
-                <TextBlock Grid.Column="0" Text="{Binding StatusText}" 
-                          VerticalAlignment="Center" Margin="10,0"
-                          Foreground="#A0A0A0" FontSize="12"/>
+                <!-- Professional Status Message -->
+                <StackPanel Grid.Column="0" 
+                           Orientation="Horizontal" 
+                           Spacing="10" 
+                           Margin="16,0"
+                           VerticalAlignment="Center">
+                    <Path Data="{StaticResource InfoIcon}" 
+                          Fill="{StaticResource PrimaryColor}" 
+                          Width="14" Height="14"
+                          Stretch="Uniform"/>
+                    <TextBlock Text="{Binding StatusText}" 
+                              Foreground="{StaticResource PrimaryTextBrush}" 
+                              FontSize="12"
+                              FontWeight="Medium"/>
+                </StackPanel>
 
-                <!-- Connection Status -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10,0">
-                    <Ellipse Width="8" Height="8" Fill="{Binding ConnectionStatusColor}"/>
+                <!-- Professional Connection Status -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           Spacing="6" 
+                           Margin="12,0"
+                           VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" 
+                            Fill="{Binding ConnectionStatusColor}">
+                        <Ellipse.Effect>
+                            <DropShadowEffect Color="{Binding ConnectionStatusColor}" 
+                                            Opacity="0.7" 
+                                            BlurRadius="4"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
                     <TextBlock Text="{Binding ConnectionStatus}" 
-                              VerticalAlignment="Center" 
-                              Foreground="#A0A0A0" FontSize="12"/>
+                              Foreground="{StaticResource SecondaryTextBrush}" 
+                              FontSize="11"
+                              FontWeight="SemiBold"/>
                 </StackPanel>
 
-                <!-- Scan Activity -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="10,0"
+                <!-- Professional Scan Progress -->
+                <StackPanel Grid.Column="2" 
+                           Orientation="Horizontal" 
+                           Spacing="6" 
+                           Margin="12,0"
+                           VerticalAlignment="Center"
                            IsVisible="{Binding IsScanning}">
-                    <controls:AnimatedSpinner Width="16" Height="16"/>
-                    <TextBlock Text="Scanning..." 
-                              VerticalAlignment="Center" 
-                              Foreground="#8B5CF6" FontSize="12"/>
+                    <controls:AnimatedSpinner Width="14" Height="14"/>
+                    <TextBlock Text="{Binding ScanProgress}" 
+                              Foreground="{StaticResource PrimaryColor}" 
+                              FontSize="11"
+                              FontWeight="Bold"/>
                 </StackPanel>
 
-                <!-- Current Time -->
-                <TextBlock Grid.Column="3" Text="{Binding CurrentTime}" 
-                          VerticalAlignment="Center" Margin="10,0"
-                          Foreground="#A0A0A0" FontSize="12"/>
+                <!-- Professional Memory Usage -->
+                <StackPanel Grid.Column="3" 
+                           Orientation="Horizontal" 
+                           Spacing="6" 
+                           Margin="12,0"
+                           VerticalAlignment="Center">
+                    <Path Data="{StaticResource ActivityIcon}" 
+                          Fill="{StaticResource SecondaryTextBrush}" 
+                          Width="12" Height="12"
+                          Stretch="Uniform"/>
+                    <TextBlock Text="{Binding MemoryUsage}" 
+                              Foreground="{StaticResource SecondaryTextBrush}" 
+                              FontSize="10"/>
+                </StackPanel>
+
+                <!-- Professional Time Display -->
+                <StackPanel Grid.Column="4" 
+                           Orientation="Horizontal" 
+                           Spacing="6" 
+                           Margin="16,0"
+                           VerticalAlignment="Center">
+                    <Path Data="{StaticResource ClockIcon}" 
+                          Fill="{StaticResource SecondaryTextBrush}" 
+                          Width="12" Height="12"
+                          Stretch="Uniform"/>
+                    <TextBlock Text="{Binding CurrentTime}" 
+                              Foreground="{StaticResource SecondaryTextBrush}" 
+                              FontSize="10"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

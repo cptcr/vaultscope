@@ -2,8 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ReactiveUI;
+using VaultScope.UI.ViewModels;
+using VaultScope.UI.Views;
 
 namespace VaultScope.UI.Services;
 
@@ -39,9 +43,39 @@ public class NotificationService : ReactiveObject, INotificationService
     
     public async Task<bool> ShowConfirmationAsync(string title, string message)
     {
-        // This would show a modal dialog
-        // For now, return true as a placeholder
-        return await Task.FromResult(true);
+        return await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            try
+            {
+                var dialog = new ConfirmationDialog
+                {
+                    Title = title,
+                    Message = message
+                };
+
+                Window? owner = null;
+                if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    owner = desktop.MainWindow;
+                }
+
+                if (owner != null)
+                {
+                    var result = await dialog.ShowDialog<bool?>(owner);
+                    return result == true;
+                }
+                else
+                {
+                    // Fallback if no main window is available
+                    return true;
+                }
+            }
+            catch
+            {
+                // Fallback to true if dialog fails to show
+                return true;
+            }
+        });
     }
     
     private void RemoveNotification(NotificationViewModel notification)

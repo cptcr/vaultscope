@@ -1,0 +1,649 @@
+name: Build and Release VaultScope Enterprise
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'VaultScope.Enterprise/src/VaultScope.UI/VaultScope.UI.csproj'
+  SOLUTION_PATH: 'VaultScope.Enterprise/VaultScope.Enterprise.sln'
+  BUILD_CONFIG: 'Release'
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      tag: ${{ steps.get_version.outputs.tag }}
+    steps:
+      - name: Get version from tag or input
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION=${VERSION#v}  # Remove 'v' prefix if present
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        id: depcheck
+        with:
+          project: 'VaultScope Enterprise'
+          path: '.'
+          format: 'ALL'
+          args: >
+            --enableRetired
+            --enableExperimental
+            --failOnCVSS 7
+            --exclude "**/bin/**"
+            --exclude "**/obj/**"
+            --exclude "**/packages/**"
+
+      - name: Upload OWASP Dependency Check results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: reports/
+
+      - name: Fail on critical vulnerabilities
+        if: steps.depcheck.outputs.exit-code != '0'
+        run: |
+          echo "Critical vulnerabilities found in dependencies!"
+          exit 1
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Run static code analysis
+        run: |
+          dotnet build ${{ env.SOLUTION_PATH }} --configuration ${{ env.BUILD_CONFIG }} --verbosity normal
+          dotnet format ${{ env.SOLUTION_PATH }} --verify-no-changes --verbosity diagnostic
+
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: [version, security-scan]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libice6 libsm6 libfontconfig1
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Build solution
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration ${{ env.BUILD_CONFIG }} --no-restore
+
+      - name: Run unit tests
+        run: |
+          dotnet test VaultScope.Enterprise/src/VaultScope.Tests/VaultScope.Tests.csproj \
+            --configuration ${{ env.BUILD_CONFIG }} \
+            --no-build \
+            --verbosity normal \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults \
+            --logger "trx;LogFileName=test-results-${{ matrix.os }}.trx"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: ./TestResults/
+
+  build:
+    runs-on: ${{ matrix.os }}
+    needs: [version, test, static-analysis]
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+            platform: Linux
+          - os: windows-latest
+            runtime: win-x64
+            platform: Windows
+          - os: macos-latest
+            runtime: osx-x64
+            platform: macOS-Intel
+          - os: macos-latest
+            runtime: osx-arm64
+            platform: macOS-ARM
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libice6 libsm6 libfontconfig1
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Publish application
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} \
+            --configuration ${{ env.BUILD_CONFIG }} \
+            --runtime ${{ matrix.runtime }} \
+            --self-contained true \
+            --output ./publish/${{ matrix.runtime }} \
+            -p:PublishSingleFile=false \
+            -p:PublishTrimmed=true \
+            -p:PublishReadyToRun=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:Version=${{ needs.version.outputs.version }} \
+            -p:AssemblyVersion=${{ needs.version.outputs.version }} \
+            -p:FileVersion=${{ needs.version.outputs.version }}
+
+      - name: Create application bundle (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          mkdir -p "VaultScope Enterprise.app/Contents/MacOS"
+          mkdir -p "VaultScope Enterprise.app/Contents/Resources"
+          cp -r ./publish/${{ matrix.runtime }}/* "VaultScope Enterprise.app/Contents/MacOS/"
+          
+          # Create Info.plist
+          cat > "VaultScope Enterprise.app/Contents/Info.plist" << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>VaultScope.UI</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.vaultscope.enterprise</string>
+              <key>CFBundleName</key>
+              <string>VaultScope Enterprise</string>
+              <key>CFBundleDisplayName</key>
+              <string>VaultScope Enterprise</string>
+              <key>CFBundleVersion</key>
+              <string>${{ needs.version.outputs.version }}</string>
+              <key>CFBundleShortVersionString</key>
+              <string>${{ needs.version.outputs.version }}</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>NSPrincipalClass</key>
+              <string>NSApplication</string>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.platform }}
+          path: |
+            ./publish/${{ matrix.runtime }}/
+            VaultScope Enterprise.app/
+
+  package-windows:
+    runs-on: windows-latest
+    needs: [version, build]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-Windows
+          path: ./build
+
+      - name: Install WiX Toolset
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311.exe" -OutFile "wix311.exe"
+          Start-Process "wix311.exe" -ArgumentList "/quiet" -Wait
+
+      - name: Create MSI installer
+        run: |
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+          
+          # Create WiX source file
+          @"
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+            <Product Id="*" Name="VaultScope Enterprise" Language="1033" Version="${{ needs.version.outputs.version }}" 
+                     Manufacturer="VaultScope" UpgradeCode="12345678-1234-1234-1234-123456789012">
+              <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+              <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+              <MediaTemplate EmbedCab="yes" />
+              
+              <Feature Id="ProductFeature" Title="VaultScope Enterprise" Level="1">
+                <ComponentGroupRef Id="ProductComponents" />
+              </Feature>
+            </Product>
+            
+            <Fragment>
+              <Directory Id="TARGETDIR" Name="SourceDir">
+                <Directory Id="ProgramFilesFolder">
+                  <Directory Id="INSTALLFOLDER" Name="VaultScope Enterprise" />
+                </Directory>
+              </Directory>
+            </Fragment>
+            
+            <Fragment>
+              <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+                <Component Id="MainExecutable" Guid="*">
+                  <File Id="VaultScopeUI" Source="build\VaultScope.UI.exe" KeyPath="yes">
+                    <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="VaultScope Enterprise" 
+                              Description="API Security Assessment Tool" WorkingDirectory="INSTALLFOLDER" />
+                  </File>
+                </Component>
+              </ComponentGroup>
+            </Fragment>
+          </Wix>
+          "@ | Out-File -FilePath "installer.wxs" -Encoding UTF8
+          
+          candle.exe installer.wxs
+          light.exe installer.wixobj -o "VaultScopeEnterprise-Windows-x64.msi"
+
+      - name: Sign MSI (if certificates available)
+        if: env.WINDOWS_CERT_PATH != ''
+        env:
+          WINDOWS_CERT_PATH: ${{ secrets.WINDOWS_CERT_PATH }}
+          WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        run: |
+          signtool sign /f "$env:WINDOWS_CERT_PATH" /p "$env:WINDOWS_CERT_PASSWORD" /t http://timestamp.digicert.com "VaultScopeEnterprise-Windows-x64.msi"
+
+      - name: Generate checksums
+        run: |
+          Get-FileHash -Algorithm SHA256 "VaultScopeEnterprise-Windows-x64.msi" | Format-List > "VaultScopeEnterprise-Windows-x64.msi.sha256"
+
+      - name: Upload Windows packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installers
+          path: |
+            VaultScopeEnterprise-Windows-x64.msi
+            VaultScopeEnterprise-Windows-x64.msi.sha256
+
+  package-macos:
+    runs-on: macos-latest
+    needs: [version, build]
+    strategy:
+      matrix:
+        arch: [Intel, ARM]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download macOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-macOS-${{ matrix.arch }}
+          path: ./build
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Sign application (if certificates available)
+        if: env.APPLE_CERT_DATA != ''
+        env:
+          APPLE_CERT_DATA: ${{ secrets.APPLE_CERT_DATA }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APPLE_DEV_ID: ${{ secrets.APPLE_DEV_ID }}
+        run: |
+          # Import certificate
+          echo "$APPLE_CERT_DATA" | base64 --decode > certificate.p12
+          security create-keychain -p "" build.keychain
+          security import certificate.p12 -k build.keychain -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+          
+          # Sign the application
+          codesign --force --options runtime --deep --sign "$APPLE_DEV_ID" "VaultScope Enterprise.app"
+
+      - name: Create DMG
+        run: |
+          create-dmg \
+            --volname "VaultScope Enterprise" \
+            --volicon "icon.png" \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --icon "VaultScope Enterprise.app" 200 190 \
+            --hide-extension "VaultScope Enterprise.app" \
+            --app-drop-link 600 185 \
+            "VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg" \
+            "VaultScope Enterprise.app"
+
+      - name: Notarize DMG (if credentials available)
+        if: env.APPLE_ID != ''
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit "VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+          
+          xcrun stapler staple "VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg"
+
+      - name: Generate checksums
+        run: |
+          shasum -a 256 "VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg" > "VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg.sha256"
+
+      - name: Upload macOS packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installers-${{ matrix.arch }}
+          path: |
+            VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg
+            VaultScopeEnterprise-macOS-${{ matrix.arch }}.dmg.sha256
+
+  package-linux:
+    runs-on: ubuntu-latest
+    needs: [version, build]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-Linux
+          path: ./build
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev rpm build-essential libc6-dev
+          
+          # Install AppImage tools
+          wget https://github.com/AppImage/pkg2appimage/releases/download/continuous/pkg2appimage-continuous-x86_64.AppImage
+          chmod +x pkg2appimage-continuous-x86_64.AppImage
+
+      - name: Create DEB package
+        run: |
+          mkdir -p vaultscope-deb/DEBIAN
+          mkdir -p vaultscope-deb/usr/bin
+          mkdir -p vaultscope-deb/usr/share/applications
+          mkdir -p vaultscope-deb/usr/share/pixmaps
+          
+          # Copy application files
+          cp -r build/* vaultscope-deb/usr/bin/
+          chmod +x vaultscope-deb/usr/bin/VaultScope.UI
+          
+          # Create desktop file
+          cat > vaultscope-deb/usr/share/applications/vaultscope.desktop << EOF
+          [Desktop Entry]
+          Name=VaultScope Enterprise
+          Comment=API Security Assessment Tool
+          Exec=/usr/bin/VaultScope.UI
+          Icon=vaultscope
+          Terminal=false
+          Type=Application
+          Categories=Development;Security;
+          EOF
+          
+          # Copy icon
+          cp icon.png vaultscope-deb/usr/share/pixmaps/vaultscope.png
+          
+          # Create control file
+          cat > vaultscope-deb/DEBIAN/control << EOF
+          Package: vaultscope-enterprise
+          Version: ${{ needs.version.outputs.version }}
+          Section: devel
+          Priority: optional
+          Architecture: amd64
+          Depends: libx11-6, libice6, libsm6, libfontconfig1
+          Maintainer: VaultScope <support@vaultscope.com>
+          Description: VaultScope Enterprise - API Security Assessment Tool
+           Comprehensive security scanner for web applications and APIs
+          EOF
+          
+          # Build DEB package
+          dpkg-deb --build vaultscope-deb VaultScopeEnterprise-Linux-x64.deb
+
+      - name: Create RPM package
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          
+          cat > ~/rpmbuild/SPECS/vaultscope.spec << EOF
+          Name:           vaultscope-enterprise
+          Version:        ${{ needs.version.outputs.version }}
+          Release:        1%{?dist}
+          Summary:        VaultScope Enterprise - API Security Assessment Tool
+          
+          License:        Proprietary
+          URL:            https://github.com/vaultscope/enterprise
+          
+          %description
+          Comprehensive security scanner for web applications and APIs
+          
+          %install
+          mkdir -p %{buildroot}/usr/bin
+          mkdir -p %{buildroot}/usr/share/applications
+          mkdir -p %{buildroot}/usr/share/pixmaps
+          cp -r $RPM_SOURCE_DIR/build/* %{buildroot}/usr/bin/
+          cp $RPM_SOURCE_DIR/vaultscope.desktop %{buildroot}/usr/share/applications/
+          cp $RPM_SOURCE_DIR/icon.png %{buildroot}/usr/share/pixmaps/vaultscope.png
+          
+          %files
+          /usr/bin/*
+          /usr/share/applications/vaultscope.desktop
+          /usr/share/pixmaps/vaultscope.png
+          
+          %changelog
+          * $(date +'%a %b %d %Y') VaultScope <support@vaultscope.com> - ${{ needs.version.outputs.version }}-1
+          - Release ${{ needs.version.outputs.version }}
+          EOF
+          
+          # Copy sources
+          cp -r build ~/rpmbuild/SOURCES/
+          cp vaultscope-deb/usr/share/applications/vaultscope.desktop ~/rpmbuild/SOURCES/
+          cp icon.png ~/rpmbuild/SOURCES/
+          
+          # Build RPM
+          rpmbuild -bb ~/rpmbuild/SPECS/vaultscope.spec
+          cp ~/rpmbuild/RPMS/x86_64/vaultscope-enterprise-${{ needs.version.outputs.version }}-1.x86_64.rpm VaultScopeEnterprise-Linux-x64.rpm
+
+      - name: Create AppImage
+        run: |
+          mkdir -p VaultScope.AppDir/usr/bin
+          mkdir -p VaultScope.AppDir/usr/share/applications
+          mkdir -p VaultScope.AppDir/usr/share/pixmaps
+          
+          # Copy files
+          cp -r build/* VaultScope.AppDir/usr/bin/
+          cp vaultscope-deb/usr/share/applications/vaultscope.desktop VaultScope.AppDir/
+          cp icon.png VaultScope.AppDir/vaultscope.png
+          cp icon.png VaultScope.AppDir/usr/share/pixmaps/
+          
+          # Create AppRun
+          cat > VaultScope.AppDir/AppRun << 'EOF'
+          #!/bin/bash
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+          exec "${HERE}/usr/bin/VaultScope.UI" "$@"
+          EOF
+          chmod +x VaultScope.AppDir/AppRun
+          
+          # Download and use appimagetool
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          ./appimagetool-x86_64.AppImage VaultScope.AppDir VaultScopeEnterprise-Linux-x64.AppImage
+
+      - name: Generate checksums
+        run: |
+          sha256sum VaultScopeEnterprise-Linux-x64.deb > VaultScopeEnterprise-Linux-x64.deb.sha256
+          sha256sum VaultScopeEnterprise-Linux-x64.rpm > VaultScopeEnterprise-Linux-x64.rpm.sha256
+          sha256sum VaultScopeEnterprise-Linux-x64.AppImage > VaultScopeEnterprise-Linux-x64.AppImage.sha256
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-installers
+          path: |
+            VaultScopeEnterprise-Linux-x64.deb
+            VaultScopeEnterprise-Linux-x64.deb.sha256
+            VaultScopeEnterprise-Linux-x64.rpm
+            VaultScopeEnterprise-Linux-x64.rpm.sha256
+            VaultScopeEnterprise-Linux-x64.AppImage
+            VaultScopeEnterprise-Linux-x64.AppImage.sha256
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [version, package-windows, package-macos, package-linux]
+    if: github.event_name == 'release'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          
+          if [ -n "$PREVIOUS_TAG" ]; then
+            echo "## Changes since $PREVIOUS_TAG" > CHANGELOG.md
+            git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD >> CHANGELOG.md
+          else
+            echo "## Initial Release" > CHANGELOG.md
+            echo "- First release of VaultScope Enterprise" >> CHANGELOG.md
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          cat CHANGELOG.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/windows-installers/*
+            artifacts/macos-installers-Intel/*
+            artifacts/macos-installers-ARM/*
+            artifacts/linux-installers/*
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: always()
+    steps:
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v4
+        with:
+          name: |
+            build-*
+            test-results-*
+            dependency-check-report
+            windows-installers
+            macos-installers-*
+            linux-installers

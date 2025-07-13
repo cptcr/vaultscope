@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace VaultScope.Security.Payloads;
 
 public static class SqlInjectionPayloads

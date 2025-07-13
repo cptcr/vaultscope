@@ -1,117 +1,31 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
-    <!-- Base Theme Settings -->
-    <SolidColorBrush x:Key="ThemeBackgroundBrush">#0F0F0F</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeBorderBrush">#2A2A2A</SolidColorBrush>
+    <!-- 🔄 THEME REDIRECT TO PERFECT THEME -->
+    <!-- This file now redirects to the new PerfectTheme.axaml -->
     
-    <!-- Accent Colors -->
-    <SolidColorBrush x:Key="AccentBrush">#8B5CF6</SolidColorBrush>
-    <SolidColorBrush x:Key="AccentHoverBrush">#A78BFA</SolidColorBrush>
-    <SolidColorBrush x:Key="AccentPressedBrush">#6D28D9</SolidColorBrush>
-    <SolidColorBrush x:Key="AccentDisabledBrush">#4C1D95</SolidColorBrush>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://VaultScope.UI/Themes/PerfectTheme.axaml"/>
+        <ResourceInclude Source="avares://VaultScope.UI/Resources/Icons.axaml"/>
+    </ResourceDictionary.MergedDictionaries>
     
-    <!-- Surface Colors -->
-    <SolidColorBrush x:Key="Surface1Brush">#1A1A1A</SolidColorBrush>
-    <SolidColorBrush x:Key="Surface2Brush">#252525</SolidColorBrush>
-    <SolidColorBrush x:Key="Surface3Brush">#2F2F2F</SolidColorBrush>
+    <!-- Legacy Compatibility Aliases -->
+    <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource BackgroundPrimary}"/>
+    <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="ThemeBorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource PrimaryDarkColor}"/>
+    <SolidColorBrush x:Key="Surface1Brush" Color="{StaticResource BackgroundSecondary}"/>
+    <SolidColorBrush x:Key="Surface2Brush" Color="{StaticResource BackgroundTertiary}"/>
+    <SolidColorBrush x:Key="Surface3Brush" Color="{StaticResource BackgroundQuaternary}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}"/>
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{StaticResource TextDisabled}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource CriticalColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    <SolidColorBrush x:Key="HighBrush" Color="{StaticResource CriticalColor}"/>
+    <SolidColorBrush x:Key="MediumBrush" Color="{StaticResource MediumColor}"/>
+    <SolidColorBrush x:Key="LowBrush" Color="{StaticResource LowColor}"/>
+    <SolidColorBrush x:Key="InformationalBrush" Color="{StaticResource TextTertiary}"/>
     
-    <!-- Text Colors -->
-    <SolidColorBrush x:Key="TextPrimaryBrush">#FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="TextSecondaryBrush">#A0A0A0</SolidColorBrush>
-    <SolidColorBrush x:Key="TextDisabledBrush">#606060</SolidColorBrush>
-    
-    <!-- Status Colors -->
-    <SolidColorBrush x:Key="SuccessBrush">#10B981</SolidColorBrush>
-    <SolidColorBrush x:Key="WarningBrush">#F59E0B</SolidColorBrush>
-    <SolidColorBrush x:Key="ErrorBrush">#EF4444</SolidColorBrush>
-    <SolidColorBrush x:Key="InfoBrush">#3B82F6</SolidColorBrush>
-    
-    <!-- Severity Colors -->
-    <SolidColorBrush x:Key="CriticalBrush">#EF4444</SolidColorBrush>
-    <SolidColorBrush x:Key="HighBrush">#F97316</SolidColorBrush>
-    <SolidColorBrush x:Key="MediumBrush">#F59E0B</SolidColorBrush>
-    <SolidColorBrush x:Key="LowBrush">#3B82F6</SolidColorBrush>
-    <SolidColorBrush x:Key="InformationalBrush">#6B7280</SolidColorBrush>
-    
-    <!-- Glass Effect -->
-    <LinearGradientBrush x:Key="GlassBrush" StartPoint="0%,0%" EndPoint="0%,100%">
-        <GradientStop Color="#10FFFFFF" Offset="0"/>
-        <GradientStop Color="#05FFFFFF" Offset="1"/>
-    </LinearGradientBrush>
-    
-    <!-- Glow Effect -->
-    <RadialGradientBrush x:Key="GlowBrush">
-        <GradientStop Color="#408B5CF6" Offset="0"/>
-        <GradientStop Color="#008B5CF6" Offset="1"/>
-    </RadialGradientBrush>
-    
-    <!-- Common Styles -->
-    <Style Selector="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-    </Style>
-    
-    <Style Selector="TextBlock.secondary">
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-    </Style>
-    
-    <Style Selector="TextBlock.accent">
-        <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-    </Style>
-    
-    <!-- Title Bar Button Style -->
-    <Style Selector="Button.titlebar-button">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="Width" Value="46"/>
-        <Setter Property="Height" Value="30"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="CornerRadius" Value="0"/>
-    </Style>
-    
-    <Style Selector="Button.titlebar-button:hover">
-        <Setter Property="Background" Value="#1AFFFFFF"/>
-    </Style>
-    
-    <Style Selector="Button.titlebar-button.close:hover">
-        <Setter Property="Background" Value="#E81123"/>
-    </Style>
-    
-    <!-- Card Style -->
-    <Style Selector="Border.card">
-        <Setter Property="Background" Value="{StaticResource Surface1Brush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ThemeBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="20"/>
-    </Style>
-    
-    <Style Selector="Border.card:pointerover">
-        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Color="#1A1A1A" Offset="0"/>
-                    <GradientStop Color="#1F1A2E" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    
-    <!-- Glass Card Style -->
-    <Style Selector="Border.glass-card">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%" Opacity="0.1">
-                    <GradientStop Color="#8B5CF6" Offset="0"/>
-                    <GradientStop Color="#6D28D9" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderBrush" Value="#408B5CF6"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="12"/>
-        <Setter Property="Padding" Value="24"/>
-    </Style>
 </ResourceDictionary>

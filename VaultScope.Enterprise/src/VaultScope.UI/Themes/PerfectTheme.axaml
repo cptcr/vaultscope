@@ -1,0 +1,489 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 🎨 ULTIMATE ENTERPRISE BLACK/PURPLE THEME WITH GLASSMORPHISM 🎨 -->
+    <!-- Ultra-premium security application design with top-tier enterprise aesthetics -->
+    
+    <!-- 🔒 PROFESSIONAL ENTERPRISE SECURITY PALETTE -->
+    <!-- Sophisticated Dark Theme for Critical Security Applications -->
+    <Color x:Key="PrimaryColor">#4A5568</Color>              <!-- Professional steel blue -->
+    <Color x:Key="PrimaryDarkColor">#2D3748</Color>          <!-- Dark steel for controls -->
+    <Color x:Key="PrimaryLightColor">#718096</Color>         <!-- Light steel accent -->
+    <Color x:Key="AccentColor">#E53E3E</Color>               <!-- Critical red accent -->
+    
+    <!-- Deep Dark Base Colors -->
+    <Color x:Key="BackgroundPrimary">#0A0A0B</Color>         <!-- Nearly black background -->
+    <Color x:Key="BackgroundSecondary">#161618</Color>       <!-- Dark charcoal -->
+    <Color x:Key="BackgroundTertiary">#1E1E21</Color>        <!-- Elevated surfaces -->
+    <Color x:Key="BackgroundQuaternary">#2A2A2D</Color>      <!-- Card backgrounds -->
+    
+    <!-- Professional Text Colors -->
+    <Color x:Key="TextPrimary">#F7FAFC</Color>               <!-- High contrast white -->
+    <Color x:Key="TextSecondary">#A0AEC0</Color>             <!-- Professional gray -->
+    <Color x:Key="TextTertiary">#718096</Color>              <!-- Muted text -->
+    <Color x:Key="TextDisabled">#4A5568</Color>              <!-- Disabled state -->
+    
+    <!-- Professional Security Status Colors -->
+    <Color x:Key="CriticalColor">#E53E3E</Color>             <!-- Critical threat red -->
+    <Color x:Key="HighColor">#DD6B20</Color>                 <!-- High risk orange -->
+    <Color x:Key="MediumColor">#D69E2E</Color>               <!-- Medium risk amber -->
+    <Color x:Key="LowColor">#38A169</Color>                  <!-- Secure green -->
+    <Color x:Key="InfoColor">#3182CE</Color>                 <!-- Information blue -->
+    <Color x:Key="BorderColor">#2D3748</Color>               <!-- Professional borders -->
+    
+    <!-- Professional Gray Scale Palette -->
+    <Color x:Key="Gray950Color">#0A0A0B</Color>              <!-- True dark background -->
+    <Color x:Key="Gray900Color">#161618</Color>              <!-- Primary dark surface -->
+    <Color x:Key="Gray850Color">#1E1E21</Color>              <!-- Elevated dark surface -->
+    <Color x:Key="Gray800Color">#2A2A2D</Color>              <!-- Card background -->
+    <Color x:Key="Gray750Color">#374151</Color>              <!-- Input background -->
+    <Color x:Key="Gray700Color">#4B5563</Color>              <!-- Border color -->
+    <Color x:Key="Gray600Color">#6B7280</Color>              <!-- Subtle text -->
+    <Color x:Key="Gray500Color">#9CA3AF</Color>              <!-- Secondary text -->
+    <Color x:Key="Gray400Color">#D1D5DB</Color>              <!-- Muted text -->
+    <Color x:Key="Gray300Color">#E5E7EB</Color>              <!-- Light text -->
+    <Color x:Key="Gray200Color">#F3F4F6</Color>              <!-- Very light text -->
+    <Color x:Key="Gray100Color">#F9FAFB</Color>              <!-- Near white -->
+    <Color x:Key="Gray50Color">#FFFFFF</Color>               <!-- Pure white text -->
+    
+    <!-- 🎨 PREMIUM BRUSHES -->
+    
+    <!-- Professional Dark Background System -->
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource BackgroundPrimary}"/>
+    <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="{StaticResource BackgroundSecondary}"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource BackgroundTertiary}"/>
+    <SolidColorBrush x:Key="ElevatedSurfaceBrush" Color="{StaticResource BackgroundQuaternary}"/>
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource Gray750Color}"/>
+    
+    <!-- Professional Text System -->
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource TextSecondary}"/>
+    <SolidColorBrush x:Key="TertiaryTextBrush" Color="{StaticResource TextTertiary}"/>
+    <SolidColorBrush x:Key="DisabledTextBrush" Color="{StaticResource TextDisabled}"/>
+    <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentColor}"/>
+    
+    <!-- Professional Border System -->
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="HoverBorderBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource Gray800Color}"/>
+    
+    <!-- Professional Accent System -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    
+    <!-- Professional Status Brushes -->
+    <SolidColorBrush x:Key="CriticalBrush" Color="{StaticResource CriticalColor}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource HighColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource MediumColor}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource LowColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    
+    <!-- Professional Subtle Gradients -->
+    <LinearGradientBrush x:Key="GlassBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#12FFFFFF" Offset="0"/>
+        <GradientStop Color="#08FFFFFF" Offset="0.5"/>
+        <GradientStop Color="#04FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="GlassHoverBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#20FFFFFF" Offset="0"/>
+        <GradientStop Color="#12FFFFFF" Offset="0.5"/>
+        <GradientStop Color="#08FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="GlassActiveBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#25FFFFFF" Offset="0"/>
+        <GradientStop Color="#15FFFFFF" Offset="0.5"/>
+        <GradientStop Color="#0AFFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- Professional Gradient System -->
+    <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="{StaticResource PrimaryColor}" Offset="0"/>
+        <GradientStop Color="{StaticResource PrimaryDarkColor}" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="SecurityGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="{StaticResource AccentColor}" Offset="0"/>
+        <GradientStop Color="{StaticResource CriticalColor}" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="CriticalGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="{StaticResource CriticalColor}" Offset="0"/>
+        <GradientStop Color="#C53030" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- Professional Card Surfaces -->
+    <LinearGradientBrush x:Key="GlassCardBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#15FFFFFF" Offset="0"/>
+        <GradientStop Color="#08FFFFFF" Offset="0.5"/>
+        <GradientStop Color="#04FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- Professional Card Hover State -->
+    <LinearGradientBrush x:Key="GlassCardHoverBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#20FFFFFF" Offset="0"/>
+        <GradientStop Color="#12FFFFFF" Offset="0.5"/>
+        <GradientStop Color="#08FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- Depth Shadow Gradients -->
+    <LinearGradientBrush x:Key="DepthShadowBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#40000000" Offset="0"/>
+        <GradientStop Color="#20000000" Offset="0.5"/>
+        <GradientStop Color="#00000000" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- 🎯 MODERN TYPOGRAPHY SYSTEM -->
+    
+    <!-- Font Family Definitions -->
+    <FontFamily x:Key="PrimaryFontFamily">Segoe UI, Inter, -apple-system, BlinkMacSystemFont, sans-serif</FontFamily>
+    <FontFamily x:Key="MonospaceFontFamily">Cascadia Code, Consolas, Monaco, monospace</FontFamily>
+    
+    <!-- Typography Styles with Weight Hierarchy -->
+    <Style Selector="TextBlock" x:Key="HeaderLarge">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.3"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="HeaderMedium">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="HeaderSmall">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="BodyLarge">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.6"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="BodyMedium">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.5"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="BodySmall">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.5"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="LabelMedium">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="LabelSmall">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource TertiaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="CaptionRegular">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource TertiaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="CaptionBold">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+    
+    <!-- 🎯 ENTERPRISE CONTROL STYLES -->
+    
+    
+    <!-- PROFESSIONAL BUTTON SYSTEM -->
+    <Style Selector="Button" x:Key="PrimaryButton">
+        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="20,10"/>
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                <BrushTransition Property="Background" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    
+    <!-- Professional Secondary Button -->
+    <Style Selector="Button" x:Key="SecondaryButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    
+    <!-- Secondary Button -->
+    <Style Selector="Button" x:Key="SecondaryButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="18,10"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <!-- Icon Button -->
+    <Style Selector="Button" x:Key="IconButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <!-- 📝 PREMIUM INPUT STYLES -->
+    <Style Selector="TextBox" x:Key="GlassTextBox">
+        <Setter Property="Background" Value="{StaticResource GlassBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="#30FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="MinHeight" Value="44"/>
+    </Style>
+    
+    <!-- 🃏 PREMIUM CARD STYLES -->
+    <Style Selector="Border" x:Key="GlassCard">
+        <Setter Property="Background" Value="{StaticResource GlassCardBrush}"/>
+        <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                <BrushTransition Property="Background" Duration="0:0:0.3"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.3"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    
+    <Style Selector="Border" x:Key="PremiumCard">
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                <BrushTransition Property="Background" Duration="0:0:0.3"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    
+    <!-- Vulnerability Severity Cards -->
+    <Style Selector="Border" x:Key="CriticalCard">
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource CriticalBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="HighCard">
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="MediumCard">
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="LowCard">
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SuccessBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+    
+    <!-- 📊 MODERNIZED METRIC STYLES WITH IMPROVED TYPOGRAPHY -->
+    <Style Selector="TextBlock" x:Key="MetricValue">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.2"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="MetricLabel">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="LineHeight" Value="1.4"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="MetricSubtext">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.5"/>
+        <Setter Property="Foreground" Value="{StaticResource TertiaryTextBrush}"/>
+    </Style>
+    
+    <!-- 🌟 ENHANCED METRIC STYLES -->
+    <Style Selector="TextBlock" x:Key="MetricLargeValue">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="52"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.1"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="MetricTitle">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="LineHeight" Value="1.3"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBlock" x:Key="MetricDescription">
+        <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="LineHeight" Value="1.5"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+    
+    <!-- 🎨 VULNERABILITY SEVERITY INDICATORS -->
+    <Style Selector="Border" x:Key="CriticalIndicator">
+        <Setter Property="Background" Value="{StaticResource CriticalGradientBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Width" Value="4"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Margin" Value="0,0,12,0"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="HighIndicator">
+        <Setter Property="Background" Value="{StaticResource DangerBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Width" Value="4"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Margin" Value="0,0,12,0"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="MediumIndicator">
+        <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Width" Value="4"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Margin" Value="0,0,12,0"/>
+    </Style>
+    
+    <Style Selector="Border" x:Key="LowIndicator">
+        <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Width" Value="4"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Margin" Value="0,0,12,0"/>
+    </Style>
+    
+    <!-- 🎯 ANIMATED STATUS DOTS -->
+    <Style Selector="Ellipse" x:Key="StatusDot">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:1" Easing="SineEaseInOut"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <!-- 🌈 PREMIUM GRADIENT OVERLAYS -->
+    <LinearGradientBrush x:Key="PremiumOverlayBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#10FFFFFF" Offset="0"/>
+        <GradientStop Color="#05FFFFFF" Offset="0.3"/>
+        <GradientStop Color="#00FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <!-- 🔥 ACCENT GLOW EFFECTS -->
+    <Style Selector="Border" x:Key="AccentGlow">
+        <Setter Property="Background" Value="{StaticResource PrimaryGradientBrush}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+    </Style>
+    
+</ResourceDictionary>

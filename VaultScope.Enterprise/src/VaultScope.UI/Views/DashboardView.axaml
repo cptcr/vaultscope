@@ -3,208 +3,874 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:VaultScope.UI.ViewModels"
-             xmlns:controls="using:VaultScope.UI.Controls"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="VaultScope.UI.Views.DashboardView"
-             x:DataType="vm:DashboardViewModel">
+             x:DataType="vm:DashboardViewModel"
+             Background="{StaticResource AppBackgroundBrush}">
     
     <Design.DataContext>
         <vm:DashboardViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*">
-        <!-- Header -->
-        <Border Grid.Row="0" Classes="page-header">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="32" Margin="40">
+            
+            <!-- SECURITY OPERATIONS HEADER -->
             <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0">
-                    <TextBlock Classes="page-title" Text="Security Dashboard" />
-                    <TextBlock Classes="page-subtitle" Text="Monitor your application security at a glance" />
+                <StackPanel Grid.Column="0" Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <!-- Premium Security Icon -->
+                        <Border Background="{StaticResource SecurityGradientBrush}"
+                                Width="48" Height="48" 
+                                CornerRadius="14">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                                Opacity="0.4" 
+                                                BlurRadius="12"
+                                                OffsetY="4"/>
+                            </Border.Effect>
+                            <Path Data="{StaticResource ShieldIcon}" 
+                                  Fill="White" Width="24" Height="24" 
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                        </Border>
+                        
+                        <StackPanel VerticalAlignment="Center" Spacing="4">
+                            <TextBlock Text="Security Operations Center" 
+                                      Classes="HeaderLarge"
+                                      FontSize="28" FontWeight="Medium" 
+                                      Foreground="{StaticResource TextPrimary}"/>
+                            <TextBlock Text="Threat Assessment • Vulnerability Management • Real-time Monitoring" 
+                                      Classes="BodyMedium"
+                                      FontSize="12" FontWeight="Normal"
+                                      Foreground="{StaticResource TextTertiary}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Text="Monitor your application security posture and recent scan results in real-time" 
+                              Classes="BodyLarge"
+                              FontSize="18" FontWeight="Normal"
+                              LineHeight="1.6"
+                              Foreground="{StaticResource SecondaryTextBrush}"/>
                 </StackPanel>
                 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button Classes="primary-button" Command="{Binding StartNewScanCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Path Data="{StaticResource ScanIcon}" Fill="{DynamicResource PrimaryButtonForeground}" Width="16" Height="16" />
-                            <TextBlock Text="New Scan" />
+                <!-- Premium Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                    <!-- Primary Action Button -->
+                    <Button Background="{StaticResource SecurityGradientBrush}" 
+                            Foreground="{StaticResource WhiteTextColor}"
+                            Padding="28,16"
+                            CornerRadius="14"
+                            FontFamily="{StaticResource PrimaryFontFamily}"
+                            FontWeight="SemiBold"
+                            FontSize="15"
+                            MinHeight="48"
+                            Command="{Binding StartNewScanCommand}"
+                            Cursor="Hand">
+                        <Button.Effect>
+                            <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                            Opacity="0.3" 
+                                            BlurRadius="8"
+                                            OffsetY="2"/>
+                        </Button.Effect>
+                        <Button.Transitions>
+                            <Transitions>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                            </Transitions>
+                        </Button.Transitions>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Path Data="{StaticResource ScanIcon}" 
+                                  Fill="White" Width="16" Height="16" 
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="Initialize Security Scan"/>
                         </StackPanel>
                     </Button>
-                    <Button Classes="secondary-button" Command="{Binding RefreshCommand}">
-                        <Path Data="{StaticResource RefreshIcon}" Fill="{DynamicResource SecondaryButtonForeground}" Width="16" Height="16" />
+                    
+                    <!-- Secondary Glass Button -->
+                    <Button Background="{StaticResource GlassBrush}" 
+                            Foreground="{StaticResource PrimaryTextBrush}"
+                            BorderBrush="#50FFFFFF"
+                            BorderThickness="1"
+                            Padding="24,16"
+                            CornerRadius="14"
+                            FontFamily="{StaticResource PrimaryFontFamily}"
+                            FontWeight="Medium"
+                            FontSize="15"
+                            MinHeight="48"
+                            Command="{Binding LoadExampleDataCommand}"
+                            Cursor="Hand">
+                        <Button.Transitions>
+                            <Transitions>
+                                <BrushTransition Property="Background" Duration="0:0:0.3"/>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                            </Transitions>
+                        </Button.Transitions>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Path Data="{StaticResource DatabaseIcon}" 
+                                  Fill="{StaticResource TextSecondary}" Width="16" Height="16" 
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="Load Test Data"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
-        </Border>
-        
-        <!-- Content -->
-        <ScrollViewer Grid.Row="1" Padding="20">
-            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="20">
-                <!-- Statistics Cards -->
-                <Grid Grid.Row="0" ColumnDefinitions="*,*,*,*,*" ColumnSpacing="15">
-                    <!-- Total Scans -->
-                    <Border Classes="stat-card">
-                        <Grid RowDefinitions="Auto,Auto,Auto">
-                            <Path Grid.Row="0" Data="{StaticResource DatabaseIcon}" Fill="{DynamicResource AccentColor}" 
-                                  Width="24" Height="24" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding TotalScans}" Margin="0,10,0,5" />
-                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Total Scans" />
-                        </Grid>
-                    </Border>
-                    
-                    <!-- Critical Vulnerabilities -->
-                    <Border Classes="stat-card critical">
-                        <Grid RowDefinitions="Auto,Auto,Auto">
-                            <Path Grid.Row="0" Data="{StaticResource AlertIcon}" Fill="#FF3B30" 
-                                  Width="24" Height="24" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding CriticalVulnerabilities}" 
-                                       Foreground="#FF3B30" Margin="0,10,0,5" />
-                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Critical" />
-                        </Grid>
-                    </Border>
-                    
-                    <!-- High Vulnerabilities -->
-                    <Border Classes="stat-card high">
-                        <Grid RowDefinitions="Auto,Auto,Auto">
-                            <Path Grid.Row="0" Data="{StaticResource WarningIcon}" Fill="#FF9500" 
-                                  Width="24" Height="24" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding HighVulnerabilities}" 
-                                       Foreground="#FF9500" Margin="0,10,0,5" />
-                            <TextBlock Grid.Row="2" Classes="stat-label" Text="High" />
-                        </Grid>
-                    </Border>
-                    
-                    <!-- Medium Vulnerabilities -->
-                    <Border Classes="stat-card medium">
-                        <Grid RowDefinitions="Auto,Auto,Auto">
-                            <Path Grid.Row="0" Data="{StaticResource InfoIcon}" Fill="#FFCC00" 
-                                  Width="24" Height="24" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding MediumVulnerabilities}" 
-                                       Foreground="#FFCC00" Margin="0,10,0,5" />
-                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Medium" />
-                        </Grid>
-                    </Border>
-                    
-                    <!-- Low Vulnerabilities -->
-                    <Border Classes="stat-card low">
-                        <Grid RowDefinitions="Auto,Auto,Auto">
-                            <Path Grid.Row="0" Data="{StaticResource CheckIcon}" Fill="#34C759" 
-                                  Width="24" Height="24" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Classes="stat-value" Text="{Binding LowVulnerabilities}" 
-                                       Foreground="#34C759" Margin="0,10,0,5" />
-                            <TextBlock Grid.Row="2" Classes="stat-label" Text="Low" />
-                        </Grid>
-                    </Border>
-                </Grid>
+
+            <!-- 🎯 PREMIUM ENTERPRISE METRICS -->
+            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto">
                 
-                <!-- Charts Section -->
-                <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="20">
-                    <!-- Vulnerability Trends Chart -->
-                    <Border Grid.Column="0" Classes="card">
-                        <Grid RowDefinitions="Auto,*">
-                            <TextBlock Grid.Row="0" Classes="card-title" Text="Vulnerability Trends" Margin="0,0,0,20" />
-                            
-                            <!-- Chart placeholder - in real app, use OxyPlot or similar -->
-                            <Border Grid.Row="1" Background="{DynamicResource CardBackgroundDarker}" 
-                                    CornerRadius="8" MinHeight="250">
-                                <TextBlock Text="Vulnerability trend chart will be displayed here" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           Foreground="{DynamicResource TextColorMuted}" />
+                <!-- Premium Total Scans Card -->
+                <Border Grid.Column="0" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="28"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="0,0,12,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <Border.Transitions>
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                            <BrushTransition Property="BorderBrush" Duration="0:0:0.3"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <StackPanel Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" 
+                                      Text="Total Scans" 
+                                      Classes="LabelMedium"
+                                      FontSize="16" 
+                                      FontWeight="Medium"
+                                      Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <Border Grid.Column="1" 
+                                    Background="{StaticResource PrimaryGradientBrush}"
+                                    Width="36" Height="36"
+                                    CornerRadius="10">
+                                <Path Data="{StaticResource BarChartIcon}" 
+                                      Fill="White" Width="20" Height="20" 
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                    </Border>
-                    
-                    <!-- Security Score Gauge -->
-                    <Border Grid.Column="1" Classes="card">
-                        <Grid RowDefinitions="Auto,*,Auto">
-                            <TextBlock Grid.Row="0" Classes="card-title" Text="Average Security Score" />
-                            
-                            <!-- Score display -->
-                            <Grid Grid.Row="1" VerticalAlignment="Center">
-                                <Ellipse Width="150" Height="150" StrokeThickness="15"
-                                         Stroke="{DynamicResource CardBackgroundDarker}" />
-                                <Ellipse Width="150" Height="150" StrokeThickness="15"
-                                         Stroke="{DynamicResource AccentColor}"
-                                         StrokeDashArray="2,1" RenderTransformOrigin="0.5,0.5">
-                                    <Ellipse.RenderTransform>
-                                        <RotateTransform Angle="-90" />
-                                    </Ellipse.RenderTransform>
-                                </Ellipse>
-                                
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding AverageSecurityScore, StringFormat='{}{0:F1}'}" 
-                                               FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" />
-                                    <TextBlock Text="/100" FontSize="16" Foreground="{DynamicResource TextColorMuted}" 
-                                               HorizontalAlignment="Center" />
-                                </StackPanel>
-                            </Grid>
-                            
-                            <TextBlock Grid.Row="2" Text="Last 30 days" HorizontalAlignment="Center"
-                                       Foreground="{DynamicResource TextColorMuted}" FontSize="12" />
+                        <TextBlock Text="{Binding TotalScans}" 
+                                  Classes="MetricValue"
+                                  FontSize="36" 
+                                  FontWeight="SemiBold" 
+                                  Foreground="{StaticResource PrimaryTextBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Background="{StaticResource SuccessBrush}"
+                                    Width="8" Height="8"
+                                    CornerRadius="4"/>
+                            <TextBlock Text="Total security scans" 
+                                      Classes="CaptionBold"
+                                      FontSize="13" 
+                                      FontWeight="Medium"
+                                      Foreground="{StaticResource SuccessBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Premium Vulnerabilities Card -->
+                <Border Grid.Column="1" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="28"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="6,0,6,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <Border.Transitions>
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                            <BrushTransition Property="BorderBrush" Duration="0:0:0.3"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <StackPanel Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" 
+                                      Text="Vulnerabilities" 
+                                      FontSize="15" 
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <Border Grid.Column="1" 
+                                    Background="{StaticResource CriticalGradientBrush}"
+                                    Width="36" Height="36"
+                                    CornerRadius="10">
+                                <Path Data="{StaticResource AlertTriangleIcon}" 
+                                      Fill="White" Width="20" Height="20" 
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </Grid>
-                    </Border>
-                </Grid>
-                
-                <!-- Recent Scans -->
-                <Border Grid.Row="2" Classes="card">
-                    <Grid RowDefinitions="Auto,*">
-                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-                            <TextBlock Grid.Column="0" Classes="card-title" Text="Recent Scans" />
-                            <TextBlock Grid.Column="1" Text="View All →" Classes="link-text" />
+                        <TextBlock Text="{Binding TotalVulnerabilities}" 
+                                  FontSize="32" 
+                                  FontWeight="Bold" 
+                                  Foreground="{StaticResource DangerBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Background="{StaticResource CriticalBrush}"
+                                    Width="8" Height="8"
+                                    CornerRadius="4"/>
+                            <TextBlock Text="{Binding CriticalVulnerabilities, StringFormat='{}{0} critical vulnerabilities'}" 
+                                      FontSize="13" 
+                                      FontWeight="Medium"
+                                      Foreground="{StaticResource WarningBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Premium Security Score Card -->
+                <Border Grid.Column="2" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="28"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="6,0,6,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <Border.Transitions>
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                            <BrushTransition Property="BorderBrush" Duration="0:0:0.3"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <StackPanel Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" 
+                                      Text="Security Score" 
+                                      FontSize="15" 
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <Border Grid.Column="1" 
+                                    Background="{StaticResource SecurityGradientBrush}"
+                                    Width="36" Height="36"
+                                    CornerRadius="10">
+                                <Path Data="{StaticResource CheckCircleIcon}" 
+                                      Fill="White" Width="20" Height="20" 
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </Grid>
-                        
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding RecentScans}" 
-                                  AutoGenerateColumns="False" CanUserSortColumns="True"
-                                  GridLinesVisibility="Horizontal" BorderThickness="0"
-                                  RowHeight="50">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Target URL" Binding="{Binding TargetUrl}" Width="3*" />
-                                <DataGridTextColumn Header="Date" Binding="{Binding ScanDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Width="2*" />
-                                <DataGridTextColumn Header="Vulnerabilities" Binding="{Binding VulnerabilityCount}" Width="*" />
-                                <DataGridTemplateColumn Header="Score" Width="*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Border Background="{Binding SecurityScore, Converter={StaticResource ScoreToColorConverter}}"
-                                                    CornerRadius="4" Padding="8,4">
-                                                <TextBlock Text="{Binding SecurityScore, StringFormat='{}{0:F1}'}"
-                                                           HorizontalAlignment="Center" FontWeight="SemiBold" />
-                                            </Border>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Actions" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Classes="table-action-button" 
-                                                    Command="{Binding $parent[UserControl].DataContext.ViewScanDetailsCommand}"
-                                                    CommandParameter="{Binding Id}">
-                                                <TextBlock Text="View Details" />
-                                            </Button>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        
-                        <!-- Empty state -->
-                        <Border Grid.Row="1" IsVisible="{Binding !RecentScans.Count}"
-                                Background="{DynamicResource CardBackgroundDarker}" 
-                                CornerRadius="8" Padding="40">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                                <Path Data="{StaticResource EmptyIcon}" Fill="{DynamicResource TextColorMuted}"
-                                      Width="48" Height="48" HorizontalAlignment="Center" />
-                                <TextBlock Text="No scans found" FontSize="16" 
-                                           Foreground="{DynamicResource TextColorMuted}" />
-                                <Button Classes="primary-button" Command="{Binding StartNewScanCommand}">
-                                    <TextBlock Text="Start Your First Scan" />
-                                </Button>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+                        <TextBlock Text="{Binding AverageSecurityScore, StringFormat='{}{0:F1}/10'}" 
+                                  FontSize="32" 
+                                  FontWeight="Bold" 
+                                  Foreground="{StaticResource PrimaryBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Background="{StaticResource PrimaryBrush}"
+                                    Width="8" Height="8"
+                                    CornerRadius="4"/>
+                            <TextBlock Text="Average security score" 
+                                      FontSize="13" 
+                                      FontWeight="Medium"
+                                      Foreground="{StaticResource PrimaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Premium Last Scan Card -->
+                <Border Grid.Column="3" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="28"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="12,0,0,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <Border.Transitions>
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                            <BrushTransition Property="BorderBrush" Duration="0:0:0.3"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <StackPanel Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" 
+                                      Text="Last Scan" 
+                                      FontSize="15" 
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource SecondaryTextBrush}"/>
+                            <Border Grid.Column="1" 
+                                    Background="{StaticResource InfoBrush}"
+                                    Width="36" Height="36"
+                                    CornerRadius="10">
+                                <Path Data="{StaticResource HistoryIcon}" 
+                                      Fill="White" Width="20" Height="20" 
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <TextBlock Text="2 hours ago" 
+                                  FontSize="32" 
+                                  FontWeight="Bold" 
+                                  Foreground="{StaticResource PrimaryTextBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Background="{StaticResource InfoBrush}"
+                                    Width="8" Height="8"
+                                    CornerRadius="4"/>
+                            <TextBlock Text="api.example.com" 
+                                      FontSize="13" 
+                                      FontWeight="Medium"
+                                      Foreground="{StaticResource InfoBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </Border>
             </Grid>
-        </ScrollViewer>
-        
-        <!-- Loading overlay -->
-        <controls:AnimatedSpinner Grid.Row="1" IsVisible="{Binding IsLoading}" 
-                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
-    </Grid>
+
+            <!-- 🎯 RECENT ACTIVITY & ENTERPRISE ACTIONS -->
+            <Grid ColumnDefinitions="2*,*" RowDefinitions="Auto">
+                
+                <!-- Premium Recent Scans Panel -->
+                <Border Grid.Column="0" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="32"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="0,0,16,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <StackPanel Spacing="24">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                                <Border Background="{StaticResource SecurityGradientBrush}"
+                                        Width="40" Height="40"
+                                        CornerRadius="12">
+                                    <Path Data="{StaticResource FileTextIcon}" 
+                                          Fill="White" Width="20" Height="20" 
+                                          Stretch="Uniform"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="Recent Scans" 
+                                              FontSize="20" 
+                                              FontWeight="Bold" 
+                                              Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    <TextBlock Text="Latest security assessments" 
+                                              FontSize="13" 
+                                              Foreground="{StaticResource SecondaryTextBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Grid.Column="1" 
+                                    Content="View All" 
+                                    Foreground="{StaticResource PrimaryBrush}" 
+                                    Background="{StaticResource GlassBrush}"
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,8"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Cursor="Hand"/>
+                        </Grid>
+                        
+                        <!-- Premium Table Header -->
+                        <Border Background="{StaticResource CardBackgroundBrush}" 
+                                Padding="20,16" 
+                                CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1">
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                <TextBlock Grid.Column="0" Text="Target" FontWeight="Bold" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="Status" FontWeight="Bold" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                                <TextBlock Grid.Column="2" Text="Issues" FontWeight="Bold" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                                <TextBlock Grid.Column="3" Text="Date" FontWeight="Bold" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Premium Table Rows -->
+                        <StackPanel Spacing="12">
+                            <!-- Premium Row 1 -->
+                            <Border Padding="20,16" 
+                                    Background="{StaticResource GlassBrush}"
+                                    BorderBrush="#30FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Border.Transitions>
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                        <Border Background="{StaticResource InfoBrush}"
+                                                Width="6" Height="6"
+                                                CornerRadius="3"
+                                                VerticalAlignment="Center"/>
+                                        <TextBlock Text="api.example.com" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" 
+                                            Background="{StaticResource SuccessBrush}" 
+                                            CornerRadius="8" 
+                                            Padding="12,6" 
+                                            Margin="24,0,0,0">
+                                        <TextBlock Text="✓ Complete" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Text="23" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DangerBrush}" Margin="44,0,0,0"/>
+                                    <TextBlock Grid.Column="3" Text="2 hours ago" FontWeight="Medium" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Premium Row 2 -->
+                            <Border Padding="20,16" 
+                                    Background="{StaticResource GlassBrush}"
+                                    BorderBrush="#30FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Border.Transitions>
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                        <Border Background="{StaticResource WarningBrush}"
+                                                Width="6" Height="6"
+                                                CornerRadius="3"
+                                                VerticalAlignment="Center"/>
+                                        <TextBlock Text="app.mysite.org" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" 
+                                            Background="{StaticResource WarningBrush}" 
+                                            CornerRadius="8" 
+                                            Padding="12,6" 
+                                            Margin="24,0,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="⚡" FontSize="12"/>
+                                            <TextBlock Text="Running" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Text="..." FontWeight="Medium" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}" Margin="44,0,0,0"/>
+                                    <TextBlock Grid.Column="3" Text="5 min ago" FontWeight="Medium" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Premium Row 3 -->
+                            <Border Padding="20,16" 
+                                    Background="{StaticResource GlassBrush}"
+                                    BorderBrush="#30FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Border.Transitions>
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                        <Border Background="{StaticResource SuccessBrush}"
+                                                Width="6" Height="6"
+                                                CornerRadius="3"
+                                                VerticalAlignment="Center"/>
+                                        <TextBlock Text="demo.webapp.net" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" 
+                                            Background="{StaticResource SuccessBrush}" 
+                                            CornerRadius="8" 
+                                            Padding="12,6" 
+                                            Margin="24,0,0,0">
+                                        <TextBlock Text="✓ Complete" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Text="7" FontWeight="Bold" FontSize="14" Foreground="{StaticResource WarningBrush}" Margin="44,0,0,0"/>
+                                    <TextBlock Grid.Column="3" Text="1 day ago" FontWeight="Medium" FontSize="13" Foreground="{StaticResource SecondaryTextBrush}" Margin="24,0"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Premium Quick Actions Panel -->
+                <Border Grid.Column="1" 
+                        Background="{StaticResource GlassCardBrush}" 
+                        CornerRadius="16" 
+                        Padding="32"
+                        BorderBrush="#60FFFFFF" 
+                        BorderThickness="1"
+                        Margin="16,0,0,0"
+                        ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" 
+                                        Opacity="0.15" 
+                                        BlurRadius="20"
+                                        OffsetY="4"/>
+                    </Border.Effect>
+                    <StackPanel Spacing="24">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Border Background="{StaticResource SecurityGradientBrush}"
+                                    Width="40" Height="40"
+                                    CornerRadius="12">
+                                <Path Data="{StaticResource ActivityIcon}" 
+                                      Fill="White" Width="20" Height="20" 
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Text="Quick Actions" 
+                                          FontSize="20" 
+                                          FontWeight="Bold" 
+                                          Foreground="{StaticResource PrimaryTextBrush}"/>
+                                <TextBlock Text="Enterprise security tools" 
+                                          FontSize="13" 
+                                          Foreground="{StaticResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <!-- Premium Action Buttons -->
+                        <StackPanel Spacing="16">
+                            <!-- Premium Quick Scan Button -->
+                            <Button Background="{StaticResource SecurityGradientBrush}" 
+                                    Foreground="White" 
+                                    Padding="20,16"
+                                    CornerRadius="12"
+                                    HorizontalAlignment="Stretch"
+                                    FontWeight="Bold"
+                                    FontSize="14"
+                                    Cursor="Hand">
+                                <Button.Effect>
+                                    <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                                    Opacity="0.3" 
+                                                    BlurRadius="8"
+                                                    OffsetY="2"/>
+                                </Button.Effect>
+                                <Button.Transitions>
+                                    <Transitions>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                        <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Button.Transitions>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Path Data="{StaticResource PlayIcon}" 
+                                          Fill="White" Width="18" Height="18" 
+                                          Stretch="Uniform"/>
+                                    <TextBlock Text="Quick Scan"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <!-- Premium Glass Buttons -->
+                            <Button Background="{StaticResource GlassBrush}" 
+                                    Foreground="{StaticResource PrimaryTextBrush}" 
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    Padding="20,16"
+                                    CornerRadius="12"
+                                    HorizontalAlignment="Stretch"
+                                    FontWeight="SemiBold"
+                                    FontSize="14"
+                                    Cursor="Hand">
+                                <Button.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.3"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Button.Transitions>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Path Data="{StaticResource HistoryIcon}" 
+                                          Fill="{StaticResource SecondaryTextBrush}" Width="18" Height="18" 
+                                          Stretch="Uniform"/>
+                                    <TextBlock Text="Schedule Scan"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Background="{StaticResource GlassBrush}" 
+                                    Foreground="{StaticResource PrimaryTextBrush}" 
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    Padding="20,16"
+                                    CornerRadius="12"
+                                    HorizontalAlignment="Stretch"
+                                    FontWeight="SemiBold"
+                                    FontSize="14"
+                                    Cursor="Hand">
+                                <Button.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.3"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Button.Transitions>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Path Data="{StaticResource DownloadIcon}" 
+                                          Fill="{StaticResource SecondaryTextBrush}" Width="18" Height="18" 
+                                          Stretch="Uniform"/>
+                                    <TextBlock Text="Generate Report"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Background="{StaticResource GlassBrush}" 
+                                    Foreground="{StaticResource PrimaryTextBrush}" 
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    Padding="20,16"
+                                    CornerRadius="12"
+                                    HorizontalAlignment="Stretch"
+                                    FontWeight="SemiBold"
+                                    FontSize="14"
+                                    Cursor="Hand">
+                                <Button.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.3"/>
+                                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                                    </Transitions>
+                                </Button.Transitions>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Path Data="{StaticResource SettingsIcon}" 
+                                          Fill="{StaticResource SecondaryTextBrush}" Width="18" Height="18" 
+                                          Stretch="Uniform"/>
+                                    <TextBlock Text="View Settings"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        
+                        <!-- Premium Status Indicator -->
+                        <Border Background="{StaticResource SuccessBrush}" 
+                                CornerRadius="12" 
+                                Padding="20,16"
+                                Margin="0,8,0,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{StaticResource LowColor}" 
+                                                Opacity="0.25" 
+                                                BlurRadius="8"
+                                                OffsetY="2"/>
+                            </Border.Effect>
+                            <StackPanel Spacing="12">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0"
+                                            Background="White"
+                                            Width="24" Height="24"
+                                            CornerRadius="12">
+                                        <Path Data="{StaticResource CheckCircleIcon}" 
+                                              Fill="{StaticResource SuccessBrush}" Width="14" Height="14" 
+                                              Stretch="Uniform"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <TextBlock Text="All Systems Operational" 
+                                                  FontWeight="Bold" 
+                                                  FontSize="14"
+                                                  Foreground="White"/>
+                                        <TextBlock Text="Security posture: Excellent" 
+                                                  FontSize="12" 
+                                                  FontWeight="Medium"
+                                                  Foreground="#E0F9F4"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Border Background="#20FFFFFF"
+                                        Height="1"
+                                        CornerRadius="1"/>
+                                <TextBlock Text="Last update: 2 minutes ago" 
+                                          FontSize="12" 
+                                          FontWeight="Medium"
+                                          Foreground="#D1F2E8"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 📊 PREMIUM SECURITY TRENDS ANALYTICS -->
+            <Border Background="{StaticResource GlassCardBrush}" 
+                    CornerRadius="16" 
+                    Padding="32"
+                    BorderBrush="#60FFFFFF" 
+                    BorderThickness="1"
+                    ClipToBounds="True">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" 
+                                    Opacity="0.15" 
+                                    BlurRadius="20"
+                                    OffsetY="4"/>
+                </Border.Effect>
+                <StackPanel Spacing="28">
+                    <!-- Premium Header -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                            <Border Background="{StaticResource SecurityGradientBrush}"
+                                    Width="48" Height="48"
+                                    CornerRadius="14">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="{StaticResource PrimaryColor}" 
+                                                    Opacity="0.4" 
+                                                    BlurRadius="8"
+                                                    OffsetY="2"/>
+                                </Border.Effect>
+                                <TextBlock Text="📈" 
+                                          FontSize="24"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Security Trends Analytics" 
+                                          FontSize="24" 
+                                          FontWeight="Bold" 
+                                          Foreground="{StaticResource PrimaryTextBrush}"/>
+                                <TextBlock Text="Real-time security metrics and trend analysis" 
+                                          FontSize="14" 
+                                          FontWeight="Medium"
+                                          Foreground="{StaticResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <!-- Time Range Selector -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Content="7D" 
+                                    Background="{StaticResource PrimaryBrush}" 
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    CornerRadius="6"
+                                    Padding="12,6"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"/>
+                            <Button Content="30D" 
+                                    Background="{StaticResource GlassBrush}" 
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="12,6"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"/>
+                            <Button Content="90D" 
+                                    Background="{StaticResource GlassBrush}" 
+                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="12,6"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <!-- Security Analytics Dashboard -->
+                    <Border Background="{StaticResource CardBackgroundBrush}" 
+                            Height="280" 
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="32">
+                        <Grid RowDefinitions="Auto,*">
+                            <!-- Analytics Header -->
+                            <StackPanel Grid.Row="0" Spacing="12" Margin="0,0,0,24">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                              Text="THREAT LANDSCAPE ANALYSIS" 
+                                              FontSize="11" 
+                                              FontWeight="Medium"
+                                              Foreground="{StaticResource TextTertiary}"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+                                        <Border Background="{StaticResource CriticalBrush}" 
+                                                Width="8" Height="8" CornerRadius="4"/>
+                                        <TextBlock Text="CRITICAL" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <Border Background="{StaticResource WarningBrush}" 
+                                                Width="8" Height="8" CornerRadius="4"/>
+                                        <TextBlock Text="MEDIUM" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <Border Background="{StaticResource SuccessBrush}" 
+                                                Width="8" Height="8" CornerRadius="4"/>
+                                        <TextBlock Text="SECURE" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- Analytics Grid -->
+                            <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="*,*">
+                                <!-- Threat Level Indicators -->
+                                <Border Grid.Column="0" Grid.Row="0" 
+                                        Background="{StaticResource BackgroundSecondary}" 
+                                        CornerRadius="4" Padding="16">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="THREAT LEVEL" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <TextBlock Text="ELEVATED" FontSize="16" FontWeight="Medium" Foreground="{StaticResource WarningBrush}"/>
+                                        <Border Height="4" Background="{StaticResource WarningBrush}" CornerRadius="2"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Active Scans -->
+                                <Border Grid.Column="1" Grid.Row="0" 
+                                        Background="{StaticResource BackgroundSecondary}" 
+                                        CornerRadius="4" Padding="16">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="ACTIVE SCANS" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <TextBlock Text="3" FontSize="16" FontWeight="Medium" Foreground="{StaticResource InfoBrush}"/>
+                                        <Border Height="4" Background="{StaticResource InfoBrush}" CornerRadius="2"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- System Status -->
+                                <Border Grid.Column="2" Grid.Row="0" 
+                                        Background="{StaticResource BackgroundSecondary}" 
+                                        CornerRadius="4" Padding="16">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="SYSTEM STATUS" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <TextBlock Text="OPERATIONAL" FontSize="16" FontWeight="Medium" Foreground="{StaticResource SuccessBrush}"/>
+                                        <Border Height="4" Background="{StaticResource SuccessBrush}" CornerRadius="2"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Alert Timeline -->
+                                <Border Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" 
+                                        Background="{StaticResource BackgroundSecondary}" 
+                                        CornerRadius="4" Padding="16">
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="RECENT SECURITY EVENTS" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4">
+                                            <Border Grid.Column="0" Background="{StaticResource CriticalBrush}" Width="4" Height="20" CornerRadius="2"/>
+                                            <TextBlock Grid.Column="1" Text="SQL Injection attempt detected on /api/users" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="12,0"/>
+                                            <TextBlock Grid.Column="2" Text="2m ago" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        </Grid>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4">
+                                            <Border Grid.Column="0" Background="{StaticResource WarningBrush}" Width="4" Height="20" CornerRadius="2"/>
+                                            <TextBlock Grid.Column="1" Text="Unusual traffic pattern from 192.168.1.45" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="12,0"/>
+                                            <TextBlock Grid.Column="2" Text="7m ago" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        </Grid>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4">
+                                            <Border Grid.Column="0" Background="{StaticResource InfoBrush}" Width="4" Height="20" CornerRadius="2"/>
+                                            <TextBlock Grid.Column="1" Text="Security scan completed for api.example.com" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="12,0"/>
+                                            <TextBlock Grid.Column="2" Text="15m ago" FontSize="9" Foreground="{StaticResource TextTertiary}"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+            
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

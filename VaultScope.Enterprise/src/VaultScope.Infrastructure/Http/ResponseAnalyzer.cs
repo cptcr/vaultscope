@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
@@ -142,9 +146,9 @@ public class ResponseAnalyzer
         // API Keys
         var apiKeyPatterns = new[]
         {
-            @"api[_-]?key[\"']?\s*[:=]\s*[\"']?([a-zA-Z0-9_\-]{20,})",
-            @"apikey[\"']?\s*[:=]\s*[\"']?([a-zA-Z0-9_\-]{20,})",
-            @"[\"']api_key[\"']\s*:\s*[\"']([^\"']+)[\"']"
+            @"api[_-]?key[""']?\s*[:=]\s*[""']?([a-zA-Z0-9_\-]{20,})",
+            @"apikey[""']?\s*[:=]\s*[""']?([a-zA-Z0-9_\-]{20,})",
+            @"[""']api_key[""']\s*:\s*[""']([^""']+)[""']"
         };
         
         foreach (var pattern in apiKeyPatterns)
@@ -164,9 +168,9 @@ public class ResponseAnalyzer
         // Passwords
         var passwordPatterns = new[]
         {
-            @"password[\"']?\s*[:=]\s*[\"']?([^\"'\s]{4,})",
-            @"pwd[\"']?\s*[:=]\s*[\"']?([^\"'\s]{4,})",
-            @"[\"']password[\"']\s*:\s*[\"']([^\"']+)[\"']"
+            @"password[""']?\s*[:=]\s*[""']?([^""'\s]{4,})",
+            @"pwd[""']?\s*[:=]\s*[""']?([^""'\s]{4,})",
+            @"[""']password[""']\s*:\s*[""']([^""']+)[""']"
         };
         
         foreach (var pattern in passwordPatterns)

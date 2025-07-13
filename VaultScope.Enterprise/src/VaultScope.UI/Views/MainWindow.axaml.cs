@@ -2,6 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+#if DEBUG
+using Avalonia.Diagnostics;
+#endif
 
 namespace VaultScope.UI.Views;
 
@@ -14,7 +17,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         
 #if DEBUG
-        this.AttachDevTools();
+        // Remove dev tools for now due to missing reference
+        // this.AttachDevTools();
 #endif
     }
     

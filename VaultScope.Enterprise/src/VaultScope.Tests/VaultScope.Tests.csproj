@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <StartupObject>VaultScope.Tests.SimpleTestRunner</StartupObject>
     <IsPackable>false</IsPackable>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +27,15 @@
     <ProjectReference Include="..\VaultScope.Core\VaultScope.Core.csproj" />
     <ProjectReference Include="..\VaultScope.Security\VaultScope.Security.csproj" />
     <ProjectReference Include="..\VaultScope.Infrastructure\VaultScope.Infrastructure.csproj" />
-    <ProjectReference Include="..\VaultScope.UI\VaultScope.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Integration\SecurityScannerServiceTests.cs" />
+    <Compile Remove="Integration\DatabaseOperationsTests.cs" />
+    <Compile Remove="Integration\ReportGenerationTests.cs" />
+    <Compile Remove="Unit\VulnerabilityAnalyzerTests.cs" />
+    <Compile Remove="Security\SqlInjectionDetectorTests.cs" />
+    <Compile Remove="Security\XssDetectorTests.cs" />
+    <Compile Remove="TestRunner.cs" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using VaultScope.Infrastructure.Data.Entities;
+using VaultScope.Infrastructure.Security;
+using VaultScope.Infrastructure.Json;
+using SQLitePCL;
+using System.Diagnostics.CodeAnalysis;
 
 namespace VaultScope.Infrastructure.Data;
 
@@ -15,6 +19,20 @@ public class VaultScopeDbContext : DbContext
     public VaultScopeDbContext(DbContextOptions<VaultScopeDbContext> options)
         : base(options)
     {
+        // Initialize SQLCipher
+        Batteries_V2.Init();
+    }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var encryptionKey = DatabaseEncryption.GetOrCreateEncryptionKey();
+            var connectionString = $"Data Source=vaultscope.db;Password={encryptionKey}";
+            optionsBuilder.UseSqlite(connectionString);
+        }
+        
+        base.OnConfiguring(optionsBuilder);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +69,10 @@ public class VaultScopeDbContext : DbContext
             
             entity.HasIndex(e => e.StartTime);
             entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.EndTime);
+            entity.HasIndex(e => new { e.Status, e.StartTime });
+            entity.HasIndex(e => e.TargetUrl);
+            entity.HasIndex(e => e.CreatedAt);
         });
         
         // Vulnerability configuration
@@ -65,9 +87,17 @@ public class VaultScopeDbContext : DbContext
             entity.Property(e => e.CweId).HasMaxLength(20);
             entity.Property(e => e.OwaspCategory).HasMaxLength(100);
             
+            // Ignore the Metadata property since it's a computed property from MetadataJson
+            entity.Ignore(e => e.Metadata);
+            
             entity.HasIndex(e => e.Severity);
             entity.HasIndex(e => e.Type);
             entity.HasIndex(e => e.DiscoveredAt);
+            entity.HasIndex(e => new { e.Severity, e.Type });
+            entity.HasIndex(e => new { e.ScanResultId, e.Severity });
+            entity.HasIndex(e => e.AffectedEndpoint);
+            entity.HasIndex(e => e.CweId);
+            entity.HasIndex(e => e.OwaspCategory);
         });
         
         // SecurityScore configuration
@@ -107,6 +137,7 @@ public class VaultScopeDbContext : DbContext
             entity.Property(e => e.Path).IsRequired().HasMaxLength(500);
             
             entity.HasIndex(e => new { e.ScanResultId, e.Url });
+            entity.HasIndex(e => e.Path);
         });
         
         // ScanConfiguration configuration
@@ -133,11 +164,13 @@ public class VaultScopeDbContext : DbContext
             
             entity.Property(e => e.CustomHeaders)
                   .HasConversion(
-                      v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
-                      v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new Dictionary<string, string>());
+                      v => System.Text.Json.JsonSerializer.Serialize(v, VaultScopeJsonContext.Default.DictionaryStringString),
+                      v => System.Text.Json.JsonSerializer.Deserialize(v, VaultScopeJsonContext.Default.DictionaryStringString) ?? new Dictionary<string, string>());
             
             entity.HasIndex(e => e.Name);
             entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => e.TargetUrl);
+            entity.HasIndex(e => e.UpdatedAt);
         });
         
         // Report configuration
@@ -155,6 +188,8 @@ public class VaultScopeDbContext : DbContext
             
             entity.HasIndex(e => e.GeneratedAt);
             entity.HasIndex(e => e.Format);
+            entity.HasIndex(e => new { e.ScanResultId, e.Format });
+            entity.HasIndex(e => e.FileName);
         });
         
         // Apply timestamp conventions
