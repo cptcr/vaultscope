@@ -12,7 +12,15 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Running debug executable directly...
-src\VaultScope.UI\bin\Debug\net8.0\VaultScope.UI.exe
+echo Executable path: src\VaultScope.UI\bin\Debug\net8.0\win-x64\VaultScope.UI.exe
+if exist "src\VaultScope.UI\bin\Debug\net8.0\win-x64\VaultScope.UI.exe" (
+    echo Executable found, starting...
+    src\VaultScope.UI\bin\Debug\net8.0\win-x64\VaultScope.UI.exe
+    echo Exit code: %ERRORLEVEL%
+) else (
+    echo ERROR: Executable not found!
+    dir src\VaultScope.UI\bin\Debug\net8.0\win-x64\
+)
 
 if %ERRORLEVEL% NEQ 0 (
     echo Application failed to start!
