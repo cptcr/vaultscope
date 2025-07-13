@@ -2,17 +2,17 @@
 echo Starting VaultScope Enterprise...
 cd "%~dp0VaultScope.Enterprise"
 
-echo Building for Windows...
-dotnet build src\VaultScope.UI\VaultScope.UI.csproj --runtime win-x64
+echo Publishing Windows executable...
+dotnet publish src\VaultScope.UI\VaultScope.UI.csproj -c Release -r win-x64 --self-contained true -o publish\win-x64
 
 if %ERRORLEVEL% NEQ 0 (
-    echo Build failed!
+    echo Publish failed!
     pause
     exit /b 1
 )
 
-echo Starting application...
-dotnet run --project src\VaultScope.UI\VaultScope.UI.csproj --runtime win-x64
+echo Starting VaultScope Enterprise...
+publish\win-x64\VaultScope.UI.exe
 
 if %ERRORLEVEL% NEQ 0 (
     echo Application failed to start!
