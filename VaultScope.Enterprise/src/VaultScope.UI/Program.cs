@@ -52,6 +52,7 @@ internal class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
+        Console.WriteLine("Configuring AppBuilder...");
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()

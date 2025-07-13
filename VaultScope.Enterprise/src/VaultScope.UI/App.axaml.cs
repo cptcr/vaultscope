@@ -14,25 +14,40 @@ public partial class App : Application
 {
     public override void Initialize()
     {
-        AvaloniaXamlLoader.Load(this);
+        Console.WriteLine("App.Initialize() called");
+        try
+        {
+            AvaloniaXamlLoader.Load(this);
+            Console.WriteLine("XAML loaded successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"XAML loading failed: {ex}");
+            throw;
+        }
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Console.WriteLine("OnFrameworkInitializationCompleted() called");
         try
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                Console.WriteLine("Creating MainWindow...");
                 // Create main window directly with simplified ViewModel
                 var mainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(null, null)
                 };
 
+                Console.WriteLine("Setting MainWindow...");
                 desktop.MainWindow = mainWindow;
                 
+                Console.WriteLine("Showing window...");
                 // Show the window explicitly
                 mainWindow.Show();
+                Console.WriteLine("Window shown successfully");
             }
         }
         catch (Exception ex)
