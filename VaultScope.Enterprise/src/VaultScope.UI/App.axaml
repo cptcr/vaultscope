@@ -21,6 +21,56 @@
         </DataTemplate>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <!-- Professional Enterprise Colors -->
+        <Color x:Key="PrimaryColor">#4A5568</Color>
+        <Color x:Key="BackgroundPrimary">#0A0A0B</Color>
+        <Color x:Key="TextPrimary">#F7FAFC</Color>
+        <Color x:Key="CriticalColor">#E53E3E</Color>
+        <Color x:Key="WhiteTextColor">#FFFFFF</Color>
+        <Color x:Key="SuccessColor">#10B981</Color>
+        <Color x:Key="WarningColor">#F59E0B</Color>
+        <Color x:Key="InfoColor">#3B82F6</Color>
+        
+        <!-- Professional Brushes -->
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0A0A0B"/>
+        <SolidColorBrush x:Key="GlassBrush" Color="#15FFFFFF"/>
+        <SolidColorBrush x:Key="GlassCardBrush" Color="#10FFFFFF"/>
+        <SolidColorBrush x:Key="GlassHoverBrush" Color="#25FFFFFF"/>
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F7FAFC"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A0AEC0"/>
+        <SolidColorBrush x:Key="CriticalBrush" Color="#E53E3E"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="#F59E0B"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="#3B82F6"/>
+        
+        <!-- Professional Gradients -->
+        <LinearGradientBrush x:Key="SecurityGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5568" Offset="0"/>
+            <GradientStop Color="#2D3748" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5568" Offset="0"/>
+            <GradientStop Color="#718096" Offset="1"/>
+        </LinearGradientBrush>
+        
+        <!-- Professional Typography -->
+        <FontFamily x:Key="PrimaryFontFamily">Segoe UI</FontFamily>
+        
+        <!-- Professional Icons -->
+        <PathGeometry x:Key="ShieldCheckIcon">M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z</PathGeometry>
+        <PathGeometry x:Key="ShieldIcon">M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z</PathGeometry>
+        <PathGeometry x:Key="DashboardIcon">M3,13H11V3H3M3,21H11V15H3M13,21H21V11H13M13,3V9H21V3</PathGeometry>
+        <PathGeometry x:Key="ScanIcon">M15.5,14H20.5L18,16.5M9.5,14H14.5L12,16.5M15.5,10H20.5L18,7.5M9.5,10H14.5L12,7.5M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z</PathGeometry>
+        <PathGeometry x:Key="ReportsIcon">M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z</PathGeometry>
+        <PathGeometry x:Key="ZapIcon">M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M7,15H9L11,18H13L10,12H8L7,15Z</PathGeometry>
+        <PathGeometry x:Key="SettingsIcon">M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z</PathGeometry>
+        <PathGeometry x:Key="PlayIcon">M8,5.14V19.14L19,12.14L8,5.14Z</PathGeometry>
+        <PathGeometry x:Key="InfoIcon">M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z</PathGeometry>
+        <PathGeometry x:Key="ActivityIcon">M22,12L18,8V11H3V13H18V16L22,12Z</PathGeometry>
+        <PathGeometry x:Key="ClockIcon">M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z</PathGeometry>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme>
             <FluentTheme.Palettes>
