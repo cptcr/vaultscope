@@ -1,7 +1,7 @@
 # VaultScope Enterprise
 
 <div align="center">
-  <img src="docs/images/logo.png" alt="VaultScope Logo" width="200"/>
+  <img src="https://github.com/cptcr/vaultscope/blob/main/icon.png" alt="VaultScope Logo" width="200"/>
   
   **Professional API Security Assessment Tool**
   
